@@ -19,7 +19,7 @@ class PeriodTest extends TestCase
      * @test
      * @dataProvider overlappingDates
      */
-    public function overlaps(Period $a, Period $b)
+    public function overlaps_with(Period $a, Period $b)
     {
         $this->assertTrue($a->overlapsWith($b));
     }
@@ -133,8 +133,8 @@ class PeriodTest extends TestCase
      *
      * A       [========]
      * B                   [==]
-     * C                          [=====]
-     * D              [=============]
+     * C                           [=====]
+     * D              [===============]
      *
      * OVERLAP        [=]   [==]   [==]
      */

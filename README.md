@@ -1,11 +1,11 @@
-# Very short description of the package
+# Complex period comparisons
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 [![Build Status](https://img.shields.io/travis/spatie/period/master.svg?style=flat-square)](https://travis-ci.org/spatie/period)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/period.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/period)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 
-Extensions on [thephpleague/period](https://github.com/thephpleague/period).
+Complex period comparisons.
 
 ## Installation
 
@@ -17,9 +17,65 @@ composer require spatie/period
 
 ## Usage
 
-``` php
-$skeleton = new Spatie\Skeleton();
-echo $skeleton->echoPhrase('Hello, Spatie!');
+Overlap with at least one other period
+
+```php
+/*
+ * A       [========]
+ * B                   [==]
+ * C                           [=====]
+ *
+ * D              [===============]
+ *
+ * OVERLAP        [=]   [==]   [==]
+ */
+ 
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-02-10', '2018-02-20');
+$c = Period::make('2018-03-01', '2018-03-31');
+
+$d = Period::make('2018-01-20', '2018-03-10');
+
+$overlaps = $d->overlap($a, $b, $c);
+```
+
+Diff between multiple periods
+
+```php
+/*
+ * A                   [====]
+ * B                               [========]
+ * C         [=====]
+ * CURRENT      [========================]
+ *
+ * DIFF             [=]      [====]
+ */
+
+$a = Period::make('2018-01-05', '2018-01-10');
+$b = Period::make('2018-01-15', '2018-03-01');
+$c = Period::make('2017-01-01', '2018-01-02');
+
+$current = Period::make('2018-01-01', '2018-01-31');
+
+$diff = $current->diff($a, $b, $c);
+```
+
+Overlap with all periods
+
+```php
+/*
+ * A              [============]
+ * B                   [==]
+ * C                  [=======]
+ *
+ * OVERLAP             [==]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-01-10', '2018-01-15');
+$c = Period::make('2018-01-10', '2018-01-31');
+
+$overlap = $a->overlapAll($b, $c);
 ```
 
 ### Testing

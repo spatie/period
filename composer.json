@@ -1,6 +1,6 @@
 {
     "name": "spatie/period",
-    "description": "Extensions on thephpleague/period",
+    "description": "Complex period comparisons",
     "keywords": [
         "spatie",
         "period"
