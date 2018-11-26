@@ -3,6 +3,7 @@
 namespace Spatie\Period;
 
 use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 
 class Period
@@ -23,12 +24,27 @@ class Period
         $this->end = $end;
     }
 
-    public static function make($start, $end, string $format = 'Y-m-d H:i:s'): Period
+    public static function make($start, $end, string $format = 'Y-m-d'): Period
     {
         return new self(
-            DateTimeImmutable::createFromFormat($format, $start . ' 00:00:00'),
-            DateTimeImmutable::createFromFormat($format, $end . ' 00:00:00')
+            self::resolveDate($start, $format)->setTime(0, 0, 0),
+            self::resolveDate($end, $format)->setTime(0, 0, 0)
         );
+    }
+
+    protected static function resolveDate($date, string $format): DateTimeImmutable
+    {
+        if ($date instanceof DateTimeImmutable) {
+            return $date;
+        }
+
+        if ($date instanceof DateTime) {
+            return DateTimeImmutable::createFromMutable($date);
+        }
+
+        $dateTime = DateTimeImmutable::createFromFormat($format, $date);
+
+        return $dateTime;
     }
 
     public function getStart(): DateTimeImmutable

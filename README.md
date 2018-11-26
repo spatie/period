@@ -17,29 +17,31 @@ composer require spatie/period
 
 ## Usage
 
-Overlap with at least one other period
+Overlaps with any other period. 
+This method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
 
 ```php
 /*
  * A       [========]
- * B                   [==]
- * C                           [=====]
+ * B                    [==]
+ * C                            [=====]
+ * CURRENT        [===============]
  *
- * D              [===============]
- *
- * OVERLAP        [=]   [==]   [==]
+ * OVERLAP        [=]   [==]    [=]
  */
  
 $a = Period::make('2018-01-01', '2018-01-31');
 $b = Period::make('2018-02-10', '2018-02-20');
 $c = Period::make('2018-03-01', '2018-03-31');
 
-$d = Period::make('2018-01-20', '2018-03-10');
+$current = Period::make('2018-01-20', '2018-03-10');
 
-$overlaps = $d->overlap($a, $b, $c);
+$overlaps = $current->overlap($a, $b, $c); 
 ```
 
-Diff between multiple periods
+Diff between multiple periods. 
+This method returns a `PeriodCollection` multiple `Period` objects 
+representing the diffs between several periods and one.
 
 ```php
 /*
@@ -60,7 +62,8 @@ $current = Period::make('2018-01-01', '2018-01-31');
 $diff = $current->diff($a, $b, $c);
 ```
 
-Overlap with all periods
+Overlap with all periods. 
+The method only returns one period where all periods overlap.
 
 ```php
 /*
@@ -77,6 +80,60 @@ $c = Period::make('2018-01-10', '2018-01-31');
 
 $overlap = $a->overlapAll($b, $c);
 ```
+
+Overlaps with: this method returns a boolean indicating of two periods overlap or not.
+
+```php
+/*
+ * A              [============]
+ * B                   [===========]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-01-10', '2018-02-15');
+
+$overlap = $a->overlapsWith($b); // true
+```
+
+Touches: this method determines if two periods touch each other.
+
+```php
+/*
+ * A              [========]
+ * B                        [===========]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-02-01', '2018-02-15');
+
+$overlap = $a->touches($b); // true
+```
+
+Gap: returns the gap between two periods. 
+If no gap exists, `null` is returned. 
+
+```php
+/*
+ * A              [========]
+ * B                           [===========]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-02-05', '2018-02-15');
+
+$overlap = $a->gap($b); // Period('2018-02-01', '2018-02-04')
+```
+
+### Compatibility
+
+You can construct a `Period` from any type of `DateTime` object such as Carbon:
+
+```php
+Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
+```
+
+Note that as soon as a period is constructed, all further operations on it are made immutable.
+There's never the danger of changing the input dates.
 
 ### Testing
 

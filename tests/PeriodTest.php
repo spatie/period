@@ -2,6 +2,7 @@
 
 namespace Spatie\Tests\Period;
 
+use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
 
@@ -452,5 +453,13 @@ class PeriodTest extends TestCase
         $this->assertTrue($first->equals(Period::make('2018-01-01', '2018-01-04')));
         $this->assertTrue($second->equals(Period::make('2018-01-11', '2018-01-14')));
         $this->assertTrue($third->equals(Period::make('2018-01-21', '2018-01-31')));
+    }
+
+    /** @test */
+    public function test_with_carbon()
+    {
+        $a = Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
+
+        $this->assertTrue($a->equals(Period::make('2018-01-01', '2018-01-02')));
     }
 }
