@@ -5,7 +5,16 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/period.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/period)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 
-Complex period comparisons.
+This package adds support for comparing multiple dates with each other.
+You can calculate the overlaps and differences between n-amount of periods,
+as well as some more basic comparisons between two periods.
+
+Periods can be constructed from any type of `DateTime` implementation, 
+making this package compatible with custom `DateTime` implementations like Carbon.
+
+Periods are always considered immutable, there's never the worry about your input dates being changed. 
+
+This package is still a work in progress.
 
 ## Installation
 
@@ -17,8 +26,8 @@ composer require spatie/period
 
 ## Usage
 
-Overlaps with any other period. 
-This method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
+**Overlaps with any other period**: 
+this method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
 
 ```php
 /*
@@ -39,8 +48,27 @@ $current = Period::make('2018-01-20', '2018-03-10');
 $overlaps = $current->overlap($a, $b, $c); 
 ```
 
-Diff between multiple periods. 
-This method returns a `PeriodCollection` multiple `Period` objects 
+**Overlap with all periods**: 
+this method only returns one period where all periods overlap.
+
+```php
+/*
+ * A              [============]
+ * B                   [==]
+ * C                  [=======]
+ *
+ * OVERLAP             [==]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-01-10', '2018-01-15');
+$c = Period::make('2018-01-10', '2018-01-31');
+
+$overlap = $a->overlapAll($b, $c);
+```
+
+**Diff between multiple periods**: 
+this method returns a `PeriodCollection` multiple `Period` objects 
 representing the diffs between several periods and one.
 
 ```php
@@ -62,26 +90,7 @@ $current = Period::make('2018-01-01', '2018-01-31');
 $diff = $current->diff($a, $b, $c);
 ```
 
-Overlap with all periods. 
-The method only returns one period where all periods overlap.
-
-```php
-/*
- * A              [============]
- * B                   [==]
- * C                  [=======]
- *
- * OVERLAP             [==]
- */
-
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-01-10', '2018-01-15');
-$c = Period::make('2018-01-10', '2018-01-31');
-
-$overlap = $a->overlapAll($b, $c);
-```
-
-Overlaps with: this method returns a boolean indicating of two periods overlap or not.
+**Overlaps with**: this method returns a boolean indicating of two periods overlap or not.
 
 ```php
 /*
@@ -95,7 +104,7 @@ $b = Period::make('2018-01-10', '2018-02-15');
 $overlap = $a->overlapsWith($b); // true
 ```
 
-Touches: this method determines if two periods touch each other.
+**Touches**: this method determines if two periods touch each other.
 
 ```php
 /*
@@ -109,7 +118,7 @@ $b = Period::make('2018-02-01', '2018-02-15');
 $overlap = $a->touches($b); // true
 ```
 
-Gap: returns the gap between two periods. 
+**Gap**: returns the gap between two periods. 
 If no gap exists, `null` is returned. 
 
 ```php
