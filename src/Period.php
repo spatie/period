@@ -27,8 +27,8 @@ class Period
     public static function make($start, $end, string $format = 'Y-m-d'): Period
     {
         return new self(
-            self::resolveDate($start, $format)->setTime(0, 0, 0),
-            self::resolveDate($end, $format)->setTime(0, 0, 0)
+            self::resolveDate($start, $format),
+            self::resolveDate($end, $format)
         );
     }
 
@@ -42,7 +42,26 @@ class Period
             return DateTimeImmutable::createFromMutable($date);
         }
 
+        if (! is_string($date)) {
+            throw InvalidDate::forFormat($date, $format);
+        }
+
+        if (
+            strpos($format, ' ') === false
+            && strpos($date, ' ') !== false
+        ) {
+            $format = 'Y-m-d H:i:s';
+        }
+
         $dateTime = DateTimeImmutable::createFromFormat($format, $date);
+
+        if ($dateTime === false) {
+            throw InvalidDate::forFormat($date, $format);
+        }
+
+        if (strpos($format, ' ') === false) {
+            $dateTime = $dateTime->setTime(0, 0, 0);
+        }
 
         return $dateTime;
     }

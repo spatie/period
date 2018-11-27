@@ -3,6 +3,7 @@
 namespace Spatie\Tests\Period;
 
 use Carbon\Carbon;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
 
@@ -461,5 +462,31 @@ class PeriodTest extends TestCase
         $a = Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
 
         $this->assertTrue($a->equals(Period::make('2018-01-01', '2018-01-02')));
+    }
+
+    /** @test */
+    public function make_with_time_keeps_the_time()
+    {
+        $period = Period::make('2018-01-01 01:02:03', '2018-01-02 04:05:06');
+
+        $this->assertTrue($period->equals(
+            new Period(
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 01:02:03'),
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 04:05:06')
+            )
+        ));
+    }
+
+    /** @test */
+    public function make_without_time_set_time_to_start_of_day()
+    {
+        $period = Period::make('2018-01-01', '2018-01-02');
+
+        $this->assertTrue($period->equals(
+            new Period(
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00'),
+                DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')
+            )
+        ));
     }
 }
