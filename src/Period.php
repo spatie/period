@@ -24,7 +24,7 @@ class Period
         $this->end = $end;
     }
 
-    public static function make($start, $end, string $format = 'Y-m-d'): Period
+    public static function make($start, $end, string $format = null): Period
     {
         return new self(
             self::resolveDate($start, $format),
@@ -32,7 +32,7 @@ class Period
         );
     }
 
-    protected static function resolveDate($date, string $format): DateTimeImmutable
+    protected static function resolveDate($date, ?string $format): DateTimeImmutable
     {
         if ($date instanceof DateTimeImmutable) {
             return $date;
@@ -42,15 +42,10 @@ class Period
             return DateTimeImmutable::createFromMutable($date);
         }
 
+        $format = self::resolveFormat($date, $format);
+
         if (! is_string($date)) {
             throw InvalidDate::forFormat($date, $format);
-        }
-
-        if (
-            strpos($format, ' ') === false
-            && strpos($date, ' ') !== false
-        ) {
-            $format = 'Y-m-d H:i:s';
         }
 
         $dateTime = DateTimeImmutable::createFromFormat($format, $date);
@@ -64,6 +59,22 @@ class Period
         }
 
         return $dateTime;
+    }
+
+    protected static function resolveFormat($date, ?string $format): string
+    {
+        if ($format !== null) {
+            return $format;
+        }
+
+        if (
+            strpos($format, ' ') === false
+            && strpos($date, ' ') !== false
+        ) {
+            return 'Y-m-d H:i:s';
+        }
+
+        return 'Y-m-d';
     }
 
     public function getStart(): DateTimeImmutable
