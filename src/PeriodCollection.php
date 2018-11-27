@@ -53,4 +53,44 @@ class PeriodCollection implements
 
         return $overlap;
     }
+
+    public function boundaries(): ?Period
+    {
+        $start = null;
+
+        $end = null;
+
+        foreach ($this as $period) {
+            if (
+                $start === null
+                || $start > $period->getStart()
+            ) {
+                $start = $period->getStart();
+            }
+
+            if (
+                $end === null
+                || $end < $period->getEnd()
+            ) {
+                $end = $period->getEnd();
+            }
+        }
+
+        if (! $start || ! $end) {
+            return null;
+        }
+
+        return new Period($start, $end);
+    }
+
+    public function gaps(): PeriodCollection
+    {
+        $boundaries = $this->boundaries();
+
+        if (! $boundaries) {
+            return new PeriodCollection();
+        }
+
+        return $boundaries->diff(...$this);
+    }
 }

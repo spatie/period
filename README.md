@@ -133,6 +133,111 @@ $b = Period::make('2018-02-05', '2018-02-15');
 $overlap = $a->gap($b); // Period('2018-02-01', '2018-02-04')
 ```
 
+**Boundaries of a collection**: get one period representing the boundaries of a collection.
+
+```php
+/*
+ * A                   [====]
+ * B                               [========]
+ * C           [=====]
+ * D                                             [====]
+ *
+ * BOUNDARIES  [=======================================]
+ */
+ 
+$collection = new PeriodCollection(
+    Period::make('2018-01-01', '2018-01-05'),
+    Period::make('2018-01-10', '2018-01-15'),
+    Period::make('2018-01-20', '2018-01-25'),
+    Period::make('2018-01-30', '2018-01-31')
+);
+
+$boundaries = $collection->boundaries();
+```
+
+**Gaps of a collection**: get all the gaps of a collection.
+
+```php
+/*
+ * A                   [====]
+ * B                               [========]
+ * C         [=====]
+ * D                                             [====]
+ *
+ * GAPS             [=]      [====]          [==]
+ */
+
+$collection = new PeriodCollection(
+    Period::make('2018-01-01', '2018-01-05'),
+    Period::make('2018-01-10', '2018-01-15'),
+    Period::make('2018-01-20', '2018-01-25'),
+    Period::make('2018-01-30', '2018-01-31')
+);
+
+$gaps = $collection->gaps();
+```
+
+**Overlap multiple collections**: returns the overlap between collections. 
+This means and AND operation between collections, and an OR operation within the same collection.
+
+```php
+/*
+ * A            [=====]      [===========]
+ * B            [=================]
+ * C                [====================]
+ *
+ * OVERLAP          [=]      [====]
+ */
+
+$a = new PeriodCollection(
+    Period::make('2018-01-01', '2018-01-07'),
+    Period::make('2018-01-15', '2018-01-25')
+);
+
+$b = new PeriodCollection(
+    Period::make('2018-01-01', '2018-01-20')
+);
+
+$c = new PeriodCollection(
+    Period::make('2018-01-06', '2018-01-25')
+);
+
+$overlap = $a->overlap($b, $c);
+```
+
+### Working with `PeriodCollection`
+
+Period collection are constructed from several periods:
+
+```php
+$collection = new PeriodCollection(
+    Period::make('2018-01-01', '2018-01-02'),
+    // …
+);
+```
+
+They may be looped over directly and its contents will be recognised by your IDE:
+
+```php
+$collection = new PeriodCollection(/* … */);
+
+foreach ($collection as $period) {
+    $period->…
+}
+```
+
+You may destruct them:
+
+```php
+[$firstPeriod, $secondPeriod, $thirdPeriod] = $collection;
+```
+
+And finally construct one collection from another:
+
+```php
+$newCollection = new PeriodCollection(...$otherCollection);
+```
+
 ### Compatibility
 
 You can construct a `Period` from any type of `DateTime` object such as Carbon:
