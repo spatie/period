@@ -16,7 +16,7 @@ class PeriodCollectionTest extends TestCase
      *
      * OVERLAP      [=====]            [=====]
      */
-    public function overlap_single()
+    public function it_can_determine_multiple_overlaps_for_a_single_collection()
     {
         $a = new PeriodCollection(
             Period::make('2018-01-05', '2018-01-10'),
@@ -28,14 +28,12 @@ class PeriodCollectionTest extends TestCase
             Period::make('2018-01-22', '2018-01-30')
         );
 
-        $overlap = $a->overlapSingle($b);
+        $overlapPeriods = $a->overlapSingle($b);
 
-        $this->assertCount(2, $overlap);
+        $this->assertCount(2, $overlapPeriods);
 
-        [$first, $second] = $overlap;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-05', '2018-01-10')));
-        $this->assertTrue($second->equals(Period::make('2018-01-22', '2018-01-25')));
+        $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-05', '2018-01-10')));
+        $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-01-22', '2018-01-25')));
     }
 
     /**
@@ -48,7 +46,7 @@ class PeriodCollectionTest extends TestCase
      *
      * OVERLAP          [=]      [====]
      */
-    public function overlap_collection()
+    public function it_can_determine_multiple_overlaps_for_multiple_collections()
     {
         $a = new PeriodCollection(
             Period::make('2018-01-01', '2018-01-07'),
@@ -63,14 +61,12 @@ class PeriodCollectionTest extends TestCase
             Period::make('2018-01-06', '2018-01-25')
         );
 
-        $overlap = $a->overlap($b, $c);
+        $overlapPeriods = $a->overlap($b, $c);
 
-        $this->assertCount(2, $overlap);
+        $this->assertCount(2, $overlapPeriods);
 
-        [$first, $second] = $overlap;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-06', '2018-01-07')));
-        $this->assertTrue($second->equals(Period::make('2018-01-15', '2018-01-20')));
+        $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-06', '2018-01-07')));
+        $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-01-15', '2018-01-20')));
     }
 
     /**
@@ -83,7 +79,7 @@ class PeriodCollectionTest extends TestCase
      *
      * BOUNDARIES  [=======================================]
      */
-    public function test_boundaries()
+    public function it_can_determine_the_boundaries_of_a_collection()
     {
         $collection = new PeriodCollection(
             Period::make('2018-01-01', '2018-01-05'),
@@ -107,7 +103,7 @@ class PeriodCollectionTest extends TestCase
      *
      * GAPS             [=]      [====]          [==]
      */
-    public function test_gaps()
+    public function it_can_determine_the_gaps_of_a_collection()
     {
         $collection = new PeriodCollection(
             Period::make('2018-01-01', '2018-01-05'),
@@ -120,10 +116,8 @@ class PeriodCollectionTest extends TestCase
 
         $this->assertCount(3, $gaps);
 
-        [$first, $second, $third] = $gaps;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-06', '2018-01-09')));
-        $this->assertTrue($second->equals(Period::make('2018-01-16', '2018-01-19')));
-        $this->assertTrue($third->equals(Period::make('2018-01-26', '2018-01-29')));
+        $this->assertTrue($gaps[0]->equals(Period::make('2018-01-06', '2018-01-09')));
+        $this->assertTrue($gaps[1]->equals(Period::make('2018-01-16', '2018-01-19')));
+        $this->assertTrue($gaps[2]->equals(Period::make('2018-01-26', '2018-01-29')));
     }
 }
