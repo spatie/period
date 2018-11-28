@@ -102,8 +102,15 @@ class Period
 
     public function overlapsWith(Period $period): bool
     {
-        return $this->start <= $period->end
-            && $period->start <= $this->end;
+        if ($this->start > $period->end) {
+            return false;
+        }
+
+        if ($period->start > $this->end) {
+            return false;
+        }
+
+        return true;
     }
 
     public function touchesWith(Period $period): bool
