@@ -148,8 +148,15 @@ class Period
 
     public function equals(Period $period): bool
     {
-        return $period->start->getTimestamp() === $this->start->getTimestamp()
-            && $period->end->getTimestamp() === $this->end->getTimestamp();
+        if ($period->start->getTimestamp() !== $this->start->getTimestamp()) {
+            return false;
+        }
+
+        if ($period->end->getTimestamp() !== $this->end->getTimestamp()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function gap(Period $period): ?Period
