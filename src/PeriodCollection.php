@@ -6,10 +6,7 @@ use ArrayAccess;
 use Countable;
 use Iterator;
 
-class PeriodCollection implements
-    ArrayAccess,
-    Iterator,
-    Countable
+class PeriodCollection implements ArrayAccess, Iterator, Countable
 {
     use IterableImplementation;
 
