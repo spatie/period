@@ -115,8 +115,15 @@ class Period
 
     public function touchesWith(Period $period): bool
     {
-        return $this->end->diff($period->start)->days <= 1
-            || $this->start->diff($period->end)->days <= 1;
+        if ($this->end->diff($period->start)->days <= 1) {
+            return true;
+        }
+
+        if ($this->start->diff($period->end)->days <= 1) {
+            return true;
+        }
+
+        return false;
     }
 
     public function startsAfterOrAt(DateTimeImmutable $date): bool
