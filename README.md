@@ -207,7 +207,7 @@ $overlap = $a->overlap($b, $c);
 
 ### Working with `PeriodCollection`
 
-Period collection are constructed from several periods:
+Period collections are constructed from several periods:
 
 ```php
 $collection = new PeriodCollection(
