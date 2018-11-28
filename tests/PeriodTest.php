@@ -277,10 +277,10 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-10', '2018-01-30');
 
-        [$first, $second] = $a->diffSingle($b);
+        $diffs = $a->diffSingle($b);
 
-        $this->assertTrue($first->equals(Period::make('2018-01-01', '2018-01-09')));
-        $this->assertTrue($second->equals(Period::make('2018-01-16', '2018-01-30')));
+        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
+        $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
     }
 
     /**
@@ -297,10 +297,10 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-01', '2018-01-15');
 
-        [$first, $second] = $a->diffSingle($b);
+        $diffs = $a->diffSingle($b);
 
-        $this->assertTrue($first->equals(Period::make('2018-01-01', '2018-01-09')));
-        $this->assertTrue($second->equals(Period::make('2018-01-16', '2018-01-30')));
+        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
+        $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
     }
 
     /**
@@ -317,10 +317,10 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-02-10', '2018-02-15');
 
-        [$first, $second] = $a->diffSingle($b);
+        $diffs = $a->diffSingle($b);
 
-        $this->assertTrue($first->equals(Period::make('2018-01-10', '2018-01-15')));
-        $this->assertTrue($second->equals(Period::make('2018-02-10', '2018-02-15')));
+        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-10', '2018-01-15')));
+        $this->assertTrue($diffs[1]->equals(Period::make('2018-02-10', '2018-02-15')));
     }
 
     /**
@@ -346,9 +346,7 @@ class PeriodTest extends TestCase
 
         $this->assertCount(1, $diff);
 
-        [$first] = $diff;
-
-        $this->assertTrue($first->equals(Period::make('2018-02-01', '2018-02-09')));
+        $this->assertTrue($diff[0]->equals(Period::make('2018-02-01', '2018-02-09')));
     }
 
     /**
@@ -391,9 +389,7 @@ class PeriodTest extends TestCase
 
         $this->assertCount(1, $diff);
 
-        [$first] = $diff;
-
-        $this->assertTrue($first->equals(Period::make('2018-02-01', '2018-02-14')));
+        $this->assertTrue($diff[0]->equals(Period::make('2018-02-01', '2018-02-14')));
     }
 
     /**
@@ -418,10 +414,8 @@ class PeriodTest extends TestCase
 
         $this->assertCount(2, $diff);
 
-        [$first, $second] = $diff;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-03', '2018-01-04')));
-        $this->assertTrue($second->equals(Period::make('2018-01-11', '2018-01-14')));
+        $this->assertTrue($diff[0]->equals(Period::make('2018-01-03', '2018-01-04')));
+        $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
     }
 
     /**
@@ -444,11 +438,9 @@ class PeriodTest extends TestCase
 
         $this->assertCount(3, $diff);
 
-        [$first, $second, $third] = $diff;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-01', '2018-01-04')));
-        $this->assertTrue($second->equals(Period::make('2018-01-11', '2018-01-14')));
-        $this->assertTrue($third->equals(Period::make('2018-01-21', '2018-01-31')));
+        $this->assertTrue($diff[0]->equals(Period::make('2018-01-01', '2018-01-04')));
+        $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
+        $this->assertTrue($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')));
     }
 
     /** @test */
