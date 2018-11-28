@@ -6,8 +6,14 @@ use InvalidArgumentException;
 
 class InvalidDate extends InvalidArgumentException
 {
-    public static function forFormat(string $date, string $format): InvalidDate
+    public static function forFormat(string $date, ?string $format): InvalidDate
     {
-        return new static("Could not construct a date from `{$date}` with format `{$format}`.");
+        $message = "Could not construct a date from `{$date}`";
+
+        if ($format) {
+            $message .= " with format `{$format}`";
+        }
+
+        return new static($message);
     }
 }
