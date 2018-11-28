@@ -93,4 +93,9 @@ class PeriodCollection implements
 
         return $boundaries->diff(...$this);
     }
+
+    public function isEmpty(): bool
+    {
+        return count($this->periods) === 0;
+    }
 }
