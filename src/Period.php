@@ -5,6 +5,7 @@ namespace Spatie\Period;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
 
@@ -127,24 +128,44 @@ class Period
         return false;
     }
 
-    public function startsAfterOrAt(DateTimeImmutable $date): bool
+    public function startsAfterOrAt(DateTimeInterface $date): bool
     {
         return $this->start >= $date;
     }
 
-    public function endsAfterOrAt(DateTimeImmutable $date): bool
+    public function endsAfterOrAt(DateTimeInterface $date): bool
     {
         return $this->end >= $date;
     }
 
-    public function startsBeforeOrAt(DateTimeImmutable $date): bool
+    public function startsBeforeOrAt(DateTimeInterface $date): bool
     {
         return $this->start <= $date;
     }
 
-    public function endsBeforeOrAt(DateTimeImmutable $date): bool
+    public function endsBeforeOrAt(DateTimeInterface $date): bool
     {
         return $this->end <= $date;
+    }
+
+    public function startsAfter(DateTimeInterface $date): bool
+    {
+        return $this->start > $date;
+    }
+
+    public function endsAfter(DateTimeInterface $date): bool
+    {
+        return $this->end > $date;
+    }
+
+    public function startsBefore(DateTimeInterface $date): bool
+    {
+        return $this->start < $date;
+    }
+
+    public function endsBefore(DateTimeInterface $date): bool
+    {
+        return $this->end < $date;
     }
 
     public function equals(Period $period): bool
