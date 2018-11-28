@@ -140,13 +140,13 @@ class Period
         }
 
         if ($this->start >= $period->end) {
-            return new static(
+            return static::make(
                 $period->end->add(new DateInterval('P1D')),
                 $this->start->sub(new DateInterval('P1D'))
             );
         }
 
-        return new static(
+        return static::make(
             $this->end->add(new DateInterval('P1D')),
             $period->start->sub(new DateInterval('P1D'))
         );
@@ -166,7 +166,7 @@ class Period
             return null;
         }
 
-        return new static($start, $end);
+        return static::make($start, $end);
     }
 
     public function overlap(Period ...$periods): PeriodCollection
@@ -217,14 +217,14 @@ class Period
             : $period->end;
 
         if ($overlap->start > $start) {
-            $periodCollection[] = new static(
+            $periodCollection[] = static::make(
                 $start,
                 $overlap->start->sub(new DateInterval('P1D'))
             );
         }
 
         if ($overlap->end < $end) {
-            $periodCollection[] = new static(
+            $periodCollection[] = static::make(
                 $overlap->end->add(new DateInterval('P1D')),
                 $end
             );
