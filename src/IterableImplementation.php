@@ -15,9 +15,10 @@ trait IterableImplementation
     {
         if (is_null($offset)) {
             $this->periods[] = $value;
-        } else {
-            $this->periods[$offset] = $value;
+            return;
         }
+
+        $this->periods[$offset] = $value;
     }
 
     public function offsetExists($offset)
