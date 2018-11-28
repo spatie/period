@@ -13,7 +13,7 @@ class PeriodCollection implements
 {
     use IterableImplementation;
 
-    /** @var \League\Period\Period[] */
+    /** @var \Spatie\Period\Period[] */
     protected $periods;
 
     public function __construct(Period ...$periods)
