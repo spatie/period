@@ -24,6 +24,13 @@ class Period
         $this->end = $end;
     }
 
+    /**
+     * @param $start
+     * @param $end
+     * @param string|null $format
+     *
+     * @return \Spatie\Period\Period|static
+     */
     public static function make($start, $end, string $format = null): Period
     {
         return new static(
