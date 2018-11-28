@@ -6,6 +6,11 @@ use InvalidArgumentException;
 
 class InvalidDate extends InvalidArgumentException
 {
+    public static function cannotBeNull(string $parameter): InvalidDate
+    {
+        return new static("{$parameter} cannot be null");
+    }
+
     public static function forFormat(string $date, ?string $format): InvalidDate
     {
         $message = "Could not construct a date from `{$date}`";

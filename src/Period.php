@@ -36,6 +36,14 @@ class Period
      */
     public static function make($start, $end, string $format = null): Period
     {
+        if ($start === null) {
+            throw InvalidDate::cannotBeNull('Start date');
+        }
+
+        if ($end === null) {
+            throw InvalidDate::cannotBeNull('Endß date');
+        }
+
         return new static(
             self::resolveDate($start, $format),
             self::resolveDate($end, $format)
