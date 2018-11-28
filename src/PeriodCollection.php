@@ -58,17 +58,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         $end = null;
 
         foreach ($this as $period) {
-            if (
-                $start === null
-                || $start > $period->getStart()
-            ) {
+            if ($start === null || $start > $period->getStart()) {
                 $start = $period->getStart();
             }
 
-            if (
-                $end === null
-                || $end < $period->getEnd()
-            ) {
+            if ($end === null || $end < $period->getEnd()) {
                 $end = $period->getEnd();
             }
         }
