@@ -10,7 +10,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 {
     use IterableImplementation;
 
-    /** @var \League\Period\Period[] */
+    /** @var \Spatie\Period\Period[] */
     protected $periods;
 
     public function __construct(Period ...$periods)
