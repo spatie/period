@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Period;
+namespace Spatie\Period\Exceptions;
 
 use DateTimeImmutable;
 use InvalidArgumentException;

@@ -5,6 +5,7 @@ namespace Spatie\Period;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use Spatie\Period\Exceptions\InvalidPeriod;
 
 class Period
 {
