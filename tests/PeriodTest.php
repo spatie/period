@@ -10,7 +10,7 @@ use Spatie\Period\Period;
 class PeriodTest extends TestCase
 {
     /** @test */
-    public function test_period_length()
+    public function it_can_determine_the_period_length()
     {
         $period = Period::make('2018-01-01', '2018-01-15');
 
@@ -21,13 +21,13 @@ class PeriodTest extends TestCase
      * @test
      * @dataProvider overlappingDates
      */
-    public function overlaps_with(Period $a, Period $b)
+    public function it_can_determine_if_two_periods_overlap_with_each_other(Period $a, Period $b)
     {
         $this->assertTrue($a->overlapsWith($b));
     }
 
     /** @test */
-    public function touches()
+    public function it_can_determine_if_two_periods_touch_each_other()
     {
         $this->assertTrue(
             Period::make('2018-01-01', '2018-01-01')
@@ -54,7 +54,7 @@ class PeriodTest extends TestCase
      * @test
      * @dataProvider noOverlappingDates
      */
-    public function does_not_overlap(Period $a, Period $b)
+    public function it_can_determine_that_two_periods_do_not_overlap_with_each_other(Period $a, Period $b)
     {
         $this->assertFalse($a->overlapsWith($b));
     }
@@ -119,15 +119,15 @@ class PeriodTest extends TestCase
      *
      * OVERLAP      [=======]
      */
-    public function test_overlapping_period()
+    public function it_can_determine_an_overlap_period_between_two_other_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-15');
 
         $b = Period::make('2018-01-10', '2018-01-30');
 
-        $overlap = Period::make('2018-01-10', '2018-01-15');
+        $overlapPeriod = Period::make('2018-01-10', '2018-01-15');
 
-        $this->assertTrue($a->overlapSingle($b)->equals($overlap));
+        $this->assertTrue($a->overlapSingle($b)->equals($overlapPeriod));
     }
 
     /**
@@ -140,22 +140,20 @@ class PeriodTest extends TestCase
      *
      * OVERLAP        [=]   [==]   [==]
      */
-    public function test_overlapping_multiple()
+    public function it_can_determine_multiple_overlap_periods_between_two_other_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-31');
         $b = Period::make('2018-02-10', '2018-02-20');
         $c = Period::make('2018-03-01', '2018-03-31');
         $d = Period::make('2018-01-20', '2018-03-10');
 
-        $overlap = $d->overlap($a, $b, $c);
+        $overlapPeriods = $d->overlap($a, $b, $c);
 
-        $this->assertCount(3, $overlap);
+        $this->assertCount(3, $overlapPeriods);
 
-        [$first, $second, $third] = $overlap;
-
-        $this->assertTrue($first->equals(Period::make('2018-01-20', '2018-01-31')));
-        $this->assertTrue($second->equals(Period::make('2018-02-10', '2018-02-20')));
-        $this->assertTrue($third->equals(Period::make('2018-03-01', '2018-03-10')));
+        $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-20', '2018-01-31')));
+        $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-02-10', '2018-02-20')));
+        $this->assertTrue($overlapPeriods[2]->equals(Period::make('2018-03-01', '2018-03-10')));
     }
 
     /**
@@ -167,7 +165,7 @@ class PeriodTest extends TestCase
      *
      * OVERLAP             [==]
      */
-    public function test_overlap_all()
+    public function it_can_determine_the_overlap_between_multiple_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-31');
         $b = Period::make('2018-01-10', '2018-01-15');
@@ -178,11 +176,8 @@ class PeriodTest extends TestCase
         $this->assertTrue($overlap->equals(Period::make('2018-01-10', '2018-01-15')));
     }
 
-    /**
-     * @test
-     *
-     */
-    public function test_no_overlap_reverse()
+    /** @test */
+    public function it_can_determine_that_two_periods_do_not_overlap()
     {
         $a = Period::make('2018-01-05', '2018-01-10');
         $b = Period::make('2018-01-22', '2018-01-30');
@@ -200,7 +195,7 @@ class PeriodTest extends TestCase
      *
      * GAP       [=]
      */
-    public function test_gap()
+    public function it_can_determine_the_gap_between_two_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-10');
 
@@ -219,7 +214,7 @@ class PeriodTest extends TestCase
      *
      * GAP       [=]
      */
-    public function test_gap_reverse()
+    public function it_can_still_determine_the_gap_between_two_periods_even_when_the_periods_are_not_in_order()
     {
         $a = Period::make('2018-01-15', '2018-01-31');
 
@@ -238,7 +233,7 @@ class PeriodTest extends TestCase
      *
      * GAP
      */
-    public function test_gap_is_null_when_touching()
+    public function if_will_determine_that_there_is_no_gap_if_the_periods_only_touch_but_do_not_overlap()
     {
         $a = Period::make('2018-01-15', '2018-01-31');
 
@@ -253,11 +248,11 @@ class PeriodTest extends TestCase
      * @test
      *
      * A           [=====]
-     * B    [=====]
+     * B       [=====]
      *
      * GAP
      */
-    public function test_gap_is_null_when_overlap()
+    public function if_will_determine_that_there_is_no_gap_when_periods_overlap()
     {
         $a = Period::make('2018-01-15', '2018-01-31');
 
@@ -276,7 +271,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [==]         [==]
      */
-    public function diff_single()
+    public function if_can_create_a_diff_for_two_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-15');
 
@@ -296,7 +291,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [==]          [==]
      */
-    public function diff_single_reverse()
+    public function if_can_still_create_a_diff_for_two_periods_even_if_there_are_not_ordered()
     {
         $a = Period::make('2018-01-10', '2018-01-30');
 
@@ -316,7 +311,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [=====]     [=====]
      */
-    public function diff_no_overlap()
+    public function it_can_determine_the_diff_if_periods_do_not_overlap_at_all()
     {
         $a = Period::make('2018-01-10', '2018-01-15');
 
@@ -339,7 +334,7 @@ class PeriodTest extends TestCase
      * OVERLAP         [=]    [====]
      * DIFF               [=]
      */
-    public function test_diff_multiple_with_double_overlaps()
+    public function it_can_determine_the_diff_for_periods_with_multiple_overlaps()
     {
         $a = Period::make('2018-01-01', '2018-01-31');
         $b = Period::make('2018-02-10', '2018-02-20');
@@ -366,7 +361,7 @@ class PeriodTest extends TestCase
      * OVERLAP         [============]
      * DIFF
      */
-    public function test_empty_diff()
+    public function if_all_periods_overlap_it_will_determine_that_there_is_no_diff()
     {
         $a = Period::make('2018-01-15', '2018-02-10');
         $b = Period::make('2017-12-20', '2018-01-15');
@@ -386,7 +381,7 @@ class PeriodTest extends TestCase
      *
      * DIFF                     [==]
      */
-    public function test_diff_single()
+    public function it_can_determine_that_there_is_a_diff()
     {
         $a = Period::make('2018-02-15', '2018-02-20');
 
@@ -411,7 +406,7 @@ class PeriodTest extends TestCase
      *
      * DIFF             [=]      [====]
      */
-    public function diff_case_1()
+    public function if_can_determine_multiple_diffs()
     {
         $a = Period::make('2018-01-05', '2018-01-10');
         $b = Period::make('2018-01-15', '2018-03-01');
@@ -438,7 +433,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [======]      [====]      [===]
      */
-    public function diff_case_2()
+    public function if_can_determine_multiple_diffs_for_sure()
     {
         $a = Period::make('2018-01-15', '2018-01-20');
         $b = Period::make('2018-01-05', '2018-01-10');
@@ -457,7 +452,7 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function test_with_carbon()
+    public function it_accepts_carbon_instances()
     {
         $a = Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
 
@@ -465,7 +460,7 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function make_with_time_keeps_the_time()
+    public function it_will_preserve_the_time()
     {
         $period = Period::make('2018-01-01 01:02:03', '2018-01-02 04:05:06');
 
@@ -478,7 +473,7 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function make_without_time_set_time_to_start_of_day()
+    public function if_will_use_the_start_of_day_when_passing_strings_to_a_period()
     {
         $period = Period::make('2018-01-01', '2018-01-02');
 
