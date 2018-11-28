@@ -26,8 +26,8 @@ class Period
     }
 
     /**
-     * @param \DateTime|string $start
-     * @param \DateTime|string $end
+     * @param \DateTimeInterface|string $start
+     * @param \DateTimeInterface|string $end
      * @param string|null $format
      *
      * @return \Spatie\Period\Period|static
