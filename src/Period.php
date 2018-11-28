@@ -26,7 +26,7 @@ class Period
 
     public static function make($start, $end, string $format = null): Period
     {
-        return new self(
+        return new static(
             self::resolveDate($start, $format),
             self::resolveDate($end, $format)
         );
