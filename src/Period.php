@@ -98,7 +98,7 @@ class Period
             && $period->start <= $this->end;
     }
 
-    public function touches(Period $period): bool
+    public function touchesWith(Period $period): bool
     {
         return $this->end->diff($period->start)->days <= 1
             || $this->start->diff($period->end)->days <= 1;
@@ -134,7 +134,7 @@ class Period
     {
         if (
             $this->overlapsWith($period)
-            || $this->touches($period)
+            || $this->touchesWith($period)
         ) {
             return null;
         }

@@ -31,22 +31,22 @@ class PeriodTest extends TestCase
     {
         $this->assertTrue(
             Period::make('2018-01-01', '2018-01-01')
-              ->touches(Period::make('2018-01-02', '2018-01-02'))
+              ->touchesWith(Period::make('2018-01-02', '2018-01-02'))
         );
 
         $this->assertTrue(
             Period::make('2018-01-02', '2018-01-02')
-              ->touches(Period::make('2018-01-01', '2018-01-01'))
+              ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
         );
 
         $this->assertFalse(
             Period::make('2018-01-01', '2018-01-01')
-                ->touches(Period::make('2018-01-03', '2018-01-03'))
+                ->touchesWith(Period::make('2018-01-03', '2018-01-03'))
         );
 
         $this->assertFalse(
             Period::make('2018-01-03', '2018-01-03')
-              ->touches(Period::make('2018-01-01', '2018-01-01'))
+              ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
         );
     }
 

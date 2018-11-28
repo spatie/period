@@ -12,7 +12,7 @@ as well as some more basic comparisons between two periods.
 Periods can be constructed from any type of `DateTime` implementation, 
 making this package compatible with custom `DateTime` implementations like Carbon.
 
-Periods are always considered immutable, there's never the worry about your input dates being changed. 
+Periods are always immutable, there's never the worry about your input dates being changed. 
 
 This package is still a work in progress.
 
@@ -104,7 +104,7 @@ $b = Period::make('2018-01-10', '2018-02-15');
 $overlap = $a->overlapsWith($b); // true
 ```
 
-**Touches**: this method determines if two periods touch each other.
+**Touches with**: this method determines if two periods touch each other.
 
 ```php
 /*
@@ -115,7 +115,7 @@ $overlap = $a->overlapsWith($b); // true
 $a = Period::make('2018-01-01', '2018-01-31');
 $b = Period::make('2018-02-01', '2018-02-15');
 
-$overlap = $a->touches($b); // true
+$overlap = $a->touchesWith($b); // true
 ```
 
 **Gap**: returns the gap between two periods. 
@@ -178,7 +178,7 @@ $gaps = $collection->gaps();
 ```
 
 **Overlap multiple collections**: returns the overlap between collections. 
-This means and AND operation between collections, and an OR operation within the same collection.
+This means an AND operation between collections, and an OR operation within the same collection.
 
 ```php
 /*
@@ -246,7 +246,7 @@ You can construct a `Period` from any type of `DateTime` object such as Carbon:
 Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
 ```
 
-Note that as soon as a period is constructed, all further operations on it are made immutable.
+Note that as soon as a period is constructed, all further operations on it are immutable.
 There's never the danger of changing the input dates.
 
 ### Testing
