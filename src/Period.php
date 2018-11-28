@@ -161,10 +161,11 @@ class Period
 
     public function gap(Period $period): ?Period
     {
-        if (
-            $this->overlapsWith($period)
-            || $this->touchesWith($period)
-        ) {
+        if ($this->overlapsWith($period)) {
+            return null;
+        }
+
+        if ($this->touchesWith($period)) {
             return null;
         }
 
