@@ -140,13 +140,13 @@ class Period
         }
 
         if ($this->start >= $period->end) {
-            return new Period(
+            return new static(
                 $period->end->add(new DateInterval('P1D')),
                 $this->start->sub(new DateInterval('P1D'))
             );
         }
 
-        return new Period(
+        return new static(
             $this->end->add(new DateInterval('P1D')),
             $period->start->sub(new DateInterval('P1D'))
         );
@@ -166,7 +166,7 @@ class Period
             return null;
         }
 
-        return new Period($start, $end);
+        return new static($start, $end);
     }
 
     public function overlap(Period ...$periods): PeriodCollection
@@ -217,14 +217,14 @@ class Period
             : $period->end;
 
         if ($overlap->start > $start) {
-            $periodCollection[] = new Period(
+            $periodCollection[] = new static(
                 $start,
                 $overlap->start->sub(new DateInterval('P1D'))
             );
         }
 
         if ($overlap->end < $end) {
-            $periodCollection[] = new Period(
+            $periodCollection[] = new static(
                 $overlap->end->add(new DateInterval('P1D')),
                 $end
             );
