@@ -3,7 +3,6 @@
 namespace Spatie\Period\Exceptions;
 
 use InvalidArgumentException;
-use Spatie\Period\InvalidDate;
 
 class InvalidDate extends InvalidArgumentException
 {
