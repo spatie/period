@@ -11,6 +11,6 @@ class InvalidPeriod extends InvalidArgumentException
         DateTimeImmutable $start,
         DateTimeImmutable $end
     ): InvalidPeriod {
-        return new self("The end time ({$end}) is before the start time ({$start})");
+        return new static("The end time `{$end}` is before the start time `{$start}`.");
     }
 }

@@ -10,6 +10,6 @@ class InvalidDate extends InvalidArgumentException
         string $date,
         string $format
     ): InvalidDate {
-        return new self("Could not construct a date from {$date} with format {$format}");
+        return new static("Could not construct a date from `{$date}` with format `{$format}`.");
     }
 }
