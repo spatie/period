@@ -4,8 +4,8 @@ namespace Spatie\Tests\Period;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
+use PHPUnit\Framework\TestCase;
 
 class PeriodTest extends TestCase
 {
@@ -62,31 +62,31 @@ class PeriodTest extends TestCase
     public function overlappingDates(): array
     {
         return [
-            /**
+            /*
              * A    [=====]
              * B       [=====]
              */
             [Period::make('2018-01-01', '2018-02-01'), Period::make('2018-01-15', '2018-02-15')],
 
-            /**
+            /*
              * A        [=====]
              * B    [=============]
              */
             [Period::make('2018-01-01', '2018-02-01'), Period::make('2017-01-01', '2019-01-01')],
 
-            /**
+            /*
              * A        [=====]
              * B     [=====]
              */
             [Period::make('2018-01-01', '2018-02-01'), Period::make('2017-12-01', '2018-01-15')],
 
-            /**
+            /*
              * A    [=============]
              * B        [=====]
              */
             [Period::make('2017-01-01', '2019-01-01'), Period::make('2018-01-01', '2018-02-01')],
 
-            /**
+            /*
              * A    [====]
              * B    [====]
              */
@@ -97,13 +97,13 @@ class PeriodTest extends TestCase
     public function noOverlappingDates()
     {
         return [
-            /**
+            /*
              * A    [===]
              * B          [===]
              */
             [Period::make('2018-01-01', '2018-01-31'), Period::make('2018-02-01', '2018-02-28')],
 
-            /**
+            /*
              * A          [===]
              * B    [===]
              */

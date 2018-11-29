@@ -2,9 +2,9 @@
 
 namespace Spatie\Period;
 
-use ArrayAccess;
-use Countable;
 use Iterator;
+use Countable;
+use ArrayAccess;
 
 class PeriodCollection implements ArrayAccess, Iterator, Countable
 {

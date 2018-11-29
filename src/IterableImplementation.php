@@ -15,6 +15,7 @@ trait IterableImplementation
     {
         if (is_null($offset)) {
             $this->periods[] = $value;
+
             return;
         }
 
