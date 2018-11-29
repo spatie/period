@@ -2,8 +2,8 @@
 
 namespace Spatie\Period;
 
-use DateInterval;
 use DateTime;
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Spatie\Period\Exceptions\InvalidDate;
