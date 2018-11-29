@@ -41,7 +41,7 @@ class Period
         }
 
         if ($end === null) {
-            throw InvalidDate::cannotBeNull('Endß date');
+            throw InvalidDate::cannotBeNull('End date');
         }
 
         return new static(
