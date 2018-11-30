@@ -176,6 +176,19 @@ class Period
         return $this->end < $date;
     }
 
+    public function contains(DateTimeInterface $date): bool
+    {
+        if ($date < $this->start) {
+            return false;
+        }
+
+        if ($date > $this->end) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function equals(Period $period): bool
     {
         if ($period->start->getTimestamp() !== $this->start->getTimestamp()) {

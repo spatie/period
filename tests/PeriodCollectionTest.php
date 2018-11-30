@@ -2,6 +2,7 @@
 
 namespace Spatie\Tests\Period;
 
+use DateTimeImmutable;
 use Spatie\Period\Period;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\PeriodCollection;
@@ -119,5 +120,25 @@ class PeriodCollectionTest extends TestCase
         $this->assertTrue($gaps[0]->equals(Period::make('2018-01-06', '2018-01-09')));
         $this->assertTrue($gaps[1]->equals(Period::make('2018-01-16', '2018-01-19')));
         $this->assertTrue($gaps[2]->equals(Period::make('2018-01-26', '2018-01-29')));
+    }
+
+    /**
+     * @test
+     *
+     * A    [===============]
+     * B        |
+     * C  |
+     * D                        |
+     */
+    public function it_can_determine_whether_a_period_has_a_date()
+    {
+        $period = Period::make('2018-01-01', '2018-01-31');
+
+        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-01')));
+        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-31')));
+        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-10')));
+
+        $this->assertFalse($period->contains(new DateTimeImmutable('2017-12-31')));
+        $this->assertFalse($period->contains(new DateTimeImmutable('2018-02-01')));
     }
 }
