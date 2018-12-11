@@ -6,7 +6,7 @@ All notable changes to `period` will be documented in this file
 
 - initial release
 
-## 0.3.1 - 2018-12-11
+## 0.3.2 - 2018-12-11
 
 - Add better return types to support inherited periods
 
