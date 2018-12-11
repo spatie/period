@@ -225,6 +225,11 @@ class Period
         );
     }
 
+    /**
+     * @param \Spatie\Period\Period $period
+     *
+     * @return \Spatie\Period\Period|static|null
+     */
     public function overlapSingle(Period $period): ?Period
     {
         $start = $this->start > $period->start
@@ -253,6 +258,11 @@ class Period
         return $overlapCollection;
     }
 
+    /**
+     * @param \Spatie\Period\Period ...$periods
+     *
+     * @return \Spatie\Period\Period|static
+     */
     public function overlapAll(Period ...$periods): Period
     {
         $overlap = clone $this;
