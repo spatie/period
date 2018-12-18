@@ -476,4 +476,22 @@ class PeriodTest extends TestCase
             )
         ));
     }
+
+    /**
+     * @test
+     *
+     * A        [=============================]
+     * B            [========]
+     *
+     * DIFF     [==]          [===============]
+     */
+    public function diff_with_one_period_within()
+    {
+        $a = Period::make('2018-01-01', '2018-01-31');
+        $b = Period::make('2018-01-10', '2018-01-15');
+
+        $diff = $a->diff($b);
+
+        $this->assertCount(2, $diff);
+    }
 }

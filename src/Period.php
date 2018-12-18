@@ -318,12 +318,10 @@ class Period
 
     public function diff(Period ...$periods): PeriodCollection
     {
-        if (count($periods) === 1) {
+        if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
             $collection = new PeriodCollection();
 
-            if (! $this->overlapsWith($periods[0])) {
-                $collection[] = $this->gap($periods[0]);
-            }
+            $collection[] = $this->gap($periods[0]);
 
             return $collection;
         }
