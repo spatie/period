@@ -202,6 +202,12 @@ class Period
         return true;
     }
 
+    /**
+     * @param \Spatie\Period\Period $period
+     *
+     * @return \Spatie\Period\Period|static|null
+     * @throws \Exception
+     */
     public function gap(Period $period): ?Period
     {
         if ($this->overlapsWith($period)) {
@@ -247,6 +253,11 @@ class Period
         return static::make($start, $end);
     }
 
+    /**
+     * @param \Spatie\Period\Period ...$periods
+     *
+     * @return \Spatie\Period\PeriodCollection|static[]
+     */
     public function overlap(Period ...$periods): PeriodCollection
     {
         $overlapCollection = new PeriodCollection();
@@ -316,6 +327,11 @@ class Period
         return $periodCollection;
     }
 
+    /**
+     * @param \Spatie\Period\Period ...$periods
+     *
+     * @return \Spatie\Period\PeriodCollection|static[]
+     */
     public function diff(Period ...$periods): PeriodCollection
     {
         if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
