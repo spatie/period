@@ -28,6 +28,12 @@ class Period
     /** @var int */
     private $exclusionMask;
 
+    /** @var \DateTimeImmutable */
+    private $includedStart;
+
+    /** @var \DateTimeImmutable */
+    private $includedEnd;
+
     public function __construct(
         DateTimeImmutable $start,
         DateTimeImmutable $end,
@@ -39,8 +45,16 @@ class Period
 
         $this->start = $start;
         $this->end = $end;
-        $this->interval = new DateInterval('P1D');
         $this->exclusionMask = $exclusionMask;
+        $this->interval = new DateInterval('P1D');
+
+        $this->includedStart = $this->startIncluded()
+            ? $this->start
+            : $this->start->add($this->interval);
+
+        $this->includedEnd = $this->endIncluded()
+            ? $this->end
+            : $this->end->sub($this->interval);
     }
 
     /**
@@ -143,11 +157,7 @@ class Period
 
     public function getIncludedStart(): DateTimeImmutable
     {
-        if ($this->startIncluded()) {
-            return $this->start;
-        }
-
-        return $this->start->add($this->interval);
+        return $this->includedStart;
     }
 
     public function getEnd(): DateTimeImmutable
@@ -157,11 +167,7 @@ class Period
 
     public function getIncludedEnd(): DateTimeImmutable
     {
-        if ($this->endIncluded()) {
-            return $this->end;
-        }
-
-        return $this->end->sub($this->interval);
+        return $this->includedEnd;
     }
 
     public function length(): int
