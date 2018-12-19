@@ -4,8 +4,8 @@ namespace Spatie\Period\Tests;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
+use PHPUnit\Framework\TestCase;
 
 class PeriodTest extends TestCase
 {
