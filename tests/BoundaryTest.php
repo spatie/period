@@ -57,7 +57,7 @@ class BoundaryTest extends TestCase
     }
 
     /** @test */
-    public function overlap_with_excluded_boundary()
+    public function overlap_with_excluded_boundaries()
     {
         $a = Period::make('2018-01-01', '2018-01-05', null, Period::EXCLUDE_END);
         $b = Period::make('2018-01-05', '2018-01-10');
