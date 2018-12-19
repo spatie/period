@@ -239,6 +239,44 @@ And finally construct one collection from another:
 $newCollection = new PeriodCollection(...$otherCollection);
 ```
 
+### Boundaries
+
+By default, period comparisons are done with included boundaries. 
+This means that these two periods overlap:
+
+```php
+$a = Period::make('2018-01-01', '2018-02-01');
+$b = Period::make('2018-02-01', '2018-02-28');
+
+$a->overlapsWith($b); // true
+```
+
+The length of a period will also include both boundaries:
+
+```php
+$a = Period::make('2018-01-01', '2018-01-31');
+
+$a->length(); // 31
+```
+
+It's possible to override the boundary behaviour:
+
+```php
+$a = Period::make('2018-01-01', '2018-02-01', null, Period::EXCLUDE_END);
+$b = Period::make('2018-02-01', '2018-02-28', null, Period::EXCLUDE_END);
+
+$a->overlapsWith($b); // false
+```
+
+There are four types of boundary exclusion:
+
+```php
+Period::EXCLUDE_NONE;
+Period::EXCLUDE_START;
+Period::EXCLUDE_END;
+Period::EXCLUDE_ALL;
+```
+
 ### Compatibility
 
 You can construct a `Period` from any type of `DateTime` object such as Carbon:
