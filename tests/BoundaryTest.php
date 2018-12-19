@@ -2,7 +2,6 @@
 
 namespace Spatie\Period\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
 
 class BoundaryTest extends TestCase
