@@ -22,8 +22,11 @@ class Period
     /** @var \DateTimeImmutable */
     protected $end;
 
+    /** @var \DateInterval */
+    protected $interval;
+
     /** @var int */
-    protected $exclusionMask;
+    private $exclusionMask;
 
     public function __construct(
         DateTimeImmutable $start,
@@ -36,6 +39,7 @@ class Period
 
         $this->start = $start;
         $this->end = $end;
+        $this->interval = new DateInterval('P1D');
         $this->exclusionMask = $exclusionMask;
     }
 
@@ -137,23 +141,43 @@ class Period
         return $this->start;
     }
 
+    public function getIncludedStart(): DateTimeImmutable
+    {
+        if ($this->startIncluded()) {
+            return $this->start;
+        }
+
+        return $this->start->add($this->interval);
+    }
+
     public function getEnd(): DateTimeImmutable
     {
         return $this->end;
     }
 
+    public function getIncludedEnd(): DateTimeImmutable
+    {
+        if ($this->endIncluded()) {
+            return $this->end;
+        }
+
+        return $this->end->sub($this->interval);
+    }
+
     public function length(): int
     {
-        return $this->start->diff($this->end)->days + 1;
+        $length = $this->getIncludedStart()->diff($this->getIncludedEnd())->days + 1;
+
+        return $length;
     }
 
     public function overlapsWith(Period $period): bool
     {
-        if ($this->start > $period->end) {
+        if ($this->getIncludedStart() > $period->getIncludedEnd()) {
             return false;
         }
 
-        if ($period->start > $this->end) {
+        if ($period->getIncludedStart() > $this->getIncludedEnd()) {
             return false;
         }
 
@@ -162,11 +186,11 @@ class Period
 
     public function touchesWith(Period $period): bool
     {
-        if ($this->end->diff($period->start)->days <= 1) {
+        if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
             return true;
         }
 
-        if ($this->start->diff($period->end)->days <= 1) {
+        if ($this->getIncludedStart()->diff($period->getIncludedEnd())->days <= 1) {
             return true;
         }
 
@@ -175,7 +199,7 @@ class Period
 
     public function startsAfterOrAt(DateTimeInterface $date): bool
     {
-        return $this->start >= $date;
+        return $this->getIncludedStart() >= $date;
     }
 
     public function endsAfterOrAt(DateTimeInterface $date): bool
@@ -185,7 +209,7 @@ class Period
 
     public function startsBeforeOrAt(DateTimeInterface $date): bool
     {
-        return $this->start <= $date;
+        return $this->getIncludedStart() <= $date;
     }
 
     public function endsBeforeOrAt(DateTimeInterface $date): bool
@@ -195,7 +219,7 @@ class Period
 
     public function startsAfter(DateTimeInterface $date): bool
     {
-        return $this->start > $date;
+        return $this->getIncludedStart() > $date;
     }
 
     public function endsAfter(DateTimeInterface $date): bool
@@ -205,21 +229,21 @@ class Period
 
     public function startsBefore(DateTimeInterface $date): bool
     {
-        return $this->start < $date;
+        return $this->getIncludedStart() < $date;
     }
 
     public function endsBefore(DateTimeInterface $date): bool
     {
-        return $this->end < $date;
+        return $this->getIncludedEnd() < $date;
     }
 
     public function contains(DateTimeInterface $date): bool
     {
-        if ($date < $this->start) {
+        if ($date < $this->getIncludedStart()) {
             return false;
         }
 
-        if ($date > $this->end) {
+        if ($date > $this->getIncludedEnd()) {
             return false;
         }
 
@@ -228,11 +252,11 @@ class Period
 
     public function equals(Period $period): bool
     {
-        if ($period->start->getTimestamp() !== $this->start->getTimestamp()) {
+        if ($period->getIncludedStart()->getTimestamp() !== $this->getIncludedStart()->getTimestamp()) {
             return false;
         }
 
-        if ($period->end->getTimestamp() !== $this->end->getTimestamp()) {
+        if ($period->getIncludedEnd()->getTimestamp() !== $this->getIncludedEnd()->getTimestamp()) {
             return false;
         }
 
@@ -255,16 +279,16 @@ class Period
             return null;
         }
 
-        if ($this->start >= $period->end) {
+        if ($this->getIncludedStart() >= $period->getIncludedEnd()) {
             return static::make(
-                $period->end->add(new DateInterval('P1D')),
-                $this->start->sub(new DateInterval('P1D'))
+                $period->getIncludedEnd()->add($this->interval),
+                $this->getIncludedStart()->sub($this->interval)
             );
         }
 
         return static::make(
-            $this->end->add(new DateInterval('P1D')),
-            $period->start->sub(new DateInterval('P1D'))
+            $this->getIncludedEnd()->add($this->interval),
+            $period->getIncludedStart()->sub($this->interval)
         );
     }
 
@@ -275,13 +299,13 @@ class Period
      */
     public function overlapSingle(Period $period): ?Period
     {
-        $start = $this->start > $period->start
-            ? $this->start
-            : $period->start;
+        $start = $this->getIncludedStart() > $period->getIncludedStart()
+            ? $this->getIncludedStart()
+            : $period->getIncludedStart();
 
-        $end = $this->end < $period->end
-            ? $this->end
-            : $period->end;
+        $end = $this->getIncludedEnd() < $period->getIncludedEnd()
+            ? $this->getIncludedEnd()
+            : $period->getIncludedEnd();
 
         if ($start > $end) {
             return null;
@@ -339,24 +363,24 @@ class Period
 
         $overlap = $this->overlapSingle($period);
 
-        $start = $this->start < $period->start
-            ? $this->start
-            : $period->start;
+        $start = $this->getIncludedStart() < $period->getIncludedStart()
+            ? $this->getIncludedStart()
+            : $period->getIncludedStart();
 
-        $end = $this->end > $period->end
-            ? $this->end
-            : $period->end;
+        $end = $this->getIncludedEnd() > $period->getIncludedEnd()
+            ? $this->getIncludedEnd()
+            : $period->getIncludedEnd();
 
-        if ($overlap->start > $start) {
+        if ($overlap->getIncludedStart() > $start) {
             $periodCollection[] = static::make(
                 $start,
-                $overlap->start->sub(new DateInterval('P1D'))
+                $overlap->getIncludedStart()->sub($this->interval)
             );
         }
 
-        if ($overlap->end < $end) {
+        if ($overlap->getIncludedEnd() < $end) {
             $periodCollection[] = static::make(
-                $overlap->end->add(new DateInterval('P1D')),
+                $overlap->getIncludedEnd()->add($this->interval),
                 $end
             );
         }

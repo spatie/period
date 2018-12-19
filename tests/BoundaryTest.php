@@ -42,4 +42,33 @@ class BoundaryTest extends TestCase
         $this->assertTrue($period->startExcluded());
         $this->assertTrue($period->endExcluded());
     }
+
+    /** @test */
+    public function length_with_boundaries()
+    {
+        $period = Period::make('2018-01-01', '2018-01-31', null, Period::EXCLUDE_START);
+        $this->assertEquals(30, $period->length());
+
+        $period = Period::make('2018-01-01', '2018-01-31', null, Period::EXCLUDE_END);
+        $this->assertEquals(30, $period->length());
+
+        $period = Period::make('2018-01-01', '2018-01-31', null, Period::EXCLUDE_ALL);
+        $this->assertEquals(29, $period->length());
+    }
+
+    /** @test */
+    public function overlap_with_excluded_boundary()
+    {
+        $a = Period::make('2018-01-01', '2018-01-05', null, Period::EXCLUDE_END);
+        $b = Period::make('2018-01-05', '2018-01-10');
+        $this->assertFalse($a->overlapsWith($b));
+
+        $a = Period::make('2018-01-01', '2018-01-05');
+        $b = Period::make('2018-01-05', '2018-01-10', null, Period::EXCLUDE_START);
+        $this->assertFalse($a->overlapsWith($b));
+
+        $a = Period::make('2018-01-01', '2018-01-05');
+        $b = Period::make('2018-01-05', '2018-01-10');
+        $this->assertTrue($a->overlapsWith($b));
+    }
 }
