@@ -3,6 +3,7 @@
 namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 
