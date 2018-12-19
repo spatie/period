@@ -11,20 +11,32 @@ use Spatie\Period\Exceptions\InvalidPeriod;
 
 class Period
 {
+    const EXCLUDE_NONE = 0;
+    const EXCLUDE_START = 2;
+    const EXCLUDE_END = 4;
+    const EXCLUDE_ALL = 6;
+
     /** @var \DateTimeImmutable */
     protected $start;
 
     /** @var \DateTimeImmutable */
     protected $end;
 
-    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)
-    {
+    /** @var int */
+    protected $exclusionMask;
+
+    public function __construct(
+        DateTimeImmutable $start,
+        DateTimeImmutable $end,
+        int $exclusionMask = 0
+    ) {
         if ($start > $end) {
             throw InvalidPeriod::endBeforeStart($start, $end);
         }
 
         $this->start = $start;
         $this->end = $end;
+        $this->exclusionMask = $exclusionMask;
     }
 
     /**
@@ -34,8 +46,12 @@ class Period
      *
      * @return \Spatie\Period\Period|static
      */
-    public static function make($start, $end, string $format = null): Period
-    {
+    public static function make(
+        $start,
+        $end,
+        ?string $format = null,
+        int $exclusionMask = 0
+    ): Period {
         if ($start === null) {
             throw InvalidDate::cannotBeNull('Start date');
         }
@@ -46,8 +62,29 @@ class Period
 
         return new static(
             self::resolveDate($start, $format),
-            self::resolveDate($end, $format)
+            self::resolveDate($end, $format),
+            $exclusionMask
         );
+    }
+
+    public function startIncluded(): bool
+    {
+        return ! $this->startExcluded();
+    }
+
+    public function startExcluded(): bool
+    {
+        return self::EXCLUDE_START & $this->exclusionMask;
+    }
+
+    public function endIncluded(): bool
+    {
+        return ! $this->endExcluded();
+    }
+
+    public function endExcluded(): bool
+    {
+        return self::EXCLUDE_END & $this->exclusionMask;
     }
 
     protected static function resolveDate($date, ?string $format): DateTimeImmutable
