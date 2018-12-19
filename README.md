@@ -250,6 +250,41 @@ Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
 Note that as soon as a period is constructed, all further operations on it are immutable.
 There's never the danger of changing the input dates.
 
+### Visualizing periods
+
+You can visualize one or more `Period` objects as well as `PeriodCollection`
+objects to see how they related to one another:
+
+```php
+$visualizer = new Visualizer(["width" => 27]);
+$visualizer->visualize([
+    "A" => Period::make('2018-01-01', '2018-01-31'),
+    "B" => Period::make('2018-02-10', '2018-02-20'),
+    "C" => Period::make('2018-03-01', '2018-03-31'),
+    "D" => Period::make('2018-01-20', '2018-03-10'),
+    "OVERLAP" => new PeriodCollection(
+        Period::make('2018-01-20', '2018-01-31'),
+        Period::make('2018-02-10', '2018-02-20'),
+        Period::make('2018-03-01', '2018-03-10')
+    ),
+]);
+```
+
+And visualize will return the following string:
+```
+A          [========]
+B                      [==]
+C                           [========]
+D               [==============]
+OVERLAP         [===]  [==] [==]
+```
+
+The visualizer has a configurable width provided upon creation
+which will control the bounds of the displayed periods:
+```php
+$visualizer = new Visualizer(["width" => 10]);
+```
+
 ### Testing
 
 ``` bash
