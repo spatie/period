@@ -257,6 +257,7 @@ objects to see how they related to one another:
 
 ```php
 $visualizer = new Visualizer(["width" => 27]);
+
 $visualizer->visualize([
     "A" => Period::make('2018-01-01', '2018-01-31'),
     "B" => Period::make('2018-02-10', '2018-02-20'),
@@ -271,6 +272,7 @@ $visualizer->visualize([
 ```
 
 And visualize will return the following string:
+
 ```
 A          [========]
 B                      [==]
@@ -281,6 +283,7 @@ OVERLAP         [===]  [==] [==]
 
 The visualizer has a configurable width provided upon creation
 which will control the bounds of the displayed periods:
+
 ```php
 $visualizer = new Visualizer(["width" => 10]);
 ```

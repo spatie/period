@@ -6,6 +6,10 @@ All notable changes to `period` will be documented in this file
 
 - initial release
 
+## 0.4.0 - 2018-12-19
+
+- Add visualizer
+
 ## 0.3.3 - 2018-12-18
 
 - Support edge case for two period diffs
