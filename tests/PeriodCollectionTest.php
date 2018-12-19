@@ -1,10 +1,9 @@
 <?php
 
-namespace Spatie\Tests\Period;
+namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
 use Spatie\Period\Period;
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\PeriodCollection;
 
 class PeriodCollectionTest extends TestCase
