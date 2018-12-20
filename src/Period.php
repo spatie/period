@@ -28,7 +28,7 @@ class Period
     private $includedEnd;
 
     /** @var int */
-    private $exclusionMask;
+    private $boundaryExclusionMask;
 
     /** @var int */
     private $precisionMask;
@@ -36,15 +36,15 @@ class Period
     public function __construct(
         DateTimeImmutable $start,
         DateTimeImmutable $end,
-        int $exclusionMask = Boundaries::EXCLUDE_NONE,
-        int $precisionMask = Precision::DAY
+        ?int $precisionMask = null,
+        ?int $boundaryExclusionMask = null
     ) {
         if ($start > $end) {
             throw InvalidPeriod::endBeforeStart($start, $end);
         }
 
-        $this->exclusionMask = $exclusionMask;
-        $this->precisionMask = $precisionMask;
+        $this->boundaryExclusionMask = $boundaryExclusionMask ?? Boundaries::EXCLUDE_NONE;
+        $this->precisionMask = $precisionMask ?? Precision::DAY;
 
         $this->start = $this->roundDate($start, $this->precisionMask);
         $this->end = $this->roundDate($end, $this->precisionMask);
@@ -60,8 +60,10 @@ class Period
     }
 
     /**
-     * @param \DateTimeInterface|string $start
-     * @param \DateTimeInterface|string $end
+     * @param $start
+     * @param $end
+     * @param int|null $precisionMask
+     * @param int|null $boundaryExclusionMask
      * @param string|null $format
      *
      * @return \Spatie\Period\Period|static
@@ -69,9 +71,9 @@ class Period
     public static function make(
         $start,
         $end,
-        ?string $format = null,
-        int $exclusionMask = Boundaries::EXCLUDE_NONE,
-        int $precisionMask = Precision::DAY
+        ?int $precisionMask = null,
+        ?int $boundaryExclusionMask = null,
+        ?string $format = null
     ): Period {
         if ($start === null) {
             throw InvalidDate::cannotBeNull('Start date');
@@ -84,8 +86,8 @@ class Period
         return new static(
             self::resolveDate($start, $format),
             self::resolveDate($end, $format),
-            $exclusionMask,
-            $precisionMask
+            $precisionMask,
+            $boundaryExclusionMask
         );
     }
 
@@ -96,7 +98,7 @@ class Period
 
     public function startExcluded(): bool
     {
-        return Boundaries::EXCLUDE_START & $this->exclusionMask;
+        return Boundaries::EXCLUDE_START & $this->boundaryExclusionMask;
     }
 
     public function endIncluded(): bool
@@ -106,7 +108,7 @@ class Period
 
     public function endExcluded(): bool
     {
-        return Boundaries::EXCLUDE_END & $this->exclusionMask;
+        return Boundaries::EXCLUDE_END & $this->boundaryExclusionMask;
     }
 
     public function getStart(): DateTimeImmutable
@@ -393,6 +395,11 @@ class Period
         $collection = (new PeriodCollection($this))->overlap(...$diffs);
 
         return $collection;
+    }
+
+    public function getPrecisionMask(): int
+    {
+        return $this->precisionMask;
     }
 
     protected static function resolveDate($date, ?string $format): DateTimeImmutable
