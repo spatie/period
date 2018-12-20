@@ -437,10 +437,7 @@ class Period
             return $format;
         }
 
-        if (
-            strpos($format, ' ') === false
-            && strpos($date, ' ') !== false
-        ) {
+        if (strpos($format, ' ') === false && strpos($date, ' ') !== false) {
             return 'Y-m-d H:i:s';
         }
 
