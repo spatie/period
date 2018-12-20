@@ -466,31 +466,16 @@ class Period
 
     protected function createDateInterval(int $precision): DateInterval
     {
-        if ((Precision::SECOND & $precision) === Precision::SECOND) {
-            return new DateInterval('PT1S');
-        }
+        $interval = [
+            Precision::SECOND => 'PT1S',
+            Precision::MINUTE => 'PT1M',
+            Precision::HOUR => 'PT1H',
+            Precision::DAY => 'P1D',
+            Precision::MONTH => 'P1M',
+            Precision::YEAR => 'P1Y',
+        ][$precision];
 
-        if ((Precision::MINUTE & $precision) === Precision::MINUTE) {
-            return new DateInterval('PT1M');
-        }
-
-        if ((Precision::HOUR & $precision) === Precision::HOUR) {
-            return new DateInterval('PT1H');
-        }
-
-        if ((Precision::DAY & $precision) === Precision::DAY) {
-            return new DateInterval('P1D');
-        }
-
-        if ((Precision::MONTH & $precision) === Precision::MONTH) {
-            return new DateInterval('P1M');
-        }
-
-        if ((Precision::YEAR & $precision) === Precision::YEAR) {
-            return new DateInterval('P1Y');
-        }
-
-        return new DateInterval('P1D');
+        return new DateInterval($interval);
     }
 
     protected function ensurePrecisionMatches(Period $period): void
