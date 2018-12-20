@@ -11,11 +11,6 @@ use Spatie\Period\Exceptions\InvalidPeriod;
 
 class Period
 {
-    const EXCLUDE_NONE = 0;
-    const EXCLUDE_START = 2;
-    const EXCLUDE_END = 4;
-    const EXCLUDE_ALL = 6;
-
     /** @var \DateTimeImmutable */
     protected $start;
 
@@ -92,7 +87,7 @@ class Period
 
     public function startExcluded(): bool
     {
-        return self::EXCLUDE_START & $this->exclusionMask;
+        return Boundaries::EXCLUDE_START & $this->exclusionMask;
     }
 
     public function endIncluded(): bool
@@ -102,7 +97,7 @@ class Period
 
     public function endExcluded(): bool
     {
-        return self::EXCLUDE_END & $this->exclusionMask;
+        return Boundaries::EXCLUDE_END & $this->exclusionMask;
     }
 
     protected static function resolveDate($date, ?string $format): DateTimeImmutable
