@@ -3,11 +3,10 @@
 namespace Spatie\Period\Tests;
 
 use DateTime;
-use PHPUnit\Framework\TestCase;
-use Spatie\Period\Boundaries;
-use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
+use PHPUnit\Framework\TestCase;
+use Spatie\Period\Exceptions\CannotComparePeriods;
 
 class PrecisionTest extends TestCase
 {

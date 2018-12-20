@@ -6,9 +6,9 @@ use DateTime;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
+use Spatie\Period\Exceptions\CannotComparePeriods;
 
 class Period
 {
