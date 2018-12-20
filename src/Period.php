@@ -173,7 +173,7 @@ class Period
 
     public function endsAfterOrAt(DateTimeInterface $date): bool
     {
-        return $this->end >= $date;
+        return $this->getIncludedEnd() >= $date;
     }
 
     public function startsBeforeOrAt(DateTimeInterface $date): bool
@@ -183,7 +183,7 @@ class Period
 
     public function endsBeforeOrAt(DateTimeInterface $date): bool
     {
-        return $this->end <= $date;
+        return $this->getIncludedEnd() <= $date;
     }
 
     public function startsAfter(DateTimeInterface $date): bool
@@ -193,7 +193,7 @@ class Period
 
     public function endsAfter(DateTimeInterface $date): bool
     {
-        return $this->end > $date;
+        return $this->getIncludedEnd() > $date;
     }
 
     public function startsBefore(DateTimeInterface $date): bool
