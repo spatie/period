@@ -27,6 +27,31 @@ composer require spatie/period
 
 ## Usage
 
+### Creating a period
+
+```php
+$period = new Period(
+     DateTimeImmutable::createFromFormat(/* … */)
+   , DateTimeImmutable::createFromFormat(/* … */)
+  [, Precision::DAY]
+  [, Boundaries::EXCLUDE_NONE]
+)
+```
+
+The static `::make` constructor can also take strings as dates:
+
+```php
+$period = Period::make(
+     '2018-01-01'
+   , '2018-01-31'
+  [, int Precision::DAY]
+  [, int Boundaries::EXCLUDE_NONE]
+  [, string $format]
+)
+```  
+
+### Comparing periods
+
 **Overlaps with any other period**: 
 this method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
 
@@ -239,6 +264,38 @@ And finally construct one collection from another:
 $newCollection = new PeriodCollection(...$otherCollection);
 ```
 
+### Precision
+
+Date precision is of utmost importance if you want to reliably compare two periods.
+The the following example:
+
+> Given two periods: `[2018-01-01, 2018-01-15]` and `[2018-01-15, 2018-01-31]`; do they overlap?
+
+At first glance the answer is "yes": they overlap on `2018-01-15`. 
+But what if the first period ends at `2018-01-15 10:00:00`, 
+while the second starts at `2018-01-15 15:00:00`? 
+Now they don't anymore!
+
+This is why this package requires you to specify a precision with each period. 
+Only periods with the same precision can be compared.
+
+A period's precision can be specified when constructing that period:
+
+```php
+Period::make('2018-01-01', '2018-02-01', Precision::DAY);
+```
+
+The default precision is set on days. These are the available precision options:
+
+```php
+Precision::YEAR
+Precision::MONTH
+Precision::DAY
+Precision::HOUR
+Precision::MINUTE
+Precision::SECOND
+```
+
 ### Boundaries
 
 By default, period comparisons are done with included boundaries. 
@@ -271,10 +328,10 @@ $a->overlapsWith($b); // false
 There are four types of boundary exclusion:
 
 ```php
-Period::EXCLUDE_NONE;
-Period::EXCLUDE_START;
-Period::EXCLUDE_END;
-Period::EXCLUDE_ALL;
+Boundaries::EXCLUDE_NONE;
+Boundaries::EXCLUDE_START;
+Boundaries::EXCLUDE_END;
+Boundaries::EXCLUDE_ALL;
 ```
 
 ### Compatibility

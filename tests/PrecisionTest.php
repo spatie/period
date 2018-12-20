@@ -23,8 +23,6 @@ class PrecisionTest extends TestCase
         $period = Period::make(
             '2018-02-05 11:11:11',
             '2018-03-05 11:11:11',
-            null,
-            Boundaries::EXCLUDE_NONE,
             $precision
         );
 
@@ -54,8 +52,8 @@ class PrecisionTest extends TestCase
     /** @test */
     public function comparing_two_periods_with_different_precision_is_not_allowed()
     {
-        $a = Period::make('2018-01-01', '2018-01-01', null, Boundaries::EXCLUDE_NONE, Precision::MONTH);
-        $b = Period::make('2018-01-01', '2018-01-01', null, Boundaries::EXCLUDE_NONE, Precision::DAY);
+        $a = Period::make('2018-01-01', '2018-01-01', Precision::MONTH);
+        $b = Period::make('2018-01-01', '2018-01-01', Precision::DAY);
 
         $this->expectException(CannotComparePeriods::class);
 
