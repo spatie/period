@@ -6,6 +6,7 @@ use DateTime;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
 
@@ -20,28 +21,34 @@ class Period
     /** @var \DateInterval */
     protected $interval;
 
-    /** @var int */
-    private $exclusionMask;
-
     /** @var \DateTimeImmutable */
     private $includedStart;
 
     /** @var \DateTimeImmutable */
     private $includedEnd;
 
+    /** @var int */
+    private $exclusionMask;
+
+    /** @var int */
+    private $precisionMask;
+
     public function __construct(
         DateTimeImmutable $start,
         DateTimeImmutable $end,
-        int $exclusionMask = 0
+        int $exclusionMask = Boundaries::EXCLUDE_NONE,
+        int $precisionMask = Precision::DAY
     ) {
         if ($start > $end) {
             throw InvalidPeriod::endBeforeStart($start, $end);
         }
 
-        $this->start = $start;
-        $this->end = $end;
         $this->exclusionMask = $exclusionMask;
-        $this->interval = new DateInterval('P1D');
+        $this->precisionMask = $precisionMask;
+
+        $this->start = $this->roundDate($start, $this->precisionMask);
+        $this->end = $this->roundDate($end, $this->precisionMask);
+        $this->interval = $this->createDateInterval($this->precisionMask);
 
         $this->includedStart = $this->startIncluded()
             ? $this->start
@@ -63,7 +70,8 @@ class Period
         $start,
         $end,
         ?string $format = null,
-        int $exclusionMask = 0
+        int $exclusionMask = Boundaries::EXCLUDE_NONE,
+        int $precisionMask = Precision::DAY
     ): Period {
         if ($start === null) {
             throw InvalidDate::cannotBeNull('Start date');
@@ -76,7 +84,8 @@ class Period
         return new static(
             self::resolveDate($start, $format),
             self::resolveDate($end, $format),
-            $exclusionMask
+            $exclusionMask,
+            $precisionMask
         );
     }
 
@@ -98,51 +107,6 @@ class Period
     public function endExcluded(): bool
     {
         return Boundaries::EXCLUDE_END & $this->exclusionMask;
-    }
-
-    protected static function resolveDate($date, ?string $format): DateTimeImmutable
-    {
-        if ($date instanceof DateTimeImmutable) {
-            return $date;
-        }
-
-        if ($date instanceof DateTime) {
-            return DateTimeImmutable::createFromMutable($date);
-        }
-
-        $format = self::resolveFormat($date, $format);
-
-        if (! is_string($date)) {
-            throw InvalidDate::forFormat($date, $format);
-        }
-
-        $dateTime = DateTimeImmutable::createFromFormat($format, $date);
-
-        if ($dateTime === false) {
-            throw InvalidDate::forFormat($date, $format);
-        }
-
-        if (strpos($format, ' ') === false) {
-            $dateTime = $dateTime->setTime(0, 0, 0);
-        }
-
-        return $dateTime;
-    }
-
-    protected static function resolveFormat($date, ?string $format): string
-    {
-        if ($format !== null) {
-            return $format;
-        }
-
-        if (
-            strpos($format, ' ') === false
-            && strpos($date, ' ') !== false
-        ) {
-            return 'Y-m-d H:i:s';
-        }
-
-        return 'Y-m-d';
     }
 
     public function getStart(): DateTimeImmutable
@@ -174,6 +138,8 @@ class Period
 
     public function overlapsWith(Period $period): bool
     {
+        $this->ensurePrecisionMatches($period);
+
         if ($this->getIncludedStart() > $period->getIncludedEnd()) {
             return false;
         }
@@ -187,6 +153,8 @@ class Period
 
     public function touchesWith(Period $period): bool
     {
+        $this->ensurePrecisionMatches($period);
+
         if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
             return true;
         }
@@ -253,6 +221,8 @@ class Period
 
     public function equals(Period $period): bool
     {
+        $this->ensurePrecisionMatches($period);
+
         if ($period->getIncludedStart()->getTimestamp() !== $this->getIncludedStart()->getTimestamp()) {
             return false;
         }
@@ -272,6 +242,8 @@ class Period
      */
     public function gap(Period $period): ?Period
     {
+        $this->ensurePrecisionMatches($period);
+
         if ($this->overlapsWith($period)) {
             return null;
         }
@@ -300,6 +272,8 @@ class Period
      */
     public function overlapSingle(Period $period): ?Period
     {
+        $this->ensurePrecisionMatches($period);
+
         $start = $this->getIncludedStart() > $period->getIncludedStart()
             ? $this->getIncludedStart()
             : $period->getIncludedStart();
@@ -419,5 +393,105 @@ class Period
         $collection = (new PeriodCollection($this))->overlap(...$diffs);
 
         return $collection;
+    }
+
+    protected static function resolveDate($date, ?string $format): DateTimeImmutable
+    {
+        if ($date instanceof DateTimeImmutable) {
+            return $date;
+        }
+
+        if ($date instanceof DateTime) {
+            return DateTimeImmutable::createFromMutable($date);
+        }
+
+        $format = self::resolveFormat($date, $format);
+
+        if (! is_string($date)) {
+            throw InvalidDate::forFormat($date, $format);
+        }
+
+        $dateTime = DateTimeImmutable::createFromFormat($format, $date);
+
+        if ($dateTime === false) {
+            throw InvalidDate::forFormat($date, $format);
+        }
+
+        if (strpos($format, ' ') === false) {
+            $dateTime = $dateTime->setTime(0, 0, 0);
+        }
+
+        return $dateTime;
+    }
+
+    protected static function resolveFormat($date, ?string $format): string
+    {
+        if ($format !== null) {
+            return $format;
+        }
+
+        if (
+            strpos($format, ' ') === false
+            && strpos($date, ' ') !== false
+        ) {
+            return 'Y-m-d H:i:s';
+        }
+
+        return 'Y-m-d';
+    }
+
+    protected function roundDate(DateTimeImmutable $date, int $precision): DateTimeImmutable
+    {
+        [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
+
+        $year = (Precision::YEAR & $precision) === Precision::YEAR ? $year : '00';
+        $month = (Precision::MONTH & $precision) === Precision::MONTH ? $month : '01';
+        $day = (Precision::DAY & $precision) === Precision::DAY ? $day : '01';
+        $hour = (Precision::HOUR & $precision) === Precision::HOUR ? $hour : '00';
+        $minute = (Precision::MINUTE & $precision) === Precision::MINUTE ? $minute : '00';
+        $second = (Precision::SECOND & $precision) === Precision::SECOND ? $second : '00';
+
+        return DateTimeImmutable::createFromFormat(
+            'Y m d H i s',
+            implode(' ', [$year, $month, $day, $hour, $minute, $second])
+        );
+    }
+
+    protected function createDateInterval(int $precision): DateInterval
+    {
+        if ((Precision::SECOND & $precision) === Precision::SECOND) {
+            return new DateInterval('PT1S');
+        }
+
+        if ((Precision::MINUTE & $precision) === Precision::MINUTE) {
+            return new DateInterval('PT1M');
+        }
+
+        if ((Precision::HOUR & $precision) === Precision::HOUR) {
+            return new DateInterval('PT1H');
+        }
+
+        if ((Precision::DAY & $precision) === Precision::DAY) {
+            return new DateInterval('P1D');
+        }
+
+        if ((Precision::MONTH & $precision) === Precision::MONTH) {
+            return new DateInterval('P1M');
+        }
+
+        if ((Precision::YEAR & $precision) === Precision::YEAR) {
+            return new DateInterval('P1Y');
+        }
+
+        return new DateInterval('P1D');
+    }
+
+    protected function ensurePrecisionMatches(Period $period): void
+    {
+        if ($this->precisionMask === $period->precisionMask) {
+            return;
+        }
+
+        throw CannotComparePeriods::precisionDoesNotMatch();
     }
 }
