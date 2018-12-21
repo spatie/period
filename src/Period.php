@@ -476,7 +476,6 @@ class Period
     {
         [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
 
-        $year = (Precision::YEAR & $precision) === Precision::YEAR ? $year : '00';
         $month = (Precision::MONTH & $precision) === Precision::MONTH ? $month : '01';
         $day = (Precision::DAY & $precision) === Precision::DAY ? $day : '01';
         $hour = (Precision::HOUR & $precision) === Precision::HOUR ? $hour : '00';
