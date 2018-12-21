@@ -56,21 +56,21 @@ $period = Period::make(
 #### Length and boundaries
 
 ```php
-$period->length(): int;
+$period->length(): int
 ```
 
 ```php
-$period->startIncluded(): bool;
-$period->startExcluded(): bool;
-$period->endIncluded(): bool;
-$period->endExcluded(): bool;
+$period->startIncluded(): bool
+$period->startExcluded(): bool
+$period->endIncluded(): bool
+$period->endExcluded(): bool
 ```
 
 ```php
-$period->getStart(): DateTimeImmutable;
-$period->getStartIncluded(): DateTimeImmutable;
-$period->getEnd(): DateTimeImmutable;
-$period->getEndIncluded(): DateTimeImmutable;
+$period->getStart(): DateTimeImmutable
+$period->getStartIncluded(): DateTimeImmutable
+$period->getEnd(): DateTimeImmutable
+$period->getEndIncluded(): DateTimeImmutable
 ```
 
 #### Comparisons
@@ -112,6 +112,19 @@ $period->overlapAll(Period ...$periods): Period
 ```php
 $period->diffSingle(Period $period): PeriodCollection
 $period->diff(Period ...$periods): PeriodCollection
+```
+
+```php
+$periodCollection->overlap(PeriodCollection ...$periodCollections): PeriodCollection
+$periodCollection->overlapSingle(PeriodCollection $periodCollection): PeriodCollection
+```
+
+```php
+$periodCollection->boundaries(): ?Period
+```
+
+```php
+$periodCollection->gaps(): PeriodCollection
 ```
 
 ### Comparing periods
