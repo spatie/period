@@ -168,14 +168,9 @@ class Period
         return false;
     }
 
-    public function startsAfterOrAt(DateTimeInterface $date): bool
+    public function startsBefore(DateTimeInterface $date): bool
     {
-        return $this->getIncludedStart() >= $date;
-    }
-
-    public function endsAfterOrAt(DateTimeInterface $date): bool
-    {
-        return $this->getIncludedEnd() >= $date;
+        return $this->getIncludedStart() < $date;
     }
 
     public function startsBeforeOrAt(DateTimeInterface $date): bool
@@ -183,38 +178,71 @@ class Period
         return $this->getIncludedStart() <= $date;
     }
 
-    public function endsBeforeOrAt(DateTimeInterface $date): bool
-    {
-        return $this->getIncludedEnd() <= $date;
-    }
-
     public function startsAfter(DateTimeInterface $date): bool
     {
         return $this->getIncludedStart() > $date;
     }
 
-    public function endsAfter(DateTimeInterface $date): bool
+    public function startsAfterOrAt(DateTimeInterface $date): bool
     {
-        return $this->getIncludedEnd() > $date;
+        return $this->getIncludedStart() >= $date;
     }
 
-    public function startsBefore(DateTimeInterface $date): bool
+    public function startsAt(DateTimeInterface $date): bool
     {
-        return $this->getIncludedStart() < $date;
+        return $this->getIncludedStart()->getTimestamp() === $this->roundDate(
+            $date,
+            $this->precisionMask
+        )->getTimestamp();
     }
 
     public function endsBefore(DateTimeInterface $date): bool
     {
-        return $this->getIncludedEnd() < $date;
+        return $this->getIncludedEnd() < $this->roundDate(
+                $date,
+                $this->precisionMask
+            );
+    }
+
+    public function endsBeforeOrAt(DateTimeInterface $date): bool
+    {
+        return $this->getIncludedEnd() <= $this->roundDate(
+                $date,
+                $this->precisionMask
+            );
+    }
+
+    public function endsAfter(DateTimeInterface $date): bool
+    {
+        return $this->getIncludedEnd() > $this->roundDate(
+                $date,
+                $this->precisionMask
+            );
+    }
+
+    public function endsAfterOrAt(DateTimeInterface $date): bool
+    {
+        return $this->getIncludedEnd() >= $this->roundDate(
+                $date,
+                $this->precisionMask
+            );
+    }
+
+    public function endsAt(DateTimeInterface $date): bool
+    {
+        return $this->getIncludedEnd()->getTimestamp() === $this->roundDate(
+                $date,
+                $this->precisionMask
+            )->getTimestamp();
     }
 
     public function contains(DateTimeInterface $date): bool
     {
-        if ($date < $this->getIncludedStart()) {
+        if ($this->roundDate($date, $this->precisionMask) < $this->getIncludedStart()) {
             return false;
         }
 
-        if ($date > $this->getIncludedEnd()) {
+        if ($this->roundDate($date, $this->precisionMask) > $this->getIncludedEnd()) {
             return false;
         }
 
@@ -444,7 +472,7 @@ class Period
         return 'Y-m-d';
     }
 
-    protected function roundDate(DateTimeImmutable $date, int $precision): DateTimeImmutable
+    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeImmutable
     {
         [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
 

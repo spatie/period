@@ -3,6 +3,7 @@
 namespace Spatie\Period\Tests;
 
 use DateTime;
+use DateTimeImmutable;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
 use PHPUnit\Framework\TestCase;
@@ -123,5 +124,66 @@ class PrecisionTest extends TestCase
 
         $this->assertTrue($a->overlapsWith($b));
         $this->assertFalse($a->overlapsWith($c));
+    }
+
+    /** @test */
+    public function precision_is_kept_when_comparing_with_the_ranges_start()
+    {
+        $a = Period::make('2018-01-01 11:11:11', '2018-01-31', Precision::DAY);
+
+        $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 11:11:11');
+
+        $this->assertTrue($a->startsAt($boundaryDate));
+
+        $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00');
+
+        $this->assertTrue($a->startsBefore($includedDate));
+        $this->assertTrue($a->startsBeforeOrAt($includedDate));
+        $this->assertFalse($a->startsAfter($includedDate));
+        $this->assertFalse($a->startsAfterOrAt($includedDate));
+
+        $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2017-12-31 23:59:59');
+
+        $this->assertFalse($a->startsBefore($excludedDate));
+        $this->assertFalse($a->startsBeforeOrAt($excludedDate));
+        $this->assertTrue($a->startsAfter($excludedDate));
+        $this->assertTrue($a->startsAfterOrAt($excludedDate));
+    }
+
+    /** @test */
+    public function precision_is_kept_when_comparing_with_the_ranges_end()
+    {
+        $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY);
+
+        $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-31 23:59:59');
+
+        $this->assertTrue($a->endsAt($boundaryDate));
+
+        $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-30 23:59:59');
+
+        $this->assertTrue($a->endsAfter($includedDate));
+        $this->assertTrue($a->endsAfterOrAt($includedDate));
+        $this->assertFalse($a->endsBefore($includedDate));
+        $this->assertFalse($a->endsBeforeOrAt($includedDate));
+
+        $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-02-01 00:00:00');
+
+        $this->assertTrue($a->endsBefore($excludedDate));
+        $this->assertTrue($a->endsBeforeOrAt($excludedDate));
+        $this->assertFalse($a->endsAfter($excludedDate));
+        $this->assertFalse($a->endsAfterOrAt($excludedDate));
+    }
+
+    /** @test */
+    public function precision_is_kept_when_testing_contains()
+    {
+        $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY);
+
+        $this->assertTrue($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00')));
+        $this->assertTrue($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')));
+        $this->assertTrue($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-31 23:59:59')));
+
+        $this->assertFalse($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-02-01 00:00:00')));
+        $this->assertFalse($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2017-12-21 23:59:59')));
     }
 }
