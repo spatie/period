@@ -320,8 +320,8 @@ $a->length(); // 31
 It's possible to override the boundary behaviour:
 
 ```php
-$a = Period::make('2018-01-01', '2018-02-01', null, Period::EXCLUDE_END);
-$b = Period::make('2018-02-01', '2018-02-28', null, Period::EXCLUDE_END);
+$a = Period::make('2018-01-01', '2018-02-01', null, Boundaries::EXCLUDE_END);
+$b = Period::make('2018-02-01', '2018-02-28', null, Boundaries::EXCLUDE_END);
 
 $a->overlapsWith($b); // false
 ```
