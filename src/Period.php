@@ -60,8 +60,8 @@ class Period
     }
 
     /**
-     * @param $start
-     * @param $end
+     * @param string|DateTimeInterface $start
+     * @param string|DateTimeInterface $end
      * @param int|null $precisionMask
      * @param int|null $boundaryExclusionMask
      * @param string|null $format

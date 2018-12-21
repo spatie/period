@@ -31,19 +31,20 @@ composer require spatie/period
 
 ```php
 $period = new Period(
-     DateTimeImmutable::createFromFormat(/* … */)
-   , DateTimeImmutable::createFromFormat(/* … */)
-  [, Precision::DAY]
-  [, Boundaries::EXCLUDE_NONE]
+     DateTimeImmutable $start
+   , DateTimeImmutable $end
+  [, int $precisionMask = Precision::DAY]
+  [, int $boundaryExclusionMask = Boundaries::EXCLUDE_NONE]
 )
 ```
 
-The static `::make` constructor can also take strings as dates:
+The static `::make` constructor can also take strings and other implementations of `DateTimeInterface`, 
+as well as an extra format string, in case the textual dates passed aren't of the format `Y-m-d` or `Y-m-d H:i:s`. 
 
 ```php
 $period = Period::make(
-     '2018-01-01'
-   , '2018-01-31'
+     string|DateTimeInterface $start
+   , string|DateTimeInterface $end
   [, int Precision::DAY]
   [, int Boundaries::EXCLUDE_NONE]
   [, string $format]
