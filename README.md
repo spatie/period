@@ -27,7 +27,9 @@ composer require spatie/period
 
 ## Usage
 
-### Creating a period
+### Quick reference
+
+#### Creating a period
 
 ```php
 $period = new Period(
@@ -49,7 +51,68 @@ $period = Period::make(
   [, ?int Boundaries::EXCLUDE_NONE]
   [, string $format]
 )
-```  
+```
+
+#### Length and boundaries
+
+```php
+$period->length(): int;
+```
+
+```php
+$period->startIncluded(): bool;
+$period->startExcluded(): bool;
+$period->endIncluded(): bool;
+$period->endExcluded(): bool;
+```
+
+```php
+$period->getStart(): DateTimeImmutable;
+$period->getStartIncluded(): DateTimeImmutable;
+$period->getEnd(): DateTimeImmutable;
+$period->getEndIncluded(): DateTimeImmutable;
+```
+
+#### Comparisons
+
+```php
+$period->contains(DateTimeInterface $date): bool
+$period->equals(Period $period): bool
+
+$period->overlapsWith(Period $period): bool
+$period->touchesWith(Period $period): bool
+```
+
+```php
+$period->startsAt(DateTimeInterface $date): bool
+$period->startsBefore(DateTimeInterface $date): bool
+$period->startsBeforeOrAt(DateTimeInterface $date): bool
+$period->startsAfter(DateTimeInterface $date): bool
+$period->startsAfterOrAt(DateTimeInterface $date): bool
+```
+
+```php
+$period->endsAt(DateTimeInterface $date): bool
+$period->endsBefore(DateTimeInterface $date): bool
+$period->endsBeforeOrAt(DateTimeInterface $date): bool
+$period->endsAfter(DateTimeInterface $date): bool
+$period->endsAfterOrAt(DateTimeInterface $date): bool
+```
+
+```php
+$period->gap(Period $period): ?Period
+```
+
+```php
+$period->overlapSingle(Period $period): ?Period
+$period->overlap(Period ...$periods): PeriodCollection
+$period->overlapAll(Period ...$periods): Period
+```
+
+```php
+$period->diffSingle(Period $period): PeriodCollection
+$period->diff(Period ...$periods): PeriodCollection
+```
 
 ### Comparing periods
 
