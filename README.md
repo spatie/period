@@ -33,8 +33,8 @@ composer require spatie/period
 $period = new Period(
      DateTimeImmutable $start
    , DateTimeImmutable $end
-  [, int $precisionMask = Precision::DAY]
-  [, int $boundaryExclusionMask = Boundaries::EXCLUDE_NONE]
+  [, ?int $precisionMask = Precision::DAY]
+  [, ?int $boundaryExclusionMask = Boundaries::EXCLUDE_NONE]
 )
 ```
 
@@ -45,8 +45,8 @@ as well as an extra format string, in case the textual dates passed aren't of th
 $period = Period::make(
      string|DateTimeInterface $start
    , string|DateTimeInterface $end
-  [, int Precision::DAY]
-  [, int Boundaries::EXCLUDE_NONE]
+  [, ?int Precision::DAY]
+  [, ?int Boundaries::EXCLUDE_NONE]
   [, string $format]
 )
 ```  
