@@ -6,6 +6,10 @@ All notable changes to `period` will be documented in this file
 
 - initial release
 
+## 0.4.1 - 2019-01-08
+
+- No overlap returns empty collection
+
 ## 0.4.0 - 2018-12-19
 
 - Add visualizer

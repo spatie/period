@@ -177,6 +177,15 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
+    public function non_overlapping_dates_return_an_empty_collection()
+    {
+        $a = Period::make('2019-01-01', '2019-01-31');
+        $b = Period::make('2019-02-01', '2019-02-28');
+
+        $this->assertTrue($a->overlap($b)->isEmpty());
+    }
+
+    /** @test */
     public function it_can_determine_that_two_periods_do_not_overlap()
     {
         $a = Period::make('2018-01-05', '2018-01-10');

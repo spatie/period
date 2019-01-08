@@ -263,7 +263,13 @@ class Period
         $overlapCollection = new PeriodCollection();
 
         foreach ($periods as $period) {
-            $overlapCollection[] = $this->overlapSingle($period);
+            $overlap = $this->overlapSingle($period);
+
+            if ($overlap === null) {
+                continue;
+            }
+
+            $overlapCollection[] = $overlap;
         }
 
         return $overlapCollection;
