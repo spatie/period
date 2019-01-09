@@ -356,6 +356,7 @@ Now they don't anymore!
 This is why this package requires you to specify a precision with each period. 
 Only periods with the same precision can be compared.
 
+A more in-depth explanation on why precision is so important can be found [here](https://stitcher.io/blog/comparing-dates).
 A period's precision can be specified when constructing that period:
 
 ```php
