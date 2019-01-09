@@ -6,6 +6,10 @@ All notable changes to `period` will be documented in this file
 
 - initial release
 
+## 0.5.0 - 2019-01-09
+
+- Add boundary and precision support
+
 ## 0.4.1 - 2019-01-08
 
 - No overlap returns empty collection
