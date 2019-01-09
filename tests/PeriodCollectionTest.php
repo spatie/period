@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Tests\Period;
+namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
 use Spatie\Period\Period;

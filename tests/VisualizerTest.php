@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Tests\Period;
+namespace Spatie\Period\Tests;
 
 use Spatie\Period\Period;
 use Spatie\Period\Visualizer;

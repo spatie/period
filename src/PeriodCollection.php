@@ -54,15 +54,14 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     public function boundaries(): ?Period
     {
         $start = null;
-
         $end = null;
 
         foreach ($this as $period) {
-            if ($start === null || $start > $period->getStart()) {
+            if ($start === null || $start > $period->getIncludedStart()) {
                 $start = $period->getStart();
             }
 
-            if ($end === null || $end < $period->getEnd()) {
+            if ($end === null || $end < $period->getIncludedEnd()) {
                 $end = $period->getEnd();
             }
         }
@@ -71,7 +70,14 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return null;
         }
 
-        return new Period($start, $end);
+        [$firstPeriod] = $this->periods;
+
+        return new Period(
+            $start,
+            $end,
+            $firstPeriod->getPrecisionMask(),
+            Boundaries::EXCLUDE_NONE
+        );
     }
 
     public function gaps(): PeriodCollection
