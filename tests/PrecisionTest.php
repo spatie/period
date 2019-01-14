@@ -186,4 +186,37 @@ class PrecisionTest extends TestCase
         $this->assertFalse($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-02-01 00:00:00')));
         $this->assertFalse($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2017-12-21 23:59:59')));
     }
+
+    /** @test */
+    public function precision_is_kept_with_diff()
+    {
+        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE);
+        $b = Period::make('2018-01-15 00:00:00', '2018-03-01 00:00:00', Precision::MINUTE);
+
+        [$diff] = $a->diff($b);
+
+        $this->assertEquals(Precision::MINUTE, $diff->getPrecisionMask());
+    }
+
+    /** @test */
+    public function precision_is_kept_with_overlap()
+    {
+        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE);
+        $b = Period::make('2018-01-01 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE);
+
+        [$diff] = $a->overlap($b);
+
+        $this->assertEquals(Precision::MINUTE, $diff->getPrecisionMask());
+    }
+
+    /** @test */
+    public function precision_is_kept_with_gap()
+    {
+        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE);
+        $b = Period::make('2018-01-15 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE);
+
+        $gap = $a->gap($b);
+
+        $this->assertEquals(Precision::MINUTE, $gap->getPrecisionMask());
+    }
 }

@@ -285,13 +285,15 @@ class Period
         if ($this->getIncludedStart() >= $period->getIncludedEnd()) {
             return static::make(
                 $period->getIncludedEnd()->add($this->interval),
-                $this->getIncludedStart()->sub($this->interval)
+                $this->getIncludedStart()->sub($this->interval),
+                $this->getPrecisionMask()
             );
         }
 
         return static::make(
             $this->getIncludedEnd()->add($this->interval),
-            $period->getIncludedStart()->sub($this->interval)
+            $period->getIncludedStart()->sub($this->interval),
+            $this->getPrecisionMask()
         );
     }
 
@@ -316,7 +318,7 @@ class Period
             return null;
         }
 
-        return static::make($start, $end);
+        return static::make($start, $end, $this->getPrecisionMask());
     }
 
     /**
@@ -363,6 +365,8 @@ class Period
 
     public function diffSingle(Period $period): PeriodCollection
     {
+        $this->ensurePrecisionMatches($period);
+
         $periodCollection = new PeriodCollection();
 
         if (! $this->overlapsWith($period)) {
@@ -385,14 +389,16 @@ class Period
         if ($overlap->getIncludedStart() > $start) {
             $periodCollection[] = static::make(
                 $start,
-                $overlap->getIncludedStart()->sub($this->interval)
+                $overlap->getIncludedStart()->sub($this->interval),
+                $this->getPrecisionMask()
             );
         }
 
         if ($overlap->getIncludedEnd() < $end) {
             $periodCollection[] = static::make(
                 $overlap->getIncludedEnd()->add($this->interval),
-                $end
+                $end,
+                $this->getPrecisionMask()
             );
         }
 

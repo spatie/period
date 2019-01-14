@@ -6,6 +6,10 @@ All notable changes to `period` will be documented in this file
 
 - initial release
 
+## 0.5.1 - 2019-01-14
+
+- Fix bug with precision not being correctly copied
+
 ## 0.5.0 - 2019-01-09
 
 - Add boundary and precision support
