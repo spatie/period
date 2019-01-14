@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use DateTimeImmutable;
 use Spatie\Period\Period;
 use PHPUnit\Framework\TestCase;
-use Spatie\Period\Precision;
 
 class PeriodTest extends TestCase
 {
