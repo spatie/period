@@ -515,6 +515,14 @@ class PeriodTest extends TestCase
         $this->assertSame($expectedCount, iterator_count($period));
     }
 
+    /** @test */
+    public function its_iterator_returns_immutable_dates()
+    {
+        $period = Period::make('2018-01-01', '2018-01-15');
+
+        $this->assertInstanceOf(DateTimeImmutable::class, current($period));
+    }
+
     public function expectedPeriodLengths()
     {
         return [
