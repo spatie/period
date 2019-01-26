@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.1.0 - 2019-01-26
+
+- Make Period iterable
+
 ## 1.0.0 - 2019-01-17
 
 - First stable release
