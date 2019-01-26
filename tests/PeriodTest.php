@@ -4,8 +4,10 @@ namespace Spatie\Period\Tests;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
-use Spatie\Period\Period;
 use PHPUnit\Framework\TestCase;
+use Spatie\Period\Period;
+use Spatie\Period\Precision;
+use Spatie\Period\Boundaries;
 
 class PeriodTest extends TestCase
 {
@@ -502,5 +504,37 @@ class PeriodTest extends TestCase
         $diff = $a->diff($b);
 
         $this->assertCount(2, $diff);
+    }
+
+    /**
+     * @test
+     * @dataProvider expectedPeriodLengths
+     */
+    public function it_is_iterable(int $expectedCount, Period $period)
+    {
+        $this->assertSame($expectedCount, iterator_count($period));
+    }
+
+    /** @test */
+    public function its_iterator_returns_immutable_dates()
+    {
+        $period = Period::make('2018-01-01', '2018-01-15');
+
+        $this->assertInstanceOf(DateTimeImmutable::class, current($period));
+    }
+
+    public function expectedPeriodLengths()
+    {
+        return [
+            [1, Period::make('2018-01-01', '2018-01-01')],
+
+            [15, Period::make('2018-01-01', '2018-01-15')],
+            [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START)],
+            [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END)],
+            [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL)],
+
+            [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)],
+            [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
+        ];
     }
 }

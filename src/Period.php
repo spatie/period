@@ -2,15 +2,17 @@
 
 namespace Spatie\Period;
 
-use DateTime;
 use DateInterval;
+use DatePeriod;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use IteratorAggregate;
 use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
 use Spatie\Period\Exceptions\CannotComparePeriods;
 
-class Period
+class Period implements IteratorAggregate
 {
     /** @var \DateTimeImmutable */
     protected $start;
@@ -434,6 +436,15 @@ class Period
     public function getPrecisionMask(): int
     {
         return $this->precisionMask;
+    }
+
+    public function getIterator()
+    {
+        return new DatePeriod(
+            $this->getIncludedStart(),
+            $this->interval,
+            $this->getIncludedEnd()->add($this->interval)
+        );
     }
 
     protected static function resolveDate($date, ?string $format): DateTimeImmutable
