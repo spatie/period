@@ -2,9 +2,9 @@
 
 namespace Spatie\Period;
 
-use DateInterval;
-use DatePeriod;
 use DateTime;
+use DatePeriod;
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use IteratorAggregate;
