@@ -423,6 +423,30 @@ Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
 Note that as soon as a period is constructed, all further operations on it are immutable.
 There's never the danger of changing the input dates.
 
+You can iterate a `Period` like a regular `DatePeriod` with the precision specified on creation:
+
+```php
+$datePeriod = Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-31'));
+
+foreach ($datePeriod as $date) {
+    /** @var DateTimeImmutable $date */
+    // 2018-01-01
+    // 2018-01-02
+    // ...
+    // (31 iterations)
+}
+
+$timePeriod = Period::make(Carbon::make('2018-01-01 00:00:00'), Carbon::make('2018-01-01 23:59:59'), Precision::HOUR);
+
+foreach ($timePeriod as $time) {
+    /** @var DateTimeImmutable $time */
+    // 2018-01-01 00:00:00
+    // 2018-01-01 01:00:00
+    // ...
+    // (24 iterations)
+}
+```
+
 ### Visualizing periods
 
 You can visualize one or more `Period` objects as well as `PeriodCollection`
