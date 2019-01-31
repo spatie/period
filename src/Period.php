@@ -145,9 +145,7 @@ class Period implements IteratorAggregate
 
     public function length(): int
     {
-        $length = $this->getIncludedStart()->diff($this->getIncludedEnd())->days + 1;
-
-        return $length;
+        return iterator_count($this);
     }
 
     public function overlapsWith(Period $period): bool
