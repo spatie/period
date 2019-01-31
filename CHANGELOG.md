@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.0.0
+
+- Breaking Change: `Period::length()` now uses the Period's precision instead of always returning days
+
 ## 1.1.1 - 2019-02-01
 
 - Fix bug with null element in diff

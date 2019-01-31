@@ -3,6 +3,7 @@
 namespace Spatie\Period\Tests;
 
 use Spatie\Period\Period;
+use Spatie\Period\Precision;
 use Spatie\Period\Boundaries;
 use PHPUnit\Framework\TestCase;
 
@@ -44,17 +45,26 @@ class BoundaryTest extends TestCase
         $this->assertTrue($period->endExcluded());
     }
 
-    /** @test */
-    public function length_with_boundaries()
+    /**
+     * @test
+     * @dataProvider periodsWithAmountsOfIncludedDates
+     */
+    public function length_with_boundaries($expectedAmount, Period $period)
     {
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_START);
-        $this->assertEquals(30, $period->length());
+        $this->assertEquals($expectedAmount, $period->length());
+    }
 
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_END);
-        $this->assertEquals(30, $period->length());
+    public function periodsWithAmountsOfIncludedDates()
+    {
+        return [
+            [30, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_START)],
+            [30, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_END)],
+            [29, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_ALL)],
 
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_ALL);
-        $this->assertEquals(29, $period->length());
+            [23, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:00', Precision::HOUR, Boundaries::EXCLUDE_START)],
+            [23, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
+            [22, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:00', Precision::HOUR, Boundaries::EXCLUDE_ALL)],
+        ];
     }
 
     /** @test */
