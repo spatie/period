@@ -33,12 +33,12 @@ class PeriodTest extends TestCase
     {
         $this->assertTrue(
             Period::make('2018-01-01', '2018-01-01')
-              ->touchesWith(Period::make('2018-01-02', '2018-01-02'))
+                ->touchesWith(Period::make('2018-01-02', '2018-01-02'))
         );
 
         $this->assertTrue(
             Period::make('2018-01-02', '2018-01-02')
-              ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
+                ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
         );
 
         $this->assertFalse(
@@ -48,7 +48,7 @@ class PeriodTest extends TestCase
 
         $this->assertFalse(
             Period::make('2018-01-03', '2018-01-03')
-              ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
+                ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
         );
     }
 
@@ -521,6 +521,18 @@ class PeriodTest extends TestCase
         $period = Period::make('2018-01-01', '2018-01-15');
 
         $this->assertInstanceOf(DateTimeImmutable::class, current($period));
+    }
+
+    /** @test */
+    public function diff_filters_out_null_object_if_no_gap()
+    {
+        $a = Period::make('2019-02-01', '2019-02-01');
+
+        $b = Period::make('2019-02-02', '2019-02-02');
+
+        $diff = $a->diff($b);
+
+        $this->assertEmpty($diff);
     }
 
     public function expectedPeriodLengths()

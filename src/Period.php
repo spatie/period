@@ -417,7 +417,11 @@ class Period implements IteratorAggregate
         if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
             $collection = new PeriodCollection();
 
-            $collection[] = $this->gap($periods[0]);
+            $gap = $this->gap($periods[0]);
+
+            if ($gap !== null) {
+                $collection[] = $gap;
+            }
 
             return $collection;
         }

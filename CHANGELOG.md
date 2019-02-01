@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.1.1 - 2019-02-01
+
+- Fix bug with null element in diff
+
 ## 1.1.0 - 2019-01-26
 
 - Make Period iterable
