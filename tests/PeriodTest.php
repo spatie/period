@@ -569,4 +569,12 @@ class PeriodTest extends TestCase
             [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
         ];
     }
+
+    /** @test **/
+    public function it_has_a_duration()
+    {
+        $period = Period::make('2018-01-01', '2018-01-10');
+
+        $this->assertSame(10, $period->duration()->length(Precision::DAY));
+    }
 }

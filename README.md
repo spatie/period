@@ -57,6 +57,8 @@ $period = Period::make(
 
 ```php
 $period->length(): int
+$period->duration(): Duration
+$period->duration()->length(Precision::*): int
 ```
 
 ```php
@@ -130,6 +132,16 @@ $periodCollection->gaps(): PeriodCollection
 ```
 
 ### Comparing periods
+
+**Period durations**
+```php
+$a = Period::make('2018-01-01', '2018-01-31');
+$b = Period::make('2018-02-01', '2018-02-28');
+
+$a->duration()->equals($b->duration()); // false
+$a->duration()->isLargerThan($b->duration()); // true
+$b->duration()->isSmallerThan($a->duration()); // true
+```
 
 **Overlaps with any other period**: 
 this method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.

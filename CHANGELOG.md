@@ -8,6 +8,9 @@ All notable changes to `period` will be documented in this file
 `\Spatie\Period\PeriodCollection::overlap` should be used.
 - Breaking Change: `Period::length()` now uses the Period's precision instead of always returning days
 - Fix bug with `overlapAll` when no overlap
+- `Period::duration()` returns an instance of `Duration`
+- `PeriodCollection::duration()` returns an instance of `Duration` 
+  with the sum of all included Period's durations
 
 ## 1.4.1 - 2019-04-23
 

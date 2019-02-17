@@ -180,4 +180,9 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         return $overlaps;
     }
+
+    public function duration(): Duration
+    {
+        return Duration::fromPeriodCollection($this);
+    }
 }
