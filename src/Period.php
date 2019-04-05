@@ -68,7 +68,7 @@ class Period implements IteratorAggregate
      * @param int|null $boundaryExclusionMask
      * @param string|null $format
      *
-     * @return \Spatie\Period\Period&static
+     * @return static
      */
     public static function make(
         $start,
@@ -269,7 +269,7 @@ class Period implements IteratorAggregate
     /**
      * @param \Spatie\Period\Period $period
      *
-     * @return \Spatie\Period\Period&static|null
+     * @return static|null
      * @throws \Exception
      */
     public function gap(Period $period): ?Period
@@ -302,7 +302,7 @@ class Period implements IteratorAggregate
     /**
      * @param \Spatie\Period\Period $period
      *
-     * @return \Spatie\Period\Period&static|null
+     * @return static|null
      */
     public function overlapSingle(Period $period): ?Period
     {
@@ -348,7 +348,7 @@ class Period implements IteratorAggregate
     /**
      * @param \Spatie\Period\Period ...$periods
      *
-     * @return \Spatie\Period\Period&static
+     * @return static
      */
     public function overlapAll(Period ...$periods): Period
     {

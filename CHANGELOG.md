@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.1.3 - 2019-04-05
+
+- Even better docblock support for static return types
+
 ## 1.1.2 - 2019-04-05
 
 - Better docblock support for static return types
