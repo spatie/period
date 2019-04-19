@@ -108,6 +108,17 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $intersected;
     }
 
+    public function add(Period ...$periods): PeriodCollection
+    {
+        $collection = clone $this;
+
+        foreach ($periods as $period) {
+            $collection[] = $period;
+        }
+
+        return $collection;
+    }
+
     public function isEmpty(): bool
     {
         return count($this->periods) === 0;

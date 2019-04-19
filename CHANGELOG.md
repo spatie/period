@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.3.0 - 2019-04-19
+
+- Add period collection add
+
 ## 1.2.0 - 2019-04-19
 
 - Add period collection intersect
