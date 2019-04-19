@@ -312,7 +312,7 @@ class Period implements IteratorAggregate
      *
      * @return static|null
      */
-    public function overlapSingle(Period $period): ?Period
+    public function overlap(Period $period): ?Period
     {
         $this->ensurePrecisionMatches($period);
 
@@ -336,21 +336,17 @@ class Period implements IteratorAggregate
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function overlap(Period ...$periods): PeriodCollection
+    public function overlapAny(Period ...$periods): PeriodCollection
     {
-        $overlapCollection = new PeriodCollection();
+        $collection = PeriodCollection::make();
 
         foreach ($periods as $period) {
-            $overlap = $this->overlapSingle($period);
-
-            if ($overlap === null) {
-                continue;
-            }
-
-            $overlapCollection[] = $overlap;
+            $collection = $collection->add(
+                $this->overlap($period)
+            );
         }
 
-        return $overlapCollection;
+        return $collection;
     }
 
     /**
@@ -360,37 +356,37 @@ class Period implements IteratorAggregate
      */
     public function overlapAll(Period ...$periods): ?Period
     {
-        $overlap = clone $this;
+        $pivot = clone $this;
 
         if (! count($periods)) {
-            return $overlap;
+            return $pivot;
         }
 
         foreach ($periods as $period) {
-            $overlap = $overlap->overlapSingle($period);
+            $pivot = $pivot->overlap($period);
 
-            if ($overlap === null) {
+            if ($pivot === null) {
                 return null;
             }
         }
 
-        return $overlap;
+        return $pivot;
     }
 
     public function diffSingle(Period $period): PeriodCollection
     {
         $this->ensurePrecisionMatches($period);
 
-        $periodCollection = new PeriodCollection();
+        $collection = PeriodCollection::make();
 
         if (! $this->overlapsWith($period)) {
-            $periodCollection[] = clone $this;
-            $periodCollection[] = clone $period;
-
-            return $periodCollection;
+            return $collection->add(
+                clone $this,
+                clone $period
+            );
         }
 
-        $overlap = $this->overlapSingle($period);
+        $overlap = $this->overlap($period);
 
         $start = $this->getIncludedStart() < $period->getIncludedStart()
             ? $this->getIncludedStart()
@@ -401,22 +397,22 @@ class Period implements IteratorAggregate
             : $period->getIncludedEnd();
 
         if ($overlap->getIncludedStart() > $start) {
-            $periodCollection[] = static::make(
+            $collection = $collection->add(static::make(
                 $start,
                 $overlap->getIncludedStart()->sub($this->interval),
                 $this->getPrecisionMask()
-            );
+            ));
         }
 
         if ($overlap->getIncludedEnd() < $end) {
-            $periodCollection[] = static::make(
+            $collection = $collection->add(static::make(
                 $overlap->getIncludedEnd()->add($this->interval),
                 $end,
                 $this->getPrecisionMask()
-            );
+            ));
         }
 
-        return $periodCollection;
+        return $collection;
     }
 
     /**
@@ -427,15 +423,8 @@ class Period implements IteratorAggregate
     public function diff(Period ...$periods): PeriodCollection
     {
         if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
-            $collection = new PeriodCollection();
-
-            $gap = $this->gap($periods[0]);
-
-            if ($gap !== null) {
-                $collection[] = $gap;
-            }
-
-            return $collection;
+            return PeriodCollection::make()
+                ->add($this->gap($periods[0]));
         }
 
         $diffs = [];
@@ -444,9 +433,7 @@ class Period implements IteratorAggregate
             $diffs[] = $this->diffSingle($period);
         }
 
-        $collection = (new PeriodCollection($this))->overlap(...$diffs);
-
-        return $collection;
+        return PeriodCollection::make($this)->overlap(...$diffs);
     }
 
     public function getPrecisionMask(): int

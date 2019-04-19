@@ -34,6 +34,23 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $this->periods[$this->position];
     }
 
+    public function overlapAny(): PeriodCollection
+    {
+        $periods = $this->periods;
+
+        $collection = PeriodCollection::make();
+
+        while (count($periods) > 1) {
+            $pivot = array_shift($periods);
+
+            foreach ($periods as $period) {
+                $collection = $collection->add($pivot->overlap($period));
+            }
+        }
+
+        return $collection;
+    }
+
     public function overlap(PeriodCollection ...$periodCollections): PeriodCollection
     {
         $overlap = clone $this;
@@ -98,7 +115,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         $intersected = static::make();
 
         foreach ($this as $period) {
-            $overlap = $intersection->overlapSingle($period);
+            $overlap = $intersection->overlap($period);
 
             if ($overlap === null) {
                 continue;
@@ -115,11 +132,15 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
      *
      * @return static
      */
-    public function add(Period ...$periods): PeriodCollection
+    public function add(?Period ...$periods): PeriodCollection
     {
         $collection = clone $this;
 
         foreach ($periods as $period) {
+            if (! $period) {
+                continue;
+            }
+
             $collection[] = $period;
         }
 
@@ -170,11 +191,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         foreach ($this as $period) {
             foreach ($periodCollection as $otherPeriod) {
-                if (! $period->overlapSingle($otherPeriod)) {
+                if (! $period->overlap($otherPeriod)) {
                     continue;
                 }
 
-                $overlaps[] = $period->overlapSingle($otherPeriod);
+                $overlaps[] = $period->overlap($otherPeriod);
             }
         }
 

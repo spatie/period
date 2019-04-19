@@ -138,7 +138,7 @@ class PeriodTest extends TestCase
 
         $overlapPeriod = Period::make('2018-01-10', '2018-01-15');
 
-        $this->assertTrue($a->overlapSingle($b)->equals($overlapPeriod));
+        $this->assertTrue($a->overlap($b)->equals($overlapPeriod));
     }
 
     /**
@@ -158,7 +158,7 @@ class PeriodTest extends TestCase
         $c = Period::make('2018-03-01', '2018-03-31');
         $d = Period::make('2018-01-20', '2018-03-10');
 
-        $overlapPeriods = $d->overlap($a, $b, $c);
+        $overlapPeriods = $d->overlapAny($a, $b, $c);
 
         $this->assertCount(3, $overlapPeriods);
 
@@ -213,7 +213,7 @@ class PeriodTest extends TestCase
         $a = Period::make('2019-01-01', '2019-01-31');
         $b = Period::make('2019-02-01', '2019-02-28');
 
-        $this->assertTrue($a->overlap($b)->isEmpty());
+        $this->assertTrue($a->overlapAny($b)->isEmpty());
     }
 
     /** @test */
@@ -222,7 +222,7 @@ class PeriodTest extends TestCase
         $a = Period::make('2018-01-05', '2018-01-10');
         $b = Period::make('2018-01-22', '2018-01-30');
 
-        $overlap = $a->overlapSingle($b);
+        $overlap = $a->overlap($b);
 
         $this->assertNull($overlap);
     }

@@ -204,7 +204,7 @@ class PrecisionTest extends TestCase
         $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE);
         $b = Period::make('2018-01-01 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE);
 
-        [$diff] = $a->overlap($b);
+        [$diff] = $a->overlapAny($b);
 
         $this->assertEquals(Precision::MINUTE, $diff->getPrecisionMask());
     }
