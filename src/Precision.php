@@ -4,10 +4,10 @@ namespace Spatie\Period;
 
 interface Precision
 {
-    const YEAR = 32;
-    const MONTH = 48;
-    const DAY = 56;
-    const HOUR = 60;
-    const MINUTE = 62;
-    const SECOND = 63;
+    public const YEAR   = 0b100000;
+    public const MONTH  = 0b110000;
+    public const DAY    = 0b111000;
+    public const HOUR   = 0b111100;
+    public const MINUTE = 0b111110;
+    public const SECOND = 0b111111;
 }
