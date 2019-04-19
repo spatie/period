@@ -437,16 +437,6 @@ class Period implements IteratorAggregate
         return $collection;
     }
 
-    /**
-     * @param \Spatie\Period\Period $period
-     *
-     * @return static
-     */
-    public function intersect(Period $period): Period
-    {
-
-    }
-
     public function getPrecisionMask(): int
     {
         return $this->precisionMask;
