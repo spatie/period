@@ -29,7 +29,7 @@ class PeriodCollectionTest extends TestCase
             Period::make('2018-01-22', '2018-01-30')
         );
 
-        $overlapPeriods = $a->overlapSingle($b);
+        $overlapPeriods = $a->overlap($b);
 
         $this->assertCount(2, $overlapPeriods);
 
