@@ -38,7 +38,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $periods = $this->periods;
 
-        $collection = PeriodCollection::make();
+        $collection = static::make();
 
         while (count($periods) > 1) {
             $pivot = array_shift($periods);
@@ -49,6 +49,27 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         }
 
         return $collection;
+    }
+
+    public function overlapAll(): ?Period
+    {
+        $periods = $this->periods;
+
+        $pivot = array_shift($periods);
+
+        if (! count($periods)) {
+            return $pivot;
+        }
+
+        foreach ($periods as $period) {
+            $pivot = $pivot->overlap($period);
+
+            if ($pivot === null) {
+                return null;
+            }
+        }
+
+        return $pivot;
     }
 
     public function overlap(PeriodCollection ...$periodCollections): PeriodCollection

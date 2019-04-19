@@ -356,21 +356,9 @@ class Period implements IteratorAggregate
      */
     public function overlapAll(Period ...$periods): ?Period
     {
-        $pivot = clone $this;
+        $collection = PeriodCollection::make($this, ...$periods);
 
-        if (! count($periods)) {
-            return $pivot;
-        }
-
-        foreach ($periods as $period) {
-            $pivot = $pivot->overlap($period);
-
-            if ($pivot === null) {
-                return null;
-            }
-        }
-
-        return $pivot;
+        return $collection->overlapAll();
     }
 
     public function diffSingle(Period $period): PeriodCollection

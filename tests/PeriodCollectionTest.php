@@ -229,4 +229,26 @@ class PeriodCollectionTest extends TestCase
         $this->assertTrue($overlap[0]->equals(Period::make('2019-01-05', '2019-02-01')));
         $this->assertTrue($overlap[1]->equals(Period::make('2019-04-01', '2019-05-01')));
     }
+
+    /**
+     * @test
+     *
+     * A              [============]
+     * B                   [==]
+     * C                   [=======]
+     *
+     * OVERLAP             [==]
+     */
+    public function overlap_all()
+    {
+        $collection = PeriodCollection::make(
+            Period::make('2018-01-01', '2018-01-31'),
+            Period::make('2018-01-10', '2018-01-15'),
+            Period::make('2018-01-10', '2018-01-31')
+        );
+
+        $overlap = $collection->overlapAll();
+
+        $this->assertTrue($overlap->equals(Period::make('2018-01-10', '2018-01-15')));
+    }
 }
