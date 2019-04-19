@@ -162,7 +162,7 @@ class PeriodCollectionTest extends TestCase
             Period::make('2019-01-05', '2019-01-15'),
             Period::make('2019-01-01', '2019-01-10'),
             Period::make('2019-01-10', '2019-01-15'),
-            Period::make('2019-02-01', '2019-02-15'),
+            Period::make('2019-02-01', '2019-02-15')
         );
 
         $intersect = $collection->intersect(Period::make('2019-01-09', '2019-01-11'));
