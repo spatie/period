@@ -2,8 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
-## 2.0.0
+## 2.0.0 - 2019-??-??
 
+- `\Spatie\Period\PeriodCollection::overlapSingle` is no longer available,
+`\Spatie\Period\PeriodCollection::overlap` should be used.
 - Breaking Change: `Period::length()` now uses the Period's precision instead of always returning days
 
 ## 1.6.0 - 2021-02-24
