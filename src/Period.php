@@ -199,40 +199,40 @@ class Period implements IteratorAggregate
     public function endsBefore(DateTimeInterface $date): bool
     {
         return $this->getIncludedEnd() < $this->roundDate(
-                $date,
-                $this->precisionMask
+            $date,
+            $this->precisionMask
             );
     }
 
     public function endsBeforeOrAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedEnd() <= $this->roundDate(
-                $date,
-                $this->precisionMask
+            $date,
+            $this->precisionMask
             );
     }
 
     public function endsAfter(DateTimeInterface $date): bool
     {
         return $this->getIncludedEnd() > $this->roundDate(
-                $date,
-                $this->precisionMask
+            $date,
+            $this->precisionMask
             );
     }
 
     public function endsAfterOrAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedEnd() >= $this->roundDate(
-                $date,
-                $this->precisionMask
+            $date,
+            $this->precisionMask
             );
     }
 
     public function endsAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedEnd()->getTimestamp() === $this->roundDate(
-                $date,
-                $this->precisionMask
+            $date,
+            $this->precisionMask
             )->getTimestamp();
     }
 
@@ -348,7 +348,7 @@ class Period implements IteratorAggregate
      *
      * @return static
      */
-    public function overlapAll(Period ...$periods): Period
+    public function overlapAll(Period ...$periods): ?Period
     {
         $overlap = clone $this;
 
@@ -358,6 +358,10 @@ class Period implements IteratorAggregate
 
         foreach ($periods as $period) {
             $overlap = $overlap->overlapSingle($period);
+
+            if ($overlap === null) {
+                return null;
+            }
         }
 
         return $overlap;
