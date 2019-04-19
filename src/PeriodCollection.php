@@ -91,6 +91,23 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $boundaries->diff(...$this);
     }
 
+    public function intersect(Period $intersection): PeriodCollection
+    {
+        $intersected = new PeriodCollection();
+
+        foreach ($this as $period) {
+            $overlap = $intersection->overlapSingle($period);
+
+            if ($overlap === null) {
+                continue;
+            }
+
+            $intersected[] = $overlap;
+        }
+
+        return $intersected;
+    }
+
     public function isEmpty(): bool
     {
         return count($this->periods) === 0;

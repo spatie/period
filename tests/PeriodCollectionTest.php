@@ -141,4 +141,36 @@ class PeriodCollectionTest extends TestCase
         $this->assertFalse($period->contains(new DateTimeImmutable('2017-12-31')));
         $this->assertFalse($period->contains(new DateTimeImmutable('2018-02-01')));
     }
+
+    /**
+     * @test
+     *
+     * A        [========================]
+     * B    [================]
+     * C                    [=====================]
+     * D                                    [=====]
+     *
+     * LIMIT        [===============]
+     *
+     * A            [===============]
+     * B            [========]
+     * C                    [=======]
+     */
+    public function intersect_test()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2019-01-05', '2019-01-15'),
+            Period::make('2019-01-01', '2019-01-10'),
+            Period::make('2019-01-10', '2019-01-15'),
+            Period::make('2019-02-01', '2019-02-15'),
+        );
+
+        $intersect = $collection->intersect(Period::make('2019-01-09', '2019-01-11'));
+
+        $this->assertCount(3, $intersect);
+
+        $this->assertTrue($intersect[0]->equals(Period::make('2019-01-09', '2019-01-11')));
+        $this->assertTrue($intersect[1]->equals(Period::make('2019-01-09', '2019-01-10')));
+        $this->assertTrue($intersect[2]->equals(Period::make('2019-01-10', '2019-01-11')));
+    }
 }
