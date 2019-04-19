@@ -34,33 +34,6 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $this->periods[$this->position];
     }
 
-    /**
-     * @param \Spatie\Period\PeriodCollection $periodCollection
-     *
-     * @return static
-     */
-    public function overlapSingle(PeriodCollection $periodCollection): PeriodCollection
-    {
-        $overlaps = static::make();
-
-        foreach ($this as $period) {
-            foreach ($periodCollection as $otherPeriod) {
-                if (! $period->overlapSingle($otherPeriod)) {
-                    continue;
-                }
-
-                $overlaps[] = $period->overlapSingle($otherPeriod);
-            }
-        }
-
-        return $overlaps;
-    }
-
-    /**
-     * @param \Spatie\Period\PeriodCollection ...$periodCollections
-     *
-     * @return static
-     */
     public function overlap(PeriodCollection ...$periodCollections): PeriodCollection
     {
         $overlap = clone $this;
@@ -189,5 +162,22 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     public function isEmpty(): bool
     {
         return count($this->periods) === 0;
+    }
+
+    private function overlapSingle(PeriodCollection $periodCollection): PeriodCollection
+    {
+        $overlaps = new PeriodCollection();
+
+        foreach ($this as $period) {
+            foreach ($periodCollection as $otherPeriod) {
+                if (! $period->overlapSingle($otherPeriod)) {
+                    continue;
+                }
+
+                $overlaps[] = $period->overlapSingle($otherPeriod);
+            }
+        }
+
+        return $overlaps;
     }
 }
