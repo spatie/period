@@ -117,6 +117,8 @@ $period->diff(Period ...$periods): PeriodCollection
 ```php
 $periodCollection->overlap(PeriodCollection ...$periodCollections): PeriodCollection
 $periodCollection->overlapSingle(PeriodCollection $periodCollection): PeriodCollection
+$periodCollection->map(Closure<Period> $closure): PeriodCollection
+$periodCollection->reduce(Closure<mixed, Period> $closure): mixed
 ```
 
 ```php

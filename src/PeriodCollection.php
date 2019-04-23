@@ -2,6 +2,7 @@
 
 namespace Spatie\Period;
 
+use Closure;
 use Iterator;
 use Countable;
 use ArrayAccess;
@@ -117,6 +118,28 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         }
 
         return $collection;
+    }
+
+    public function map(Closure $closure): PeriodCollection
+    {
+        $collection = clone $this;
+
+        foreach ($collection->periods as $key => $period) {
+            $collection->periods[$key] = $closure($period);
+        }
+
+        return $collection;
+    }
+
+    public function reduce(Closure $closure, $initial = null)
+    {
+        $carry = $initial;
+
+        foreach ($this as $period) {
+            $carry = $closure($carry, $period);
+        }
+
+        return $carry;
     }
 
     public function isEmpty(): bool

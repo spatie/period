@@ -173,4 +173,35 @@ class PeriodCollectionTest extends TestCase
         $this->assertTrue($intersect[1]->equals(Period::make('2019-01-09', '2019-01-10')));
         $this->assertTrue($intersect[2]->equals(Period::make('2019-01-10', '2019-01-11')));
     }
+
+    /** @test */
+    public function map()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2019-01-01', '2019-01-02'),
+            Period::make('2019-01-01', '2019-01-02'),
+        );
+
+        $mapped = $collection->map(function (Period $period) {
+            return $period;
+        });
+
+        $this->assertTrue($mapped[0]->equals($collection[0]));
+        $this->assertTrue($mapped[1]->equals($collection[1]));
+    }
+
+    /** @test */
+    public function reduce()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2019-01-01', '2019-01-02'),
+            Period::make('2019-01-03', '2019-01-04'),
+        );
+
+        $totalLength = $collection->reduce(function (int $carry, Period $period) {
+            return $carry + $period->length();
+        }, 0);
+
+        $this->assertEquals(4, $totalLength);
+    }
 }

@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.4.0 - 2019-04-23
+
+- Add `map` and `reduce` to `PeriodCollection`
+
 ## 1.3.1 - 2019-04-19
 
 - Remove unused code
