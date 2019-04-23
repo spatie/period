@@ -195,7 +195,7 @@ class PeriodCollectionTest extends TestCase
     {
         $collection = new PeriodCollection(
             Period::make('2019-01-01', '2019-01-02'),
-            Period::make('2019-01-03', '2019-01-04'),
+            Period::make('2019-01-03', '2019-01-04')
         );
 
         $totalLength = $collection->reduce(function (int $carry, Period $period) {
