@@ -35,6 +35,9 @@ class Period implements IteratorAggregate
     /** @var int */
     private $precisionMask;
 
+    /** @var PeriodDuration */
+    private $duration;
+
     public function __construct(
         DateTimeImmutable $start,
         DateTimeImmutable $end,
@@ -59,6 +62,8 @@ class Period implements IteratorAggregate
         $this->includedEnd = $this->endIncluded()
             ? $this->end
             : $this->end->sub($this->interval);
+
+        $this->duration = new PeriodDuration($this);
     }
 
     /**
@@ -136,6 +141,11 @@ class Period implements IteratorAggregate
     public function length(): int
     {
         return iterator_count($this);
+    }
+
+    public function duration(): PeriodDuration
+    {
+        return $this->duration;
     }
 
     public function overlapsWith(Period $period): bool
