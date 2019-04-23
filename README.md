@@ -66,6 +66,7 @@ $period = Period::make(
 
 ```php
 $period->length(): int
+$period->duration(): PeriodDuration
 ```
 
 ```php
@@ -111,6 +112,12 @@ $period->endsBefore(DateTimeInterface $date): bool
 $period->endsBeforeOrAt(DateTimeInterface $date): bool
 $period->endsAfter(DateTimeInterface $date): bool
 $period->endsAfterOrAt(DateTimeInterface $date): bool
+```
+
+```php
+$period->duration()->equals(PeriodDuration $other): bool
+$period->duration()->isLargerThan(PeriodDuration $other): bool
+$period->duration()->isSmallerThan(PeriodDuration $other): bool 
 ```
 
 ```php
@@ -251,6 +258,28 @@ $a = Period::make('2018-01-01', '2018-01-31');
 $b = Period::make('2018-02-05', '2018-02-15');
 
 $overlap = $a->gap($b); // Period('2018-02-01', '2018-02-04')
+```
+
+**Duration**: returns the duration of a period to compare it to other durations
+
+```php
+$january = Period::make('2018-01-01', '2018-01-31', Precision::MONTH);
+$february = Period::make('2018-02-01', '2018-02-28', Precision::MONTH);
+
+// both represent a month
+$january->duration()->equals($february->duration()); // true
+
+$march = Period::make('2018-03-01', '2018-03-31', Precision::DAY);
+$may = Period::make('2018-05-01', '2018-05-31', Precision::DAY);
+
+// both have 31 days
+$march->duration()->equals($may->duration()); // true
+
+$twoDays = Period::make('2018-01-01', '2018-01-02', Precision::DAY);
+$threeDays = Period::make('2018-01-01', '2018-01-03', Precision::DAY);
+
+$twoDays->duration()->isSmallerThan($threeDays->duration()); // true
+$threeDays->duration()->isLargerThan($twoDays->duration()); // true
 ```
 
 **Boundaries of a collection**: Get one period representing the boundaries of a collection.
