@@ -179,7 +179,7 @@ class PeriodCollectionTest extends TestCase
     {
         $collection = new PeriodCollection(
             Period::make('2019-01-01', '2019-01-02'),
-            Period::make('2019-01-01', '2019-01-02'),
+            Period::make('2019-01-01', '2019-01-02')
         );
 
         $mapped = $collection->map(function (Period $period) {
