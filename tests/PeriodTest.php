@@ -30,6 +30,16 @@ class PeriodTest extends TestCase
         $this->assertEquals($rewewal->length(), $period->length());
     }
 
+    /** @test */
+    public function it_has_a_duration()
+    {
+        $a = Period::make('2018-01-01', '2018-01-15');
+        $b = Period::make('2018-02-01', '2018-02-15');
+
+        $this->assertTrue($a->duration()->equals($b->duration()));
+
+    }
+
     /**
      * @test
      * @dataProvider overlappingDates
