@@ -2,6 +2,11 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.4.1 - 2019-04-23
+
+- Support PeriodCollection::make()
+- Improved PeriodCollection doc blocks
+
 ## 1.4.0 - 2019-04-23
 
 - Add `map` and `reduce` to `PeriodCollection`
