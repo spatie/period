@@ -219,7 +219,7 @@ class PeriodCollectionTest extends TestCase
         $collection = PeriodCollection::make(
             Period::make('2019-01-05', '2019-05-01'),
             Period::make('2019-01-01', '2019-02-01'),
-            Period::make('2019-04-01', '2019-06-01'),
+            Period::make('2019-04-01', '2019-06-01')
         );
 
         $overlap = $collection->overlapAny();
