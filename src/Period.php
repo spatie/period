@@ -361,7 +361,7 @@ class Period implements IteratorAggregate
         return $collection->overlapAll();
     }
 
-    public function diffSingle(Period $period): PeriodCollection
+    public function diff(Period $period): PeriodCollection
     {
         $this->ensurePrecisionMatches($period);
 
@@ -408,7 +408,7 @@ class Period implements IteratorAggregate
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function diff(Period ...$periods): PeriodCollection
+    public function diffMany(Period ...$periods): PeriodCollection
     {
         if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
             return PeriodCollection::make()
@@ -418,7 +418,7 @@ class Period implements IteratorAggregate
         $diffs = [];
 
         foreach ($periods as $period) {
-            $diffs[] = $this->diffSingle($period);
+            $diffs[] = $this->diff($period);
         }
 
         return PeriodCollection::make($this)->overlap(...$diffs);

@@ -123,7 +123,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return static::make();
         }
 
-        return $boundaries->diff(...$this);
+        return $boundaries->diffMany(...$this);
     }
 
     /**

@@ -193,7 +193,7 @@ class PrecisionTest extends TestCase
         $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE);
         $b = Period::make('2018-01-15 00:00:00', '2018-03-01 00:00:00', Precision::MINUTE);
 
-        [$diff] = $a->diff($b);
+        [$diff] = $a->diffMany($b);
 
         $this->assertEquals(Precision::MINUTE, $diff->getPrecisionMask());
     }

@@ -317,7 +317,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-10', '2018-01-30');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->diff($b);
 
         $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
         $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
@@ -337,7 +337,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-01', '2018-01-15');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->diff($b);
 
         $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
         $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
@@ -357,7 +357,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-02-10', '2018-02-15');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->diff($b);
 
         $this->assertTrue($diffs[0]->equals(Period::make('2018-01-10', '2018-01-15')));
         $this->assertTrue($diffs[1]->equals(Period::make('2018-02-10', '2018-02-15')));
@@ -382,7 +382,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-20', '2018-03-15');
 
-        $diff = $current->diff($a, $b, $c);
+        $diff = $current->diffMany($a, $b, $c);
 
         $this->assertCount(1, $diff);
 
@@ -406,7 +406,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a, $b);
+        $diff = $current->diffMany($a, $b);
 
         $this->assertCount(0, $diff);
     }
@@ -425,7 +425,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a);
+        $diff = $current->diffMany($a);
 
         $this->assertCount(1, $diff);
 
@@ -450,7 +450,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a, $b, $c);
+        $diff = $current->diffMany($a, $b, $c);
 
         $this->assertCount(2, $diff);
 
@@ -474,7 +474,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a, $b);
+        $diff = $current->diffMany($a, $b);
 
         $this->assertCount(3, $diff);
 
@@ -530,7 +530,7 @@ class PeriodTest extends TestCase
         $a = Period::make('2018-01-01', '2018-01-31');
         $b = Period::make('2018-01-10', '2018-01-15');
 
-        $diff = $a->diff($b);
+        $diff = $a->diffMany($b);
 
         $this->assertCount(2, $diff);
     }
@@ -559,7 +559,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2019-02-02', '2019-02-02');
 
-        $diff = $a->diff($b);
+        $diff = $a->diffMany($b);
 
         $this->assertEmpty($diff);
     }
