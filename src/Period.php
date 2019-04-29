@@ -454,6 +454,46 @@ class Period implements IteratorAggregate
         return $this->precisionMask;
     }
 
+    public function withChangedPrecision(int $targetPrecision): Period
+    {
+        // Example
+        // (2019-04-01, 2019-04-31) Precision::DAY
+        $newStart = $this->includedStart;
+
+        // becomes (2019-04-01, 2019-05-01)
+        $newEnd = $this->includedEnd->add($this->interval);
+
+        switch ($targetPrecision) {
+            case Precision::SECOND:
+                // becomes (2019-04-01 00:00:00, 2019-04-30 23:59:59)
+                $newEnd = $newEnd->sub(new DateInterval('PT1S'));
+                break;
+            case Precision::MINUTE:
+                // becomes (2019-04-01 00:00:00, 2019-04-30 23:59:00)
+                $newEnd = $newEnd->sub(new DateInterval('PT1M'));
+                break;
+            case Precision::HOUR:
+                // becomes (2019-04-01 00:00:00, 2019-04-30 23:00:00)
+                $newEnd = $newEnd->sub(new DateInterval('PT1H'));
+                break;
+            case Precision::DAY:
+                // becomes (2019-04-01, 2019-04-30)
+                $newEnd = $newEnd->sub(new DateInterval('P1D'));
+                break;
+            case Precision::MONTH:
+                // becomes (2019-04-01, 2019-04-01)
+                $newEnd = $newEnd->sub(new DateInterval('P1M'));
+                break;
+        }
+
+        return new static(
+            $newStart,
+            $newEnd,
+            $targetPrecision,
+            Boundaries::EXCLUDE_NONE
+        );
+    }
+
     public function getIterator()
     {
         return new DatePeriod(
