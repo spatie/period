@@ -583,7 +583,7 @@ class PeriodTest extends TestCase
      * @test
      * @dataProvider periodsWithChangedPrecisions
      */
-    public function its_precision_can_be_changed(int $expectedLength, int $targetPrecision, Period $period)
+    public function its_precision_can_be_changed(Period $period, int $targetPrecision, int $expectedLength)
     {
         $this->assertSame($expectedLength, $period->withChangedPrecision($targetPrecision)->length());
     }
@@ -592,79 +592,79 @@ class PeriodTest extends TestCase
     {
         return [
             '2 days in hours' => [
-                48,
-                Precision::HOUR,
                 Period::make('2019-04-01', '2019-04-02', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::HOUR,
+                48,
             ],
             '1 day in hours' => [
-                24,
-                Precision::HOUR,
                 Period::make('2019-04-01', '2019-04-02', Precision::DAY, Boundaries::EXCLUDE_END),
+                Precision::HOUR,
+                24,
             ],
             '1 week in hours' => [
-                168,
-                Precision::HOUR,
                 Period::make('2019-04-01', '2019-04-07', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::HOUR,
+                168,
             ],
             '30 days in april' => [
-                30,
-                Precision::DAY,
                 Period::make('2019-04-01', '2019-04-30', Precision::MONTH, Boundaries::EXCLUDE_NONE),
+                Precision::DAY,
+                30,
             ],
             '60 minutes in an hour' => [
-                60,
-                Precision::MINUTE,
                 Period::make('2019-04-01 00:00:00', '2019-04-01 01:00:00', Precision::HOUR, Boundaries::EXCLUDE_END),
+                Precision::MINUTE,
+                60,
             ],
             '60 seconds in a minute' => [
-                60,
-                Precision::SECOND,
                 Period::make('2019-04-01 00:00:00', '2019-04-01 00:01:00', Precision::MINUTE, Boundaries::EXCLUDE_END),
+                Precision::SECOND,
+                60,
             ],
             '60 minutes are 1 hour' => [
-                1,
-                Precision::HOUR,
                 Period::make('2019-04-01 00:00:00', '2019-04-01 01:00:00', Precision::HOUR, Boundaries::EXCLUDE_END),
+                Precision::HOUR,
+                1,
             ],
             'any amount of days in one month are 1 month' => [
-                1,
-                Precision::MONTH,
                 Period::make('2019-04-01', '2019-04-30', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::MONTH,
+                1,
             ],
             'any amount of days spanning two months are 2 months' => [
-                2,
-                Precision::MONTH,
                 Period::make('2019-04-01', '2019-05-31', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::MONTH,
+                2,
             ],
             'any amount of days in a year is a year' => [
-                1,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2019-05-31', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                1,
             ],
             'any amount of months in a year is a year' => [
-                1,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2019-05-31', Precision::MONTH, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                1,
             ],
             'any amount of hours in a year is a year' => [
-                1,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2019-05-31', Precision::HOUR, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                1,
             ],
             'any amount of hours spanning two years are two years' => [
-                2,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2020-05-31', Precision::HOUR, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                2,
             ],
             'any amount of days spanning two years are two years' => [
-                2,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2020-05-31', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                2,
             ],
             'any amount of months spanning two years are two years' => [
-                2,
-                Precision::YEAR,
                 Period::make('2019-04-01', '2020-05-31', Precision::MONTH, Boundaries::EXCLUDE_NONE),
+                Precision::YEAR,
+                2,
             ],
         ];
     }
