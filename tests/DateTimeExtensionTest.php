@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Spatie\Period\Tests;
 
@@ -30,7 +30,7 @@ class DateTimeExtensionTest extends TestCase
 }
 
 /**
- * In real life this would be Carbon or Chronos
+ * In real life this would be Carbon or Chronos.
  */
 class DateTimeExtension extends \DateTimeImmutable
 {
