@@ -86,8 +86,8 @@ class Period implements IteratorAggregate
         }
 
         return new static(
-            self::resolveDate($start, $format),
-            self::resolveDate($end, $format),
+            static::resolveDate($start, $format),
+            static::resolveDate($end, $format),
             $precisionMask,
             $boundaryExclusionMask
         );
@@ -461,7 +461,7 @@ class Period implements IteratorAggregate
             return DateTimeImmutable::createFromMutable($date);
         }
 
-        $format = self::resolveFormat($date, $format);
+        $format = static::resolveFormat($date, $format);
 
         if (! is_string($date)) {
             throw InvalidDate::forFormat($date, $format);
