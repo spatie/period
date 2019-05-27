@@ -2,7 +2,10 @@
 
 namespace Spatie\Period\Tests;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
+use Spatie\Period\Period;
 
 class DateTimeExtensionTest extends TestCase
 {
@@ -32,11 +35,11 @@ class DateTimeExtensionTest extends TestCase
 /**
  * In real life this would be Carbon or Chronos.
  */
-class DateTimeExtension extends \DateTimeImmutable
+class DateTimeExtension extends DateTimeImmutable
 {
-    public static function instance(\DateTimeImmutable $dt): self
+    public static function instance(DateTimeImmutable $dateTime): self
     {
-        return new static($dt->format('Y-m-d H:i:s.u'), $dt->getTimezone());
+        return new static($dateTime->format('Y-m-d H:i:s.u'), $dateTime->getTimezone());
     }
 }
 
@@ -46,10 +49,11 @@ class DateTimeExtension extends \DateTimeImmutable
  * @method DateTimeExtension getEnd
  * @method DateTimeExtension getIncludedEnd
  */
-class TestPeriod extends \Spatie\Period\Period
+class TestPeriod extends Period
 {
     /** @var DateTimeExtension */
     protected $start;
+
     /** @var DateTimeExtension */
     protected $end;
 
@@ -59,13 +63,13 @@ class TestPeriod extends \Spatie\Period\Period
     }
 
     /** @return DateTimeExtension */
-    protected static function resolveDate($date, ?string $format): \DateTimeImmutable
+    protected static function resolveDate($date, ?string $format): DateTimeImmutable
     {
         return DateTimeExtension::instance(parent::resolveDate($date, $format));
     }
 
     /** @return DateTimeExtension */
-    protected function roundDate(\DateTimeInterface $date, int $precision): \DateTimeImmutable
+    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeImmutable
     {
         return DateTimeExtension::instance(parent::roundDate($date, $precision));
     }
