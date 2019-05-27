@@ -4,8 +4,8 @@ namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
+use PHPUnit\Framework\TestCase;
 
 class DateTimeExtensionTest extends TestCase
 {
