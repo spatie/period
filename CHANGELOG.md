@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.4.3 - 2019-07-09
+
+- Improve iterator performance (#42)
+
 ## 1.4.2 - 2019-05-27
 
 - Allow extension of Period that forces extension of DateTimeImmutable (#38)
