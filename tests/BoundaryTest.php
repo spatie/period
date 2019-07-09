@@ -93,6 +93,9 @@ class BoundaryTest extends TestCase
     /** @test */
     public function length_with_random_values()
     {
+        $iteratorTime = 0;
+        $calcTime = 0;
+
         for ($i = 0; $i < 64; $i++) {
             $date = new DateTime('2000-01-01 00:00:00');
             $date->setTimestamp($date->getTimestamp() + mt_rand(0, 126144000));
@@ -100,12 +103,22 @@ class BoundaryTest extends TestCase
             $precisionIndex = mt_rand(0, 5);
             $precision = [Precision::YEAR, Precision::MONTH, Precision::DAY, Precision::HOUR, Precision::MINUTE, Precision::SECOND][$precisionIndex];
             $precisionFactor = [365 * 24 * 3600, 30 * 24 * 3600, 24 * 3600, 3600, 60, 1][$precisionIndex];
-            $date->setTimestamp($date->getTimestamp() + mt_rand(0, 200) * $precisionFactor);
+            $date->setTimestamp($date->getTimestamp() + (mt_rand(0, 1) ? mt_rand(3, 200) : mt_rand(1000, 2000)) * $precisionFactor);
             $bound = [Boundaries::EXCLUDE_NONE, Boundaries::EXCLUDE_START, Boundaries::EXCLUDE_END, Boundaries::EXCLUDE_ALL][mt_rand(0, 3)];
             $period = Period::make($start, $date->format('Y-m-d H:i:s'), $precision, $bound);
 
-            $this->assertEquals(iterator_count($period), $period->length());
+            $iteratorTime -= microtime(true);
+            $iteratorCount = iterator_count($period);
+            $iteratorTime += microtime(true);
+
+            $calcTime -= microtime(true);
+            $length = $period->length();
+            $calcTime += microtime(true);
+
+            $this->assertEquals($iteratorCount, $length);
         }
+
+        $this->assertLessThan($iteratorTime, $calcTime);
     }
 
     /** @test */
