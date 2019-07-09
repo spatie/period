@@ -140,7 +140,28 @@ class Period implements IteratorAggregate
 
     public function length(): int
     {
-        return iterator_count($this);
+        // Length of month and year are not fixed, so we can't predict the length without iterate
+        if (in_array($this->precisionMask, [Precision::MONTH, Precision::YEAR])) {
+            return iterator_count($this);
+        }
+
+        if (in_array($this->precisionMask, [Precision::HOUR, Precision::MINUTE, Precision::SECOND])) {
+            $length = abs($this->getIncludedEnd()->getTimestamp() - $this->getIncludedStart()->getTimestamp());
+
+            if ($this->precisionMask === Precision::SECOND) {
+                return $length + 1;
+            }
+
+            $length = floor($length / 60);
+
+            if ($this->precisionMask === Precision::MINUTE) {
+                return $length + 1;
+            }
+
+            return floor($length / 60) + 1;
+        }
+
+        return $this->getIncludedStart()->diff($this->getIncludedEnd())->days + 1;
     }
 
     public function duration(): PeriodDuration
