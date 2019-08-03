@@ -63,13 +63,13 @@ class TestPeriod extends Period
     }
 
     /** @return DateTimeExtension */
-    protected static function resolveDate($date, ?string $format): DateTimeImmutable
+    protected static function resolveDate($date, ?string $format): DateTimeInterface
     {
         return DateTimeExtension::instance(parent::resolveDate($date, $format));
     }
 
     /** @return DateTimeExtension */
-    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeImmutable
+    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeInterface
     {
         return DateTimeExtension::instance(parent::roundDate($date, $precision));
     }

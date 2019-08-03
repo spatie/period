@@ -14,19 +14,22 @@ use Spatie\Period\Exceptions\CannotComparePeriods;
 
 class Period implements IteratorAggregate
 {
-    /** @var \DateTimeImmutable */
+    /** @var \DateTimeInterface */
     protected $start;
 
-    /** @var \DateTimeImmutable */
+    /** @var \DateTimeInterface */
     protected $end;
 
     /** @var \DateInterval */
     protected $interval;
 
-    /** @var \DateTimeImmutable */
+    /** @var string */
+    protected $dateClass = DateTimeImmutable::class;
+
+    /** @var \DateTimeInterface */
     private $includedStart;
 
-    /** @var \DateTimeImmutable */
+    /** @var \DateTimeInterface */
     private $includedEnd;
 
     /** @var int */
@@ -39,8 +42,8 @@ class Period implements IteratorAggregate
     private $duration;
 
     public function __construct(
-        DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        DateTimeInterface $start,
+        DateTimeInterface $end,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null
     ) {
@@ -118,22 +121,22 @@ class Period implements IteratorAggregate
         return Boundaries::EXCLUDE_END & $this->boundaryExclusionMask;
     }
 
-    public function getStart(): DateTimeImmutable
+    public function getStart(): DateTimeInterface
     {
         return $this->start;
     }
 
-    public function getIncludedStart(): DateTimeImmutable
+    public function getIncludedStart(): DateTimeInterface
     {
         return $this->includedStart;
     }
 
-    public function getEnd(): DateTimeImmutable
+    public function getEnd(): DateTimeInterface
     {
         return $this->end;
     }
 
-    public function getIncludedEnd(): DateTimeImmutable
+    public function getIncludedEnd(): DateTimeInterface
     {
         return $this->includedEnd;
     }
@@ -484,14 +487,10 @@ class Period implements IteratorAggregate
         );
     }
 
-    protected static function resolveDate($date, ?string $format): DateTimeImmutable
+    protected static function resolveDate($date, ?string $format): DateTimeInterface
     {
-        if ($date instanceof DateTimeImmutable) {
+        if ($date instanceof DateTimeInterface) {
             return $date;
-        }
-
-        if ($date instanceof DateTime) {
-            return DateTimeImmutable::createFromMutable($date);
         }
 
         $format = static::resolveFormat($date, $format);
@@ -526,7 +525,7 @@ class Period implements IteratorAggregate
         return 'Y-m-d';
     }
 
-    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeImmutable
+    protected function roundDate(DateTimeInterface $date, int $precision): DateTimeInterface
     {
         [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
 
@@ -536,7 +535,7 @@ class Period implements IteratorAggregate
         $minute = (Precision::MINUTE & $precision) === Precision::MINUTE ? $minute : '00';
         $second = (Precision::SECOND & $precision) === Precision::SECOND ? $second : '00';
 
-        return DateTimeImmutable::createFromFormat(
+        return $this->dateClass::createFromFormat(
             'Y m d H i s',
             implode(' ', [$year, $month, $day, $hour, $minute, $second])
         );
