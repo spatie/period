@@ -2,6 +2,7 @@
 
 namespace Spatie\Period\Tests;
 
+use DateTime;
 use Carbon\Carbon;
 use DateTimeImmutable;
 use Spatie\Period\Period;
@@ -577,5 +578,42 @@ class PeriodTest extends TestCase
             [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)],
             [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
         ];
+    }
+
+    /** @test */
+    public function it_allows_to_choose_date_time_class()
+    {
+        $a = Period::make('2019-02-01', '2019-02-01');
+
+        $this->assertSame(DateTimeImmutable::class, $a->getDateClass());
+        $this->assertInstanceOf(DateTimeImmutable::class, $a->getStart());
+
+        $a = Period::make('2019-02-01', '2019-02-01', null, null, null, DateTime::class);
+
+        $this->assertSame(DateTime::class, $a->getDateClass());
+        $this->assertInstanceOf(DateTime::class, $a->getStart());
+
+        $a = Period::make('2019-02-01', '2019-02-01', null, null, null, DateTimeImmutable::class);
+
+        $this->assertSame(DateTimeImmutable::class, $a->getDateClass());
+        $this->assertInstanceOf(DateTimeImmutable::class, $a->getStart());
+
+        $a = Period::make('2019-02-01', '2019-02-01', null, null, null, DateTimeSubClass::class);
+
+        $this->assertSame(DateTimeSubClass::class, $a->getDateClass());
+        $this->assertInstanceOf(DateTimeSubClass::class, $a->getStart());
+        $this->assertInstanceOf(DateTimeSubClass::class, $a->getIncludedEnd());
+        $this->assertSame('2019-02-01 00:00:00.000000', $a->getStart()->format('Y-m-d H:i:s.u'));
+    }
+}
+
+/**
+ * In real life this would be Carbon or Chronos.
+ */
+class DateTimeSubClass extends DateTimeImmutable
+{
+    public static function instance(DateTimeImmutable $dateTime): self
+    {
+        return new static($dateTime->format('Y-m-d H:i:s.u'), $dateTime->getTimezone());
     }
 }

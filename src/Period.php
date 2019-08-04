@@ -2,7 +2,6 @@
 
 namespace Spatie\Period;
 
-use DateTime;
 use DatePeriod;
 use DateInterval;
 use DateTimeImmutable;
@@ -45,10 +44,15 @@ class Period implements IteratorAggregate
         DateTimeInterface $start,
         DateTimeInterface $end,
         ?int $precisionMask = null,
-        ?int $boundaryExclusionMask = null
+        ?int $boundaryExclusionMask = null,
+        ?string $dateClass = null
     ) {
         if ($start > $end) {
             throw InvalidPeriod::endBeforeStart($start, $end);
+        }
+
+        if ($dateClass) {
+            $this->dateClass = $dateClass;
         }
 
         $this->boundaryExclusionMask = $boundaryExclusionMask ?? Boundaries::EXCLUDE_NONE;
@@ -83,7 +87,8 @@ class Period implements IteratorAggregate
         $end,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null,
-        ?string $format = null
+        ?string $format = null,
+        ?string $dateClass = null
     ): Period {
         if ($start === null) {
             throw InvalidDate::cannotBeNull('Start date');
@@ -97,8 +102,14 @@ class Period implements IteratorAggregate
             static::resolveDate($start, $format),
             static::resolveDate($end, $format),
             $precisionMask,
-            $boundaryExclusionMask
+            $boundaryExclusionMask,
+            $dateClass
         );
+    }
+
+    public function getDateClass(): string
+    {
+        return $this->dateClass;
     }
 
     public function startIncluded(): bool
@@ -272,30 +283,17 @@ class Period implements IteratorAggregate
 
     public function contains(DateTimeInterface $date): bool
     {
-        if ($this->roundDate($date, $this->precisionMask) < $this->getIncludedStart()) {
-            return false;
-        }
+        $roundedDate = $this->roundDate($date, $this->precisionMask);
 
-        if ($this->roundDate($date, $this->precisionMask) > $this->getIncludedEnd()) {
-            return false;
-        }
-
-        return true;
+        return $roundedDate >= $this->getIncludedStart() && $roundedDate <= $this->getIncludedEnd();
     }
 
     public function equals(Period $period): bool
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($period->getIncludedStart()->getTimestamp() !== $this->getIncludedStart()->getTimestamp()) {
-            return false;
-        }
-
-        if ($period->getIncludedEnd()->getTimestamp() !== $this->getIncludedEnd()->getTimestamp()) {
-            return false;
-        }
-
-        return true;
+        return $period->getIncludedStart()->getTimestamp() === $this->getIncludedStart()->getTimestamp() &&
+            $period->getIncludedEnd()->getTimestamp() === $this->getIncludedEnd()->getTimestamp();
     }
 
     /**
@@ -535,10 +533,12 @@ class Period implements IteratorAggregate
         $minute = (Precision::MINUTE & $precision) === Precision::MINUTE ? $minute : '00';
         $second = (Precision::SECOND & $precision) === Precision::SECOND ? $second : '00';
 
-        return $this->dateClass::createFromFormat(
-            'Y m d H i s',
-            implode(' ', [$year, $month, $day, $hour, $minute, $second])
-        );
+        $dateClass = $this->getDateClass();
+
+        return new $dateClass(sprintf(
+            '%d-%d-%d %d:%d:%d',
+            $year, $month, $day, $hour, $minute, $second
+        ), $date->getTimezone());
     }
 
     protected function createDateInterval(int $precision): DateInterval
