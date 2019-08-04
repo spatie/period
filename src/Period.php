@@ -269,15 +269,9 @@ class Period implements IteratorAggregate
 
     public function contains(DateTimeInterface $date): bool
     {
-        if ($this->roundDate($date, $this->precisionMask) < $this->getIncludedStart()) {
-            return false;
-        }
+        $roundedDate = $this->roundDate($date, $this->precisionMask);
 
-        if ($this->roundDate($date, $this->precisionMask) > $this->getIncludedEnd()) {
-            return false;
-        }
-
-        return true;
+        return $roundedDate >= $this->getIncludedStart() && $roundedDate <= $this->getIncludedEnd();
     }
 
     public function equals(Period $period): bool
