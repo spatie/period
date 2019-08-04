@@ -255,15 +255,8 @@ class Period implements IteratorAggregate
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($period->getIncludedStart()->getTimestamp() !== $this->getIncludedStart()->getTimestamp()) {
-            return false;
-        }
-
-        if ($period->getIncludedEnd()->getTimestamp() !== $this->getIncludedEnd()->getTimestamp()) {
-            return false;
-        }
-
-        return true;
+        return $period->getIncludedStart()->getTimestamp() === $this->getIncludedStart()->getTimestamp() &&
+            $period->getIncludedEnd()->getTimestamp() === $this->getIncludedEnd()->getTimestamp();
     }
 
     /**
