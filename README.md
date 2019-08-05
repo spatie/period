@@ -11,7 +11,10 @@ You can calculate the overlaps and differences between n-amount of periods,
 as well as some more basic comparisons between two periods.
 
 Periods can be constructed from any type of `DateTime` implementation, 
-making this package compatible with custom `DateTime` implementations like Carbon.
+making this package compatible with custom `DateTime` implementations like
+[Carbon](https://carbon.nesbot.com)
+(see [cmixin/enhanced-period](https://github.com/kylekatarnls/enhanced-period) to
+convert diretly from and to CarbonPeriod).
 
 Periods are always immutable, there's never the worry about your input dates being changed. 
 
