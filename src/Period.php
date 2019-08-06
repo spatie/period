@@ -93,6 +93,16 @@ class Period implements IteratorAggregate
         );
     }
 
+    public static function fromDatePeriod(DatePeriod $period): Period
+    {
+        $start = $period->getStartDate();
+        $end = $period->getEndDate();
+        $precision = static::resolvePrecision($period->getDateInterval());
+        $boundaries = $period->include_start_date ? Boundaries::EXCLUDE_NONE : Boundaries::EXCLUDE_START;
+
+        return static::make($start, $end, $precision, $boundaries);
+    }
+
     public function startIncluded(): bool
     {
         return ! $this->startExcluded();
@@ -442,6 +452,15 @@ class Period implements IteratorAggregate
         return $this->precisionMask;
     }
 
+    public function asDatePeriod(): DatePeriod
+    {
+        return new DatePeriod(
+            $this->getIncludedStart(),
+            $this->interval,
+            $this->getIncludedEnd()
+        );
+    }
+
     public function getIterator()
     {
         return new DatePeriod(
@@ -507,6 +526,26 @@ class Period implements IteratorAggregate
             'Y m d H i s',
             implode(' ', [$year, $month, $day, $hour, $minute, $second])
         );
+    }
+
+    protected static function resolvePrecision(DateInterval $interval): ?int
+    {
+        $map = [
+            's' => Precision::SECOND,
+            'i' => Precision::MINUTE,
+            'h' => Precision::HOUR,
+            'd' => Precision::DAY,
+            'm' => Precision::MONTH,
+            'y' => Precision::YEAR,
+        ];
+
+        foreach ($map as $property => $precision) {
+            if ($interval->{$property} !== 0) {
+                return $precision;
+            }
+        }
+
+        return Precision::DAY;
     }
 
     protected function createDateInterval(int $precision): DateInterval

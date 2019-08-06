@@ -56,6 +56,12 @@ $period = Period::make(
 )
 ```
 
+The static `::fromDatePeriod` constructor accepts `DatePeriod` objects:
+
+```php
+$period = Period::fromDatePeriod(DatePeriod $nativeDatePeriod)
+``` 
+
 #### Length and boundaries
 
 ```php

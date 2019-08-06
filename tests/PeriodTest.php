@@ -2,8 +2,12 @@
 
 namespace Spatie\Period\Tests;
 
+use DateTime;
+use DatePeriod;
+use DateInterval;
 use Carbon\Carbon;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
 use Spatie\Period\Boundaries;
@@ -535,6 +539,34 @@ class PeriodTest extends TestCase
         $this->assertEmpty($diff);
     }
 
+    /**
+     * @test
+     * @dataProvider fromNativeDatePeriods
+     */
+    public function it_can_be_created_from_a_native_date_period(DatePeriod $period, DateTimeInterface $expectedStart, DateTimeInterface $expectedEnd, int $expectedPrecision)
+    {
+        $check = Period::fromDatePeriod($period);
+
+        $this->assertEquals($expectedStart, $check->getIncludedStart());
+        $this->assertEquals($expectedEnd, $check->getIncludedEnd());
+        $this->assertEquals($expectedPrecision, $check->getPrecisionMask());
+    }
+
+    /**
+     * @test
+     * @dataProvider toNativeDatePeriods
+     */
+    public function it_converts_to_a_native_date_period(Period $period, $expectedStart, $expectedEnd, $expectedInterval)
+    {
+        $check = $period->asDatePeriod();
+
+        $this->assertEquals($expectedStart, $check->getStartDate());
+        $this->assertEquals($expectedEnd, $check->getEndDate());
+
+        $now = new DateTimeImmutable();
+        $this->assertEquals($now->add($expectedInterval), $now->add($check->getDateInterval()));
+    }
+
     public function expectedPeriodLengths()
     {
         return [
@@ -547,6 +579,74 @@ class PeriodTest extends TestCase
 
             [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)],
             [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
+        ];
+    }
+
+    public function fromNativeDatePeriods()
+    {
+        return [
+            'included start' => [
+                new DatePeriod(new DateTime('2018-01-01'), new DateInterval('P1D'), new DateTime('2018-01-07')),
+                new DateTime('2018-01-01'), new DateTime('2018-01-07'), Precision::DAY,
+            ],
+            'excluded start' => [
+                new DatePeriod(new DateTime('2018-01-01'), new DateInterval('P1D'), new DateTime('2018-01-07'), DatePeriod::EXCLUDE_START_DATE),
+                new DateTime('2018-01-02'), new DateTime('2018-01-07'), Precision::DAY,
+            ],
+            'seconds' => [
+                new DatePeriod(new DateTime('2018-01-01 00:00:00.12345'), new DateInterval('PT1S'), new DateTime('2018-01-01 00:00:59.54321')),
+                new DateTime('2018-01-01 00:00:00'), new DateTime('2018-01-01 00:00:59'), Precision::SECOND,
+            ],
+            'minutes' => [
+                new DatePeriod(new DateTime('2018-01-01 00:00:12'), new DateInterval('PT1M'), new DateTime('2018-01-01 00:59:34')),
+                new DateTime('2018-01-01 00:00'), new DateTime('2018-01-01 00:59'), Precision::MINUTE,
+            ],
+            'hours' => [
+                new DatePeriod(new DateTime('2018-01-01 00:12:34'), new DateInterval('PT1H'), new DateTime('2018-01-01 23:12:34')),
+                new DateTime('2018-01-01 00:00'), new DateTime('2018-01-01 23:00'), Precision::HOUR,
+            ],
+            'days' => [
+                new DatePeriod(new DateTime('2018-01-01 12:34:56'), new DateInterval('P1D'), new DateTime('2018-01-07 12:34:56')),
+                new DateTime('2018-01-01'), new DateTime('2018-01-07'), Precision::DAY,
+            ],
+            'months' => [
+                new DatePeriod(new DateTime('2018-01-12 12:34:56'), new DateInterval('P1M'), new DateTime('2018-12-12 12:34:56')),
+                new DateTime('2018-01-01'), new DateTime('2018-12-01'), Precision::MONTH,
+            ],
+            'years' => [
+                new DatePeriod(new DateTime('2018-03-12 12:34:56'), new DateInterval('P1Y'), new DateTime('2028-07-12 12:34:56')),
+                new DateTime('2018-01-01'), new DateTime('2028-01-01'), Precision::YEAR,
+            ],
+            'lowest_denominator' => [
+                new DatePeriod(new DateTime('2018-01-01'), new DateInterval('P13DT37M'), new DateTime('2018-01-07')),
+                new DateTime('2018-01-01'), new DateTime('2018-01-07'), Precision::MINUTE,
+            ],
+            'default' => [
+                new DatePeriod(new DateTime('2018-01-01'), new DateInterval('PT0S'), new DateTime('2018-01-07')),
+                new DateTime('2018-01-01'), new DateTime('2018-01-07'), Precision::DAY,
+            ],
+        ];
+    }
+
+    public function toNativeDatePeriods()
+    {
+        return [
+            'without exlusions' => [
+                Period::make('2018-01-01', '2018-01-07', Precision::DAY, Boundaries::EXCLUDE_NONE),
+                new DateTime('2018-01-01'), new DateTime('2018-01-07'), new DateInterval('P1D'),
+            ],
+            'with excluded start' => [
+                Period::make('2018-01-01', '2018-01-07', Precision::DAY, Boundaries::EXCLUDE_START),
+                new DateTime('2018-01-02'), new DateTime('2018-01-07'), new DateInterval('P1D'),
+            ],
+            'with excluded end' => [
+                Period::make('2018-01-01', '2018-01-07', Precision::DAY, Boundaries::EXCLUDE_END),
+                new DateTime('2018-01-01'), new DateTime('2018-01-06'), new DateInterval('P1D'),
+            ],
+            'with start and end excluded' => [
+                Period::make('2018-01-01', '2018-01-07', Precision::DAY, Boundaries::EXCLUDE_ALL),
+                new DateTime('2018-01-02'), new DateTime('2018-01-06'), new DateInterval('P1D'),
+            ],
         ];
     }
 }
