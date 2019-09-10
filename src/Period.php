@@ -227,7 +227,6 @@ class Period implements IteratorAggregate
                 return true;
             }
         }
-
     }
 
     /**
