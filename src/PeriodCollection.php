@@ -24,20 +24,27 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return new static(...$periods);
     }
 
+    /**
+     * PeriodCollection constructor.
+     * @param Period ...$periods
+     */
     public function __construct(Period ...$periods)
     {
         $this->periods = $periods;
     }
 
+    /**
+     * @return Period
+     */
     public function current(): Period
     {
         return $this->periods[$this->position];
     }
 
     /**
-     * @param \Spatie\Period\PeriodCollection $periodCollection
-     *
-     * @return static
+     * @param PeriodCollection $periodCollection
+     * @return PeriodCollection
+     * @throws Exceptions\CannotComparePeriods
      */
     public function overlapSingle(PeriodCollection $periodCollection): PeriodCollection
     {
@@ -57,9 +64,9 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * @param \Spatie\Period\PeriodCollection ...$periodCollections
-     *
-     * @return static
+     * @param PeriodCollection ...$periodCollections
+     * @return PeriodCollection
+     * @throws Exceptions\CannotComparePeriods
      */
     public function overlap(PeriodCollection ...$periodCollections): PeriodCollection
     {
@@ -72,6 +79,10 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $overlap;
     }
 
+    /**
+     * @return Period|null
+     * @throws \Exception
+     */
     public function boundaries(): ?Period
     {
         $start = null;
@@ -102,7 +113,8 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * @return static
+     * @return PeriodCollection
+     * @throws Exceptions\CannotComparePeriods
      */
     public function gaps(): PeriodCollection
     {
@@ -116,9 +128,9 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * @param \Spatie\Period\Period $intersection
-     *
-     * @return static
+     * @param Period $intersection
+     * @return PeriodCollection
+     * @throws Exceptions\CannotComparePeriods
      */
     public function intersect(Period $intersection): PeriodCollection
     {
@@ -138,9 +150,8 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     }
 
     /**
-     * @param \Spatie\Period\Period ...$periods
-     *
-     * @return static
+     * @param Period ...$periods
+     * @return PeriodCollection
      */
     public function add(Period ...$periods): PeriodCollection
     {
@@ -186,6 +197,9 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $carry;
     }
 
+    /**
+     * @return bool
+     */
     public function isEmpty(): bool
     {
         return count($this->periods) === 0;
