@@ -45,11 +45,11 @@ class Period implements IteratorAggregate
      */
     public function __construct(
         DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        ?DateTimeImmutable $end,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null
     ) {
-        if ($start > $end) {
+        if ($start > $end && null != $end) {
             throw InvalidPeriod::endBeforeStart($start, $end);
         }
 
@@ -57,7 +57,12 @@ class Period implements IteratorAggregate
         $this->precisionMask = $precisionMask ?? Precision::DAY;
 
         $this->start = $this->roundDate($start, $this->precisionMask);
-        $this->end = $this->roundDate($end, $this->precisionMask);
+        if (null != $end) {
+            $this->end = $this->roundDate($end, $this->precisionMask);
+        } else {
+            $this->end = null;
+        }
+
         $this->interval = $this->createDateInterval($this->precisionMask);
 
         $this->includedStart = $this->startIncluded()
@@ -89,13 +94,13 @@ class Period implements IteratorAggregate
             throw InvalidDate::cannotBeNull('Start date');
         }
 
-        if ($end === null) {
-            throw InvalidDate::cannotBeNull('End date');
-        }
+//        if ($end === null) {
+//            throw InvalidDate::cannotBeNull('End date');
+//        }
 
         return new static(
             static::resolveDate($start, $format),
-            static::resolveDate($end, $format),
+            $end ? static::resolveDate($end, $format) : null,
             $precisionMask,
             $boundaryExclusionMask
         );
@@ -184,15 +189,45 @@ class Period implements IteratorAggregate
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($this->getIncludedStart() > $period->getIncludedEnd()) {
-            return false;
+        // if all Period have end
+        if (null != $this->end && null != $period->end) {
+            if ($this->getIncludedStart() > $period->getIncludedEnd()) {
+                return false;
+            }
+
+            if ($period->getIncludedStart() > $this->getIncludedEnd()) {
+                return false;
+            }
+
+            return true;
+
+            // if one of the Periods does not have end
+        } else {
+
+            // if this Period end have null and another Period end don`t
+            if (null == $this->end && null != $period->end) {
+                if ($this->getIncludedStart() > $period->getIncludedEnd()) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            // if this Period end don`t null and another Period end have null
+            if (null != $this->end && null == $period->end) {
+                if ($period->getIncludedStart() > $this->getIncludedEnd()) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            // if above Period end have null
+            if (null == $this->end && null == $period->end) {
+                return true;
+            }
         }
 
-        if ($period->getIncludedStart() > $this->getIncludedEnd()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

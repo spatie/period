@@ -127,6 +127,25 @@ class PrecisionTest extends TestCase
     }
 
     /** @test */
+    public function overlaps_with_open_end()
+    {
+        $a = Period::make('2018-01-01', '2018-01-02', Precision::DAY);
+        $b = Period::make('2018-01-03', null, Precision::DAY);
+        $this->assertFalse($a->overlapsWith($b));
+
+        $c = Period::make('2019-01-01', '2019-01-02', Precision::DAY);
+        $d = Period::make('2019-01-01', null, Precision::DAY);
+        $this->assertTrue($d->overlapsWith($c));
+
+        $a = Period::make('2018-01-01 00:00:15', '2018-01-01 00:00:15', Precision::SECOND);
+        $b = Period::make('2018-01-01 00:00:15', null, Precision::SECOND);
+        $c = Period::make('2018-01-01 00:00:16', null, Precision::SECOND);
+
+        $this->assertTrue($a->overlapsWith($b));
+        $this->assertFalse($a->overlapsWith($c));
+    }
+
+    /** @test */
     public function precision_is_kept_when_comparing_with_the_ranges_start()
     {
         $a = Period::make('2018-01-01 11:11:11', '2018-01-31', Precision::DAY);
