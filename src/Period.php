@@ -201,7 +201,7 @@ class Period implements IteratorAggregate
 
             return true;
 
-            // if one of the Periods does not have end
+        // if one of the Periods does not have end
         } else {
 
             // if this Period end have null and another Period end don`t
