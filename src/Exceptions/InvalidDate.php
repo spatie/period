@@ -11,6 +11,11 @@ class InvalidDate extends InvalidArgumentException
         return new static("{$parameter} cannot be null");
     }
 
+    public static function shouldBeNull(string $parameter): InvalidDate
+    {
+        return new static("{$parameter} should be null");
+    }
+
     public static function forFormat(string $date, ?string $format): InvalidDate
     {
         $message = "Could not construct a date from `{$date}`";

@@ -12,7 +12,7 @@ use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
 use Spatie\Period\Exceptions\CannotComparePeriods;
 
-class Period implements IteratorAggregate, PeriodInterface
+class EndlessPeriod implements IteratorAggregate, PeriodInterface
 {
     /** @var \DateTimeImmutable */
     protected $start;
@@ -37,19 +37,19 @@ class Period implements IteratorAggregate, PeriodInterface
 
     public function __construct(
         DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        ?DateTimeImmutable $end,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null
     ) {
-        if ($start > $end) {
-            throw InvalidPeriod::endBeforeStart($start, $end);
-        }
+//        if ($start > $end) {
+//            throw InvalidPeriod::endBeforeStart($start, $end);
+//        }
 
         $this->boundaryExclusionMask = $boundaryExclusionMask ?? Boundaries::EXCLUDE_NONE;
         $this->precisionMask = $precisionMask ?? Precision::DAY;
 
         $this->start = $this->roundDate($start, $this->precisionMask);
-        $this->end = $this->roundDate($end, $this->precisionMask);
+        $this->end = null;//$this->roundDate($end, $this->precisionMask);
         $this->interval = $this->createDateInterval($this->precisionMask);
 
         $this->includedStart = $this->startIncluded()
@@ -72,7 +72,7 @@ class Period implements IteratorAggregate, PeriodInterface
      */
     public static function make(
         $start,
-        $end,
+        $end = null,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null,
         ?string $format = null
@@ -81,13 +81,13 @@ class Period implements IteratorAggregate, PeriodInterface
             throw InvalidDate::cannotBeNull('Start date');
         }
 
-        if ($end === null) {
-            throw InvalidDate::cannotBeNull('End date');
-        }
+//        if ($end !== null) {
+//            throw InvalidDate::shouldBeNull('End date');
+//        }
 
         return new static(
             static::resolveDate($start, $format),
-            static::resolveDate($end, $format),
+            null,
             $precisionMask,
             $boundaryExclusionMask
         );
@@ -128,16 +128,14 @@ class Period implements IteratorAggregate, PeriodInterface
         return $this->end;
     }
 
-    public function getIncludedEnd(): DateTimeImmutable
+    public function getIncludedEnd(): ?DateTimeImmutable
     {
         return $this->includedEnd;
     }
 
-    public function length(): int
+    public function length(): ?int
     {
-        $length = $this->getIncludedStart()->diff($this->getIncludedEnd())->days + 1;
-
-        return $length;
+        return null;
     }
 
     public function overlapsWith(PeriodInterface $period): bool
@@ -159,7 +157,7 @@ class Period implements IteratorAggregate, PeriodInterface
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
+        if ($period instanceof EndlessPeriod) {
             return true;
         }
 
@@ -193,9 +191,9 @@ class Period implements IteratorAggregate, PeriodInterface
     public function startsAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedStart()->getTimestamp() === $this->roundDate(
-            $date,
-            $this->precisionMask
-        )->getTimestamp();
+                $date,
+                $this->precisionMask
+            )->getTimestamp();
     }
 
     public function endsBefore(DateTimeInterface $date): bool
