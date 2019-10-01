@@ -244,7 +244,7 @@ class PeriodTest extends TestCase
      *
      * GAP
      */
-    public function if_will_determine_that_there_is_no_gap_if_the_periods_only_touch_but_do_not_overlap()
+    public function it_will_determine_that_there_is_no_gap_if_the_periods_only_touch_but_do_not_overlap()
     {
         $a = Period::make('2018-01-15', '2018-01-31');
 
@@ -263,7 +263,7 @@ class PeriodTest extends TestCase
      *
      * GAP
      */
-    public function if_will_determine_that_there_is_no_gap_when_periods_overlap()
+    public function it_will_determine_that_there_is_no_gap_when_periods_overlap()
     {
         $a = Period::make('2018-01-15', '2018-01-31');
 
@@ -282,7 +282,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [==]         [==]
      */
-    public function if_can_create_a_diff_for_two_periods()
+    public function it_can_create_a_diff_for_two_periods()
     {
         $a = Period::make('2018-01-01', '2018-01-15');
 
@@ -302,7 +302,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [==]          [==]
      */
-    public function if_can_still_create_a_diff_for_two_periods_even_if_there_are_not_ordered()
+    public function it_can_still_create_a_diff_for_two_periods_even_if_there_are_not_ordered()
     {
         $a = Period::make('2018-01-10', '2018-01-30');
 
@@ -413,7 +413,7 @@ class PeriodTest extends TestCase
      *
      * DIFF             [=]      [====]
      */
-    public function if_can_determine_multiple_diffs()
+    public function it_can_determine_multiple_diffs()
     {
         $a = Period::make('2018-01-05', '2018-01-10');
         $b = Period::make('2018-01-15', '2018-03-01');
@@ -438,7 +438,7 @@ class PeriodTest extends TestCase
      *
      * DIFF     [======]      [====]      [===]
      */
-    public function if_can_determine_multiple_diffs_for_sure()
+    public function it_can_determine_multiple_diffs_for_sure()
     {
         $a = Period::make('2018-01-15', '2018-01-20');
         $b = Period::make('2018-01-05', '2018-01-10');
@@ -476,7 +476,7 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function if_will_use_the_start_of_day_when_passing_strings_to_a_period()
+    public function it_will_use_the_start_of_day_when_passing_strings_to_a_period()
     {
         $period = Period::make('2018-01-01', '2018-01-02');
 
