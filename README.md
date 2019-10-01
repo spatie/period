@@ -135,7 +135,7 @@ $periodCollection->gaps(): PeriodCollection
 ### Comparing periods
 
 **Overlaps with any other period**: 
-this method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
+This method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
 
 ```php
 /*
@@ -157,7 +157,7 @@ $overlaps = $current->overlap($a, $b, $c);
 ```
 
 **Overlap with all periods**: 
-this method only returns one period where all periods overlap.
+This method only returns one period where all periods overlap.
 
 ```php
 /*
@@ -176,7 +176,7 @@ $overlap = $a->overlapAll($b, $c);
 ```
 
 **Diff between multiple periods**: 
-this method returns a `PeriodCollection` multiple `Period` objects 
+This method returns a `PeriodCollection` multiple `Period` objects 
 representing the diffs between several periods and one.
 
 ```php
@@ -198,7 +198,7 @@ $current = Period::make('2018-01-01', '2018-01-31');
 $diff = $current->diff($a, $b, $c);
 ```
 
-**Overlaps with**: this method returns a boolean indicating of two periods overlap or not.
+**Overlaps with**: This method returns a boolean indicating of two periods overlap or not.
 
 ```php
 /*
@@ -212,7 +212,7 @@ $b = Period::make('2018-01-10', '2018-02-15');
 $overlap = $a->overlapsWith($b); // true
 ```
 
-**Touches with**: this method determines if two periods touch each other.
+**Touches with**: This method determines if two periods touch each other.
 
 ```php
 /*
@@ -226,7 +226,7 @@ $b = Period::make('2018-02-01', '2018-02-15');
 $overlap = $a->touchesWith($b); // true
 ```
 
-**Gap**: returns the gap between two periods. 
+**Gap**: Returns the gap between two periods. 
 If no gap exists, `null` is returned. 
 
 ```php
@@ -241,7 +241,7 @@ $b = Period::make('2018-02-05', '2018-02-15');
 $overlap = $a->gap($b); // Period('2018-02-01', '2018-02-04')
 ```
 
-**Boundaries of a collection**: get one period representing the boundaries of a collection.
+**Boundaries of a collection**: Get one period representing the boundaries of a collection.
 
 ```php
 /*
@@ -263,7 +263,7 @@ $collection = new PeriodCollection(
 $boundaries = $collection->boundaries();
 ```
 
-**Gaps of a collection**: get all the gaps of a collection.
+**Gaps of a collection**: Get all the gaps of a collection.
 
 ```php
 /*
@@ -285,7 +285,7 @@ $collection = new PeriodCollection(
 $gaps = $collection->gaps();
 ```
 
-**Overlap multiple collections**: returns the overlap between collections. 
+**Overlap multiple collections**: Returns the overlap between collections. 
 This means an AND operation between collections, and an OR operation within the same collection.
 
 ```php
@@ -349,7 +349,7 @@ $newCollection = new PeriodCollection(...$otherCollection);
 ### Precision
 
 Date precision is of utmost importance if you want to reliably compare two periods.
-The the following example:
+The following example:
 
 > Given two periods: `[2018-01-01, 2018-01-15]` and `[2018-01-15, 2018-01-31]`; do they overlap?
 
