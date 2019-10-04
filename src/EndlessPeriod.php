@@ -33,7 +33,7 @@ class EndlessPeriod implements IteratorAggregate, PeriodInterface
     private $boundaryExclusionMask;
 
     /** @var int */
-    private $precisionMask;
+    public $precisionMask;
 
     public function __construct(
         DateTimeImmutable $start,
@@ -49,7 +49,7 @@ class EndlessPeriod implements IteratorAggregate, PeriodInterface
         $this->precisionMask = $precisionMask ?? Precision::DAY;
 
         $this->start = $this->roundDate($start, $this->precisionMask);
-        $this->end = null;//$this->roundDate($end, $this->precisionMask);
+        $this->end = $end ? $this->roundDate($end, $this->precisionMask) : null;
         $this->interval = $this->createDateInterval($this->precisionMask);
 
         $this->includedStart = $this->startIncluded()
@@ -87,7 +87,7 @@ class EndlessPeriod implements IteratorAggregate, PeriodInterface
 
         return new static(
             static::resolveDate($start, $format),
-            null,
+            $end ? static::resolveDate($end, $format) : null,
             $precisionMask,
             $boundaryExclusionMask
         );
@@ -157,8 +157,11 @@ class EndlessPeriod implements IteratorAggregate, PeriodInterface
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($period instanceof EndlessPeriod) {
+        if ($period instanceof EndlessPeriod
+            && (null == $this->getIncludedEnd() && null == $period->getIncludedEnd())) {
             return true;
+        } else {
+            return false;
         }
 
         if ($this->getIncludedStart()->diff($period->getIncludedEnd())->days <= 1) {

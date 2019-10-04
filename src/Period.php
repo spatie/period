@@ -33,7 +33,7 @@ class Period implements IteratorAggregate, PeriodInterface
     private $boundaryExclusionMask;
 
     /** @var int */
-    private $precisionMask;
+    public $precisionMask;
 
     public function __construct(
         DateTimeImmutable $start,
@@ -158,6 +158,10 @@ class Period implements IteratorAggregate, PeriodInterface
     public function touchesWith(PeriodInterface $period): bool
     {
         $this->ensurePrecisionMatches($period);
+
+        if ($period instanceof EndlessPeriod && $this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
+
+        }
 
         if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
             return true;

@@ -57,7 +57,7 @@ class TestPeriod extends Period
     /** @var DateTimeExtension */
     protected $end;
 
-    public function __construct(DateTimeExtension $start, DateTimeExtension $end, ?int $precisionMask = null, ?int $boundaryExclusionMask = null)
+    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end, ?int $precisionMask = null, ?int $boundaryExclusionMask = null)
     {
         parent::__construct($start, $end, $precisionMask, $boundaryExclusionMask);
     }

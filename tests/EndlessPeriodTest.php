@@ -33,12 +33,12 @@ class EndlessPeriodTest extends TestCase
     public function it_can_determine_if_two_periods_touch_each_other()
     {
         $this->assertTrue(
-            EndlessPeriod::make('2018-01-01')
+            Period::make('2018-01-01', '2018-01-02')
                 ->touchesWith(EndlessPeriod::make('2018-01-02'))
         );
 
-        $this->assertTrue(
-            EndlessPeriod::make('2018-01-02', '2018-01-02')
+        $this->assertFalse(
+            EndlessPeriod::make('2018-01-02')
                 ->touchesWith(EndlessPeriod::make('2018-01-01', '2018-01-01'))
         );
 
