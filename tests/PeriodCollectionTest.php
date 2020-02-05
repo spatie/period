@@ -3,6 +3,7 @@
 namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\PeriodCollection;
@@ -120,6 +121,28 @@ class PeriodCollectionTest extends TestCase
         $this->assertTrue($gaps[0]->equals(Period::make('2018-01-06', '2018-01-09')));
         $this->assertTrue($gaps[1]->equals(Period::make('2018-01-16', '2018-01-19')));
         $this->assertTrue($gaps[2]->equals(Period::make('2018-01-26', '2018-01-29')));
+    }
+
+    /**
+     * @test
+     *
+     * A         [=====)
+     * B         [=====)
+     * C         [=====)
+     *
+     * GAP
+     */
+    public function no_gaps_when_periods_fully_overlap_and_end_excluded()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
+            Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
+            Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
+        );
+
+        $gaps = $collection->gaps();
+
+        $this->assertCount(0, $gaps);
     }
 
     /**
