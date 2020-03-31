@@ -186,6 +186,20 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $carry;
     }
 
+    /**
+     * @param  \Closure  $closure
+     *
+     * @return static
+     */
+    public function filter(Closure $closure): PeriodCollection
+    {
+        $collection = clone $this;
+
+        $collection->periods = array_filter($collection->periods, $closure);
+
+        return $collection;
+    }
+
     public function isEmpty(): bool
     {
         return count($this->periods) === 0;

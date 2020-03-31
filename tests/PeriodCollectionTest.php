@@ -2,6 +2,7 @@
 
 namespace Spatie\Period\Tests;
 
+use DateTime;
 use DateTimeImmutable;
 use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
@@ -226,5 +227,21 @@ class PeriodCollectionTest extends TestCase
         }, 0);
 
         $this->assertEquals(4, $totalLength);
+    }
+
+    /** @test */
+    public function filter()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2019-01-01', '2019-01-02'),
+            Period::make('2019-02-01', '2019-02-02')
+        );
+
+        $filtered = $collection->filter(function (Period $period) {
+            return $period->startsAt(new DateTime('2019-01-01'));
+        });
+
+        $this->assertCount(1, $filtered);
+        $this->assertTrue($filtered[0]->equals($collection[0]));
     }
 }
