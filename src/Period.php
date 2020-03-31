@@ -2,15 +2,15 @@
 
 namespace Spatie\Period;
 
-use DateTime;
-use DatePeriod;
 use DateInterval;
+use DatePeriod;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use IteratorAggregate;
+use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Exceptions\InvalidDate;
 use Spatie\Period\Exceptions\InvalidPeriod;
-use Spatie\Period\Exceptions\CannotComparePeriods;
 
 class Period implements IteratorAggregate
 {
