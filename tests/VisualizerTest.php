@@ -2,10 +2,10 @@
 
 namespace Spatie\Period\Tests;
 
-use Spatie\Period\Period;
-use Spatie\Period\Visualizer;
 use PHPUnit\Framework\TestCase;
+use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\Visualizer;
 
 class VisualizerTest extends TestCase
 {
