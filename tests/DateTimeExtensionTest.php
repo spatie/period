@@ -4,13 +4,13 @@ namespace Spatie\Period\Tests;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use Spatie\Period\Period;
 use PHPUnit\Framework\TestCase;
+use Spatie\Period\Period;
 
 class DateTimeExtensionTest extends TestCase
 {
     /** @test */
-    public function it_should_be_possible_use_date_time_extensions() : void
+    public function it_should_be_possible_use_date_time_extensions(): void
     {
         $start = new DateTimeExtension('2019-05-22');
         $end = new DateTimeExtension('2019-06-05');
@@ -23,7 +23,7 @@ class DateTimeExtensionTest extends TestCase
     }
 
     /** @test */
-    public function it_should_be_possible_to_use_period_extension_to_force_date_time_extension() : void
+    public function it_should_be_possible_to_use_period_extension_to_force_date_time_extension(): void
     {
         $period = TestPeriod::make('2019-05-01', '2019-05-31');
 
