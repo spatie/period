@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.5.0 - 2020-03-31
+
+- Add `filter` to `PeriodCollection` 
+
 ## 1.4.5 - 2020-02-05
 
 - Fix for PeriodCollection::gaps() with excluded boundaries (#58)
