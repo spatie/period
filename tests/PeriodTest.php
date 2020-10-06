@@ -52,6 +52,16 @@ class PeriodTest extends TestCase
         );
 
         $this->assertFalse(
+            Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::HOUR)
+                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::HOUR))
+        );
+
+        $this->assertTrue(
+            Period::make('2018-01-01 06:30:00', '2018-01-01 08:30:00', Precision::HOUR)
+                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::HOUR))
+        );
+
+        $this->assertFalse(
             Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND)
                 ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND))
         );

@@ -165,37 +165,24 @@ class Period implements IteratorAggregate
             $diff = $this->getIncludedEnd()->diff($period->getIncludedStart());
         }
 
-        switch ($this->getPrecisionMask()) {
-            case Precision::YEAR:
-                return $diff->y <= 1;
-            case Precision::MONTH:
-                return $diff->m <= 1
-                    && $diff->y === 0;
-            case Precision::DAY:
-                return $diff->d <= 1
-                    && $diff->m === 0
-                    && $diff->y === 0;
-            case Precision::HOUR:
-                return $diff->h <= 1
-                    && $diff->d === 0
-                    && $diff->m === 0
-                    && $diff->y === 0;
-            case Precision::MINUTE:
-                return $diff->i <= 1
-                    && $diff->h === 0
-                    && $diff->d === 0
-                    && $diff->m === 0
-                    && $diff->y === 0;
-            case Precision::SECOND:
-                return $diff->s <= 1
-                    && $diff->i === 0
-                    && $diff->h === 0
-                    && $diff->d === 0
-                    && $diff->m === 0
-                    && $diff->y === 0;
+        $intervals = [
+            Precision::YEAR     => 'y',
+            Precision::MONTH    => 'm',
+            Precision::DAY      => 'd',
+            Precision::HOUR     => 'h',
+            Precision::MINUTE   => 'i',
+            Precision::SECOND   => 's'
+        ];
+        $touches = true;
+        $precisionMask = $this->getPrecisionMask();
+        foreach ($intervals as $precision => $interval) {
+            if($precisionMask === $precision){
+                $touches = $touches && $diff->$interval <= 1;
+            } else {
+                $touches = $touches && $diff->$interval === 0;
+            }
         }
-
-        return false;
+        return $touches;
     }
 
     public function startsBefore(DateTimeInterface $date): bool
