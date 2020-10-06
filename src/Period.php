@@ -159,12 +159,40 @@ class Period implements IteratorAggregate
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
-            return true;
+        $diff = $this->getIncludedStart()->diff($period->getIncludedEnd());
+
+        if($this->endsBefore($period->getIncludedStart())){
+            $diff = $this->getIncludedEnd()->diff($period->getIncludedStart());
         }
 
-        if ($this->getIncludedStart()->diff($period->getIncludedEnd())->days <= 1) {
-            return true;
+        switch ($this->getPrecisionMask()) {
+            case Precision::YEAR:
+                return $diff->y <= 1;
+            case Precision::MONTH:
+                return $diff->m <= 1
+                    && $diff->y === 0;
+            case Precision::DAY:
+                return $diff->d <= 1
+                    && $diff->m === 0
+                    && $diff->y === 0;
+            case Precision::HOUR:
+                return $diff->h <= 1
+                    && $diff->d === 0
+                    && $diff->m === 0
+                    && $diff->y === 0;
+            case Precision::MINUTE:
+                return $diff->i <= 1
+                    && $diff->h === 0
+                    && $diff->d === 0
+                    && $diff->m === 0
+                    && $diff->y === 0;
+            case Precision::SECOND:
+                return $diff->s <= 1
+                    && $diff->i === 0
+                    && $diff->h === 0
+                    && $diff->d === 0
+                    && $diff->m === 0
+                    && $diff->y === 0;
         }
 
         return false;

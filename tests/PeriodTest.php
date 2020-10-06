@@ -50,6 +50,12 @@ class PeriodTest extends TestCase
             Period::make('2018-01-03', '2018-01-03')
                 ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
         );
+
+        $this->assertFalse(
+            Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND)
+                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND))
+        );
+
     }
 
     /**
