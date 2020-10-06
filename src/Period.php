@@ -159,11 +159,15 @@ class Period implements IteratorAggregate
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
+        $difference = $this->getIncludedEnd()->diff($period->getIncludedStart());
+
+        if ($difference->days * 86400 + $difference->s <= 0) {
             return true;
         }
 
-        if ($this->getIncludedStart()->diff($period->getIncludedEnd())->days <= 1) {
+        $difference = $this->getIncludedStart()->diff($period->getIncludedEnd());
+
+        if ($difference->days * 86400 + $difference->s <= 0) {
             return true;
         }
 
