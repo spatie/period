@@ -138,7 +138,7 @@ class PeriodCollectionTest extends TestCase
         $collection = new PeriodCollection(
             Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
             Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
-            Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END),
+            Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END)
         );
 
         $gaps = $collection->gaps();
