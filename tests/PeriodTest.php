@@ -535,6 +535,14 @@ class PeriodTest extends TestCase
         $this->assertEmpty($diff);
     }
 
+    /** @test */
+    public function determine_periods_not_touch_when_they_are_on_the_same_day(){
+        $a = Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND);
+        $b = Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND);
+
+        $this->assertFalse($a->touchesWith($b));
+    }
+
     public function expectedPeriodLengths()
     {
         return [

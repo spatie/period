@@ -161,13 +161,13 @@ class Period implements IteratorAggregate
 
         $difference = $this->getIncludedEnd()->diff($period->getIncludedStart());
 
-        if ($difference->days * 86400 + $difference->s <= 0) {
+        if ($difference->days * 86400 + $difference->h * 3600 + $difference->m * 60 + $difference->s <= 0) {
             return true;
         }
 
         $difference = $this->getIncludedStart()->diff($period->getIncludedEnd());
 
-        if ($difference->days * 86400 + $difference->s <= 0) {
+        if ($difference->days * 86400 + $difference->h * 3600 + $difference->m * 60 + $difference->s <= 0) {
             return true;
         }
 
