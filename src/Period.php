@@ -159,15 +159,30 @@ class Period implements IteratorAggregate
     {
         $this->ensurePrecisionMatches($period);
 
-        if ($this->getIncludedEnd()->diff($period->getIncludedStart())->days <= 1) {
-            return true;
+        $diff = $this->getIncludedStart()->diff($period->getIncludedEnd());
+
+        if($this->endsBefore($period->getIncludedStart())){
+            $diff = $this->getIncludedEnd()->diff($period->getIncludedStart());
         }
 
-        if ($this->getIncludedStart()->diff($period->getIncludedEnd())->days <= 1) {
-            return true;
+        $intervals = [
+            Precision::YEAR     => 'y',
+            Precision::MONTH    => 'm',
+            Precision::DAY      => 'd',
+            Precision::HOUR     => 'h',
+            Precision::MINUTE   => 'i',
+            Precision::SECOND   => 's'
+        ];
+        $touches = true;
+        $precisionMask = $this->getPrecisionMask();
+        foreach ($intervals as $precision => $interval) {
+            if($precisionMask === $precision){
+                $touches = $touches && $diff->$interval <= 1;
+            } else {
+                $touches = $touches && $diff->$interval === 0;
+            }
         }
-
-        return false;
+        return $touches;
     }
 
     public function startsBefore(DateTimeInterface $date): bool
