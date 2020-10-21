@@ -161,27 +161,31 @@ class Period implements IteratorAggregate
 
         $diff = $this->getIncludedStart()->diff($period->getIncludedEnd());
 
-        if($this->endsBefore($period->getIncludedStart())){
+        if ($this->endsBefore($period->getIncludedStart())) {
             $diff = $this->getIncludedEnd()->diff($period->getIncludedStart());
         }
 
         $intervals = [
-            Precision::YEAR     => 'y',
-            Precision::MONTH    => 'm',
-            Precision::DAY      => 'd',
-            Precision::HOUR     => 'h',
-            Precision::MINUTE   => 'i',
-            Precision::SECOND   => 's'
+            Precision::YEAR => 'y',
+            Precision::MONTH => 'm',
+            Precision::DAY => 'd',
+            Precision::HOUR => 'h',
+            Precision::MINUTE => 'i',
+            Precision::SECOND => 's',
         ];
+
         $touches = true;
+
         $precisionMask = $this->getPrecisionMask();
+
         foreach ($intervals as $precision => $interval) {
-            if($precisionMask === $precision){
+            if ($precisionMask === $precision) {
                 $touches = $touches && $diff->$interval <= 1;
             } else {
                 $touches = $touches && $diff->$interval === 0;
             }
         }
+
         return $touches;
     }
 
@@ -208,9 +212,9 @@ class Period implements IteratorAggregate
     public function startsAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedStart()->getTimestamp() === $this->roundDate(
-            $date,
-            $this->precisionMask
-        )->getTimestamp();
+                $date,
+                $this->precisionMask
+            )->getTimestamp();
     }
 
     public function endsBefore(DateTimeInterface $date): bool
