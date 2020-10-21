@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.5.1 - 2020-10-21
+
+- Support multiple precisions when checking touchesWith (#68)
+
 ## 1.5.0 - 2020-03-31
 
 - Add `filter` to `PeriodCollection` 
