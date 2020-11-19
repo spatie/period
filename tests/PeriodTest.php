@@ -551,6 +551,17 @@ class PeriodTest extends TestCase
         $this->assertEmpty($diff);
     }
 
+    /** @test */
+    public function it_keeps_timezone_when_boundaries_are_timezoned()
+    {
+      $timeZone = new \DateTimeZone('Europe/London');
+      $start = new DateTimeImmutable('2000-01-01', $timeZone);
+      $end = new DateTimeImmutable('2000-02-01', $timeZone);
+      $period = new Period($start, $end);
+      $this->assertEquals($period->getStart()->getTimezone(), $timeZone);
+      $this->assertEquals($period->getEnd()->getTimezone(), $timeZone);
+    }
+
     public function expectedPeriodLengths()
     {
         return [

@@ -524,7 +524,8 @@ class Period implements IteratorAggregate
 
         return DateTimeImmutable::createFromFormat(
             'Y m d H i s',
-            implode(' ', [$year, $month, $day, $hour, $minute, $second])
+            implode(' ', [$year, $month, $day, $hour, $minute, $second]),
+            $date->getTimezone()
         );
     }
 
