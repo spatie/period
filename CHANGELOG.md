@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.5.2 - 2020-11-19
+
+- Keep timezone when boundaries are timezoned (#71)
+
 ## 1.5.1 - 2020-10-21
 
 - Support multiple precisions when checking touchesWith (#68)
