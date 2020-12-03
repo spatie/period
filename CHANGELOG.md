@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.5.3 - 2020-12-03
+
+- PHP8 compatibility
+
 ## 1.5.2 - 2020-11-19
 
 - Keep timezone when boundaries are timezoned (#71)
