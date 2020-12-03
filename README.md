@@ -1,9 +1,7 @@
 # Complex period comparisons
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
-[![Build Status](https://img.shields.io/travis/spatie/period/master.svg?style=flat-square)](https://travis-ci.org/spatie/period)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/period.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/period)
-[![StyleCI](https://github.styleci.io/repos/159155863/shield?branch=master)](https://github.styleci.io/repos/159155863)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 
 This package adds support for comparing multiple dates with each other.
