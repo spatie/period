@@ -93,6 +93,16 @@ class Period implements IteratorAggregate
         );
     }
 
+    public function renew(): Period
+    {
+        $length = $this->includedStart->diff($this->includedEnd);
+
+        $start = $this->includedEnd->add($this->interval);
+        $end = $start->add($length);
+
+        return new self($start, $end, $this->precisionMask, $this->boundaryExclusionMask);
+    }
+
     public function startIncluded(): bool
     {
         return ! $this->startExcluded();

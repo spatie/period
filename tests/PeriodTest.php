@@ -19,6 +19,17 @@ class PeriodTest extends TestCase
         $this->assertEquals(15, $period->length());
     }
 
+    /** @test */
+    public function it_can_renew_a_period()
+    {
+        $period = Period::make('2018-01-01', '2018-01-15');
+
+        $rewewal = $period->renew();
+
+        $this->assertTrue($rewewal->touchesWith($period));
+        $this->assertEquals($rewewal->length(), $period->length());
+    }
+
     /**
      * @test
      * @dataProvider overlappingDates
