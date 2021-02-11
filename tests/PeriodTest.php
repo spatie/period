@@ -563,19 +563,6 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function diff_with_no_overlap_returns_original_period()
-    {
-        $a = Period::make('2019-02-01', '2019-02-01');
-
-        $b = Period::make('2019-02-02', '2019-02-02');
-
-        $diff = $a->diff($b);
-
-        $this->assertCount(1, $diff);
-        $this->assertTrue($diff[0]->equals(Period::make('2019-02-01', '2019-02-01')));
-    }
-
-    /** @test */
     public function it_keeps_timezone_when_boundaries_are_timezoned()
     {
       $timeZone = new \DateTimeZone('Europe/London');
