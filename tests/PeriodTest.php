@@ -572,7 +572,6 @@ class PeriodTest extends TestCase
         $diff = $a->diff($b);
 
         $this->assertCount(1, $diff);
-        $this->assertEmpty($diff);
         $this->assertTrue($diff[0]->equals(Period::make('2019-02-01', '2019-02-01')));
     }
 
