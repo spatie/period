@@ -563,7 +563,7 @@ class PeriodTest extends TestCase
     }
 
     /** @test */
-    public function diff_filters_out_null_object_if_no_gap()
+    public function diff_with_no_overlap_returns_original_period()
     {
         $a = Period::make('2019-02-01', '2019-02-01');
 
@@ -571,7 +571,9 @@ class PeriodTest extends TestCase
 
         $diff = $a->diff($b);
 
+        $this->assertCount(1, $diff);
         $this->assertEmpty($diff);
+        $this->assertTrue($diff[0]->equals(Period::make('2019-02-01', '2019-02-01')));
     }
 
     /** @test */
