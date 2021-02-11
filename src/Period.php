@@ -392,6 +392,7 @@ class Period implements IteratorAggregate
 
         if (! $this->overlapsWith($period)) {
             $periodCollection[] = clone $this;
+            $periodCollection[] = clone $period;
 
             return $periodCollection;
         }
