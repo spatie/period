@@ -409,7 +409,7 @@ class PeriodTest extends TestCase
     public function it_can_determine_that_there_is_nothing_to_diff_with_single_argument()
     {
         $a = Period::make('2018-02-15', '2018-02-20');
-        
+
         $current = Period::make('2018-01-01', '2018-01-31');
 
         $diff = $current->diff($a);
