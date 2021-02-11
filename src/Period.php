@@ -392,7 +392,6 @@ class Period implements IteratorAggregate
 
         if (! $this->overlapsWith($period)) {
             $periodCollection[] = clone $this;
-            $periodCollection[] = clone $period;
 
             return $periodCollection;
         }
@@ -433,18 +432,6 @@ class Period implements IteratorAggregate
      */
     public function diff(Period ...$periods): PeriodCollection
     {
-        if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
-            $collection = new PeriodCollection();
-
-            $gap = $this->gap($periods[0]);
-
-            if ($gap !== null) {
-                $collection[] = $gap;
-            }
-
-            return $collection;
-        }
-
         $diffs = [];
 
         foreach ($periods as $period) {
