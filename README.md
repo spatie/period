@@ -77,9 +77,10 @@ $period->endExcluded(): bool
 
 ```php
 $period->getStart(): DateTimeImmutable
-$period->getStartIncluded(): DateTimeImmutable
+$period->getIncludedStart(): DateTimeImmutable
 $period->getEnd(): DateTimeImmutable
-$period->getEndIncluded(): DateTimeImmutable
+$period->getIncludedEnd(): DateTimeImmutable
+$period->getCeilingEnd(): DateTimeImmutable
 ```
 
 #### Comparisons

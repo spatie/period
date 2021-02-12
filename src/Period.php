@@ -133,6 +133,11 @@ class Period implements IteratorAggregate
         return $this->includedEnd;
     }
 
+    public function getCeilingEnd(): DateTimeImmutable
+    {
+        return $this->ceilDate($this->includedEnd, $this->precisionMask);
+    }
+
     public function length(): int
     {
         $length = $this->getIncludedStart()->diff($this->getIncludedEnd())->days + 1;
@@ -521,6 +526,23 @@ class Period implements IteratorAggregate
         $hour = (Precision::HOUR & $precision) === Precision::HOUR ? $hour : '00';
         $minute = (Precision::MINUTE & $precision) === Precision::MINUTE ? $minute : '00';
         $second = (Precision::SECOND & $precision) === Precision::SECOND ? $second : '00';
+
+        return DateTimeImmutable::createFromFormat(
+            'Y m d H i s',
+            implode(' ', [$year, $month, $day, $hour, $minute, $second]),
+            $date->getTimezone()
+        );
+    }
+
+    protected function ceilDate(DateTimeInterface $date, int $precision): DateTimeImmutable
+    {
+        [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
+
+        $month = (Precision::MONTH & $precision) === Precision::MONTH ? $month : '12';
+        $day = (Precision::DAY & $precision) === Precision::DAY ? $day : cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $hour = (Precision::HOUR & $precision) === Precision::HOUR ? $hour : '23';
+        $minute = (Precision::MINUTE & $precision) === Precision::MINUTE ? $minute : '59';
+        $second = (Precision::SECOND & $precision) === Precision::SECOND ? $second : '59';
 
         return DateTimeImmutable::createFromFormat(
             'Y m d H i s',

@@ -21,6 +21,27 @@ class PeriodTest extends TestCase
 
     /**
      * @test
+     * @dataProvider ceilingDates
+    */
+    public function it_rounds_to_the_end_of_precision(Period $period, Carbon $expected)
+    {
+        $this->assertEquals($expected->startOfSecond(), $period->getCeilingEnd());
+    }
+
+    public function ceilingDates(): array
+    {
+        return [
+            [Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::SECOND), Carbon::make('2018-01-15 11:30:15')->endOfSecond()],
+            [Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::MINUTE), Carbon::make('2018-01-15 11:30:15')->endOfMinute()],
+            [Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::HOUR), Carbon::make('2018-01-15 11:30:15')->endOfHour()],
+            [Period::make('2018-01-01', '2018-01-15', Precision::DAY), Carbon::make('2018-01-15')->endOfDay()],
+            [Period::make('2018-01-01', '2018-01-15', Precision::MONTH), Carbon::make('2018-01-15')->endOfMonth()],
+            [Period::make('2018-01-01', '2018-01-15', Precision::YEAR), Carbon::make('2018-01-15')->endOfYear()],
+        ];
+    }
+
+    /**
+     * @test
      * @dataProvider overlappingDates
      */
     public function it_can_determine_if_two_periods_overlap_with_each_other(Period $a, Period $b)
