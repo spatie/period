@@ -35,6 +35,7 @@ class PeriodTest extends TestCase
             [Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::MINUTE), Carbon::make('2018-01-15 11:30:15')->endOfMinute()],
             [Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::HOUR), Carbon::make('2018-01-15 11:30:15')->endOfHour()],
             [Period::make('2018-01-01', '2018-01-15', Precision::DAY), Carbon::make('2018-01-15')->endOfDay()],
+            [Period::make('2018-01-01', '2018-01-15', Precision::DAY, Boundaries::EXCLUDE_END), Carbon::make('2018-01-15')->subDay()->endOfDay()],
             [Period::make('2018-01-01', '2018-01-15', Precision::MONTH), Carbon::make('2018-01-15')->endOfMonth()],
             [Period::make('2018-01-01', '2018-01-15', Precision::YEAR), Carbon::make('2018-01-15')->endOfYear()],
         ];
