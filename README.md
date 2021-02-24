@@ -82,6 +82,11 @@ $period->getEnd(): DateTimeImmutable
 $period->getEndIncluded(): DateTimeImmutable
 ```
 
+#### Renewing a Period
+
+$period = Period::make('2018-01-01', '2018-01-15');
+$renewal = $period->renew(); // '2018-01-16' to '2018-01-31'
+
 #### Comparisons
 
 ```php
