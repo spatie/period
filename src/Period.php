@@ -454,7 +454,7 @@ class Period implements IteratorAggregate
             $diffs[] = $this->diff($period);
         }
 
-        $collection = (new PeriodCollection($this))->overlap(...$diffs);
+        $collection = (new PeriodCollection($this))->overlapAll(...$diffs);
 
         return $collection;
     }

@@ -12,12 +12,12 @@ All notable changes to `period` will be documented in this file
 - All period properties are now typed
 - Return types of several methods have been changed from `Period` to `static`
 - `Period::overlap()` renamed to `Period::overlapAny()`
+- `PeriodCollection::overlap()` renamed to `PeriodCollection::overlapAll()`
 - `Period::overlapSingle()` renamed to `Period::overlap()`
 - `Period::diff()` renamed to `Period::subtract()`
 - `Period::diffSingle()` renamed to `Period::diff()`
 - `Period::subtract()` no longer returns the gap when there's no overlap
 - `Period::contains` now accepts both `DateTimeInterface` and `Period`
-
 ## 1.6.0 - 2021-02-24
 
 - Add `Period::renew` (#74)
