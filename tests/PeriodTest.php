@@ -4,6 +4,8 @@ namespace Spatie\Period\Tests;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use DateTimeZone;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
@@ -24,10 +26,10 @@ class PeriodTest extends TestCase
     {
         $period = Period::make('2018-01-01', '2018-01-15');
 
-        $rewewal = $period->renew();
+        $renewal = $period->renew();
 
-        $this->assertTrue($rewewal->touchesWith($period));
-        $this->assertEquals($rewewal->length(), $period->length());
+        $this->assertTrue($renewal->touchesWith($period));
+        $this->assertEquals($renewal->length(), $period->length());
     }
 
     /** @test */
@@ -37,478 +39,6 @@ class PeriodTest extends TestCase
         $b = Period::make('2018-02-01', '2018-02-15');
 
         $this->assertTrue($a->duration()->equals($b->duration()));
-    }
-
-    /**
-     * @test
-     * @dataProvider overlappingDates
-     */
-    public function it_can_determine_if_two_periods_overlap_with_each_other(Period $a, Period $b)
-    {
-        $this->assertTrue($a->overlapsWith($b));
-    }
-
-    /** @test */
-    public function it_can_determine_if_two_periods_touch_each_other()
-    {
-        $this->assertTrue(
-            Period::make('2018-01-01', '2018-01-01')
-                ->touchesWith(Period::make('2018-01-02', '2018-01-02'))
-        );
-
-        $this->assertTrue(
-            Period::make('2018-01-02', '2018-01-02')
-                ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
-        );
-
-        $this->assertFalse(
-            Period::make('2018-01-01', '2018-01-01')
-                ->touchesWith(Period::make('2018-01-03', '2018-01-03'))
-        );
-
-        $this->assertFalse(
-            Period::make('2018-01-03', '2018-01-03')
-                ->touchesWith(Period::make('2018-01-01', '2018-01-01'))
-        );
-
-        $this->assertFalse(
-            Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::HOUR)
-                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::HOUR))
-        );
-
-        $this->assertTrue(
-            Period::make('2018-01-01 06:30:00', '2018-01-01 08:30:00', Precision::HOUR)
-                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::HOUR))
-        );
-
-        $this->assertFalse(
-            Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND)
-                ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND))
-        );
-    }
-
-    /**
-     * @test
-     * @dataProvider noOverlappingDates
-     */
-    public function it_can_determine_that_two_periods_do_not_overlap_with_each_other(Period $a, Period $b)
-    {
-        $this->assertFalse($a->overlapsWith($b));
-    }
-
-    public function overlappingDates(): array
-    {
-        return [
-            /*
-             * A    [=====]
-             * B       [=====]
-             */
-            [Period::make('2018-01-01', '2018-02-01'), Period::make('2018-01-15', '2018-02-15')],
-
-            /*
-             * A        [=====]
-             * B    [=============]
-             */
-            [Period::make('2018-01-01', '2018-02-01'), Period::make('2017-01-01', '2019-01-01')],
-
-            /*
-             * A        [=====]
-             * B     [=====]
-             */
-            [Period::make('2018-01-01', '2018-02-01'), Period::make('2017-12-01', '2018-01-15')],
-
-            /*
-             * A    [=============]
-             * B        [=====]
-             */
-            [Period::make('2017-01-01', '2019-01-01'), Period::make('2018-01-01', '2018-02-01')],
-
-            /*
-             * A    [====]
-             * B    [====]
-             */
-            [Period::make('2018-01-01', '2018-02-01'), Period::make('2018-01-01', '2018-02-01')],
-        ];
-    }
-
-    public function noOverlappingDates()
-    {
-        return [
-            /*
-             * A    [===]
-             * B          [===]
-             */
-            [Period::make('2018-01-01', '2018-01-31'), Period::make('2018-02-01', '2018-02-28')],
-
-            /*
-             * A          [===]
-             * B    [===]
-             */
-            [Period::make('2018-02-01', '2018-02-28'), Period::make('2018-01-01', '2018-01-31')],
-        ];
-    }
-
-    /**
-     * @test
-     *
-     * A        [===========]
-     * B            [============]
-     *
-     * OVERLAP      [=======]
-     */
-    public function it_can_determine_an_overlap_period_between_two_other_periods()
-    {
-        $a = Period::make('2018-01-01', '2018-01-15');
-
-        $b = Period::make('2018-01-10', '2018-01-30');
-
-        $overlapPeriod = Period::make('2018-01-10', '2018-01-15');
-
-        $this->assertTrue($a->overlap($b)->equals($overlapPeriod));
-    }
-
-    /**
-     * @test
-     *
-     * A       [========]
-     * B                   [==]
-     * C                           [=====]
-     * D              [===============]
-     *
-     * OVERLAP        [=]   [==]   [==]
-     */
-    public function it_can_determine_multiple_overlap_periods_between_two_other_periods()
-    {
-        $a = Period::make('2018-01-01', '2018-01-31');
-        $b = Period::make('2018-02-10', '2018-02-20');
-        $c = Period::make('2018-03-01', '2018-03-31');
-        $d = Period::make('2018-01-20', '2018-03-10');
-
-        $overlapPeriods = $d->overlapAny($a, $b, $c);
-
-        $this->assertCount(3, $overlapPeriods);
-
-        $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-20', '2018-01-31')));
-        $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-02-10', '2018-02-20')));
-        $this->assertTrue($overlapPeriods[2]->equals(Period::make('2018-03-01', '2018-03-10')));
-    }
-
-    /**
-     * @test
-     *
-     * A              [============]
-     * B                   [==]
-     * C                   [=======]
-     *
-     * OVERLAP             [==]
-     */
-    public function it_can_determine_the_overlap_between_multiple_periods()
-    {
-        $a = Period::make('2018-01-01', '2018-01-31');
-        $b = Period::make('2018-01-10', '2018-01-15');
-        $c = Period::make('2018-01-10', '2018-01-31');
-
-        $overlap = $a->overlapAll($b, $c);
-
-        $this->assertTrue($overlap->equals(Period::make('2018-01-10', '2018-01-15')));
-    }
-
-    /**
-     * @test
-     *
-     * A              [============]
-     * B                                    [==]
-     * C                   [=======]
-     *
-     * OVERLAP             /
-     */
-    public function overlap_all_returns_null_when_no_overlaps()
-    {
-        $a = Period::make('2018-01-01', '2018-02-01');
-        $b = Period::make('2018-05-10', '2018-06-01');
-        $c = Period::make('2018-01-10', '2018-02-01');
-
-        $overlap = $a->overlapAll($b, $c);
-
-        $this->assertNull($overlap);
-    }
-
-    /** @test */
-    public function non_overlapping_dates_return_an_empty_collection()
-    {
-        $a = Period::make('2019-01-01', '2019-01-31');
-        $b = Period::make('2019-02-01', '2019-02-28');
-
-        $this->assertTrue($a->overlapAny($b)->isEmpty());
-    }
-
-    /** @test */
-    public function it_can_determine_that_two_periods_do_not_overlap()
-    {
-        $a = Period::make('2018-01-05', '2018-01-10');
-        $b = Period::make('2018-01-22', '2018-01-30');
-
-        $overlap = $a->overlap($b);
-
-        $this->assertNull($overlap);
-    }
-
-    /**
-     * @test
-     *
-     * A    [===]
-     * B            [===]
-     *
-     * GAP       [=]
-     */
-    public function it_can_determine_the_gap_between_two_periods()
-    {
-        $a = Period::make('2018-01-01', '2018-01-10');
-
-        $b = Period::make('2018-01-15', '2018-01-31');
-
-        $gap = $a->gap($b);
-
-        $this->assertTrue($gap->equals(Period::make('2018-01-11', '2018-01-14')));
-    }
-
-    /**
-     * @test
-     *
-     * A            [===]
-     * B    [===]
-     *
-     * GAP       [=]
-     */
-    public function it_can_still_determine_the_gap_between_two_periods_even_when_the_periods_are_not_in_order()
-    {
-        $a = Period::make('2018-01-15', '2018-01-31');
-
-        $b = Period::make('2018-01-01', '2018-01-10');
-
-        $gap = $a->gap($b);
-
-        $this->assertTrue($gap->equals(Period::make('2018-01-11', '2018-01-14')));
-    }
-
-    /**
-     * @test
-     *
-     * A           [=====]
-     * B    [=====]
-     *
-     * GAP
-     */
-    public function it_will_determine_that_there_is_no_gap_if_the_periods_only_touch_but_do_not_overlap()
-    {
-        $a = Period::make('2018-01-15', '2018-01-31');
-
-        $b = Period::make('2018-02-01', '2018-02-01');
-
-        $gap = $a->gap($b);
-
-        $this->assertNull($gap);
-    }
-
-    /**
-     * @test
-     *
-     * A           [=====]
-     * B       [=====]
-     *
-     * GAP
-     */
-    public function it_will_determine_that_there_is_no_gap_when_periods_overlap()
-    {
-        $a = Period::make('2018-01-15', '2018-01-31');
-
-        $b = Period::make('2018-01-28', '2018-02-01');
-
-        $gap = $a->gap($b);
-
-        $this->assertNull($gap);
-    }
-
-    /**
-     * @test
-     *
-     * A        [===========]
-     * B            [===========]
-     *
-     * DIFF     [==]         [==]
-     */
-    public function it_can_create_a_diff_for_two_periods()
-    {
-        $a = Period::make('2018-01-01', '2018-01-15');
-
-        $b = Period::make('2018-01-10', '2018-01-30');
-
-        $diffs = $a->diff($b);
-
-        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
-        $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
-    }
-
-    /**
-     * @test
-     *
-     * A             [==========]
-     * B        [============]
-     *
-     * DIFF     [==]          [==]
-     */
-    public function it_can_still_create_a_diff_for_two_periods_even_if_there_are_not_ordered()
-    {
-        $a = Period::make('2018-01-10', '2018-01-30');
-
-        $b = Period::make('2018-01-01', '2018-01-15');
-
-        $diffs = $a->diff($b);
-
-        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
-        $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
-    }
-
-    /**
-     * @test
-     *
-     * A                    [=====]
-     * B        [=====]
-     *
-     * RES                  [=====]
-     */
-    public function subtraction_without_overlap_returns_the_original_period()
-    {
-        $a = Period::make('2018-01-10', '2018-01-15');
-        $b = Period::make('2018-02-10', '2018-02-15');
-
-        $diffs = $a->subtract($b);
-
-        $this->assertCount(1, $diffs);
-
-        $this->assertTrue($diffs[0]->equals($a));
-    }
-
-    /**
-     * @test
-     *
-     * CURRENT         [===========]
-     *
-     * A       [=========]
-     * B                     [==]
-     * C                      [=========]
-     *
-     * OVERLAP         [=]    [====]
-     * DIFF               [=]
-     */
-    public function it_can_determine_subtract_for_periods_with_multiple_overlaps()
-    {
-        $current = Period::make('2018-01-20', '2018-03-15');
-
-        $a = Period::make('2018-01-01', '2018-01-31');
-        $b = Period::make('2018-02-10', '2018-02-20');
-        $c = Period::make('2018-02-11', '2018-03-31');
-
-        $diff = $current->subtract($a, $b, $c);
-
-        $this->assertCount(1, $diff);
-
-        $this->assertTrue($diff[0]->equals(Period::make('2018-02-01', '2018-02-09')));
-    }
-
-    /**
-     * @test
-     *
-     * A                       [========]
-     * B             [=========]
-     * CURRENT         [============]
-     *
-     * OVERLAP         [============]
-     * DIFF
-     */
-    public function if_all_periods_overlap_it_will_determine_that_there_is_no_diff()
-    {
-        $a = Period::make('2018-01-15', '2018-02-10');
-        $b = Period::make('2017-12-20', '2018-01-15');
-
-        $current = Period::make('2018-01-01', '2018-01-31');
-
-        $diff = $current->subtract($a, $b);
-
-        $this->assertCount(0, $diff);
-    }
-
-    /**
-     * @test
-     *
-     * CURRENT         [=======]
-     *
-     * A                            [========]
-     *
-     * DIFF             [=======]
-     */
-    public function it_can_subtract()
-    {
-        $a = Period::make('2018-02-15', '2018-02-20');
-
-        $current = Period::make('2018-01-01', '2018-01-31');
-
-        $diff = $current->subtract($a);
-
-        $this->assertCount(1, $diff);
-        $this->assertTrue($diff[0]->equals($current));
-    }
-
-    /**
-     * @test
-     *
-     * A                   [====]
-     * B                               [========]
-     * C         [=====]
-     * CURRENT      [========================]
-     *
-     * DIFF             [=]      [====]
-     */
-    public function it_can_determine_multiple_diffs()
-    {
-        $a = Period::make('2018-01-05', '2018-01-10');
-        $b = Period::make('2018-01-15', '2018-03-01');
-        $c = Period::make('2017-01-01', '2018-01-02');
-
-        $current = Period::make('2018-01-01', '2018-01-31');
-
-        $diff = $current->subtract($a, $b, $c);
-
-        $this->assertCount(2, $diff);
-
-        $this->assertTrue($diff[0]->equals(Period::make('2018-01-03', '2018-01-04')));
-        $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
-    }
-
-    /**
-     * @test
-     *
-     * CURRENT  [=============================]
-     *
-     * A                            [====]
-     * B                [====]
-     *
-     * DIFF     [======]      [====]      [===]
-     */
-    public function it_can_determine_multiple_diffs_for_sure()
-    {
-        $current = Period::make('2018-01-01', '2018-01-31');
-
-        $a = Period::make('2018-01-15', '2018-01-20');
-        $b = Period::make('2018-01-05', '2018-01-10');
-
-        $diff = $current->subtract($a, $b);
-
-        $this->assertCount(3, $diff);
-
-        $this->assertTrue($diff[0]->equals(Period::make('2018-01-01', '2018-01-04')));
-        $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
-        $this->assertTrue($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')));
     }
 
     /** @test */
@@ -547,24 +77,6 @@ class PeriodTest extends TestCase
 
     /**
      * @test
-     *
-     * A        [=============================]
-     * B            [========]
-     *
-     * DIFF     [==]          [===============]
-     */
-    public function diff_with_one_period_within()
-    {
-        $a = Period::make('2018-01-01', '2018-01-31');
-        $b = Period::make('2018-01-10', '2018-01-15');
-
-        $diff = $a->diff($b);
-
-        $this->assertCount(2, $diff);
-    }
-
-    /**
-     * @test
      * @dataProvider expectedPeriodLengths
      */
     public function it_is_iterable(int $expectedCount, Period $period)
@@ -583,7 +95,7 @@ class PeriodTest extends TestCase
     /** @test */
     public function it_keeps_timezone_when_boundaries_are_timezoned()
     {
-        $timeZone = new \DateTimeZone('Europe/London');
+        $timeZone = new DateTimeZone('Europe/London');
         $start = new DateTimeImmutable('2000-01-01', $timeZone);
         $end = new DateTimeImmutable('2000-02-01', $timeZone);
         $period = new Period($start, $end);
@@ -591,18 +103,14 @@ class PeriodTest extends TestCase
         $this->assertEquals($period->getEnd()->getTimezone(), $timeZone);
     }
 
-    public function expectedPeriodLengths()
+    public function expectedPeriodLengths(): Generator
     {
-        return [
-            [1, Period::make('2018-01-01', '2018-01-01')],
-
-            [15, Period::make('2018-01-01', '2018-01-15')],
-            [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START)],
-            [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END)],
-            [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL)],
-
-            [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)],
-            [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)],
-        ];
+        yield [1, Period::make('2018-01-01', '2018-01-01')];
+        yield [15, Period::make('2018-01-01', '2018-01-15')];
+        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START)];
+        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END)];
+        yield [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL)];
+        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)];
+        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)];
     }
 }
