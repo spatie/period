@@ -190,6 +190,7 @@ Next, the `Period` class also has some getters:
 - `includedStart(): DateTimeImmutable`
 - `end(): DateTimeImmutable`
 - `includedEnd(): DateTimeImmutable`
+- `ceilingEnd(Precision::SECOND): DateTimeImmutable`
 - `length(): int`
 - `duration(): PeriodDuration`
 - `precision(): Precision`

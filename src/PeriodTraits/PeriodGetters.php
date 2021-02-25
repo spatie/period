@@ -4,6 +4,7 @@ namespace Spatie\Period\PeriodTraits;
 
 use DateTimeImmutable;
 use Spatie\Period\Boundaries;
+use Spatie\Period\Exceptions\CannotCeilLowerPrecision;
 use Spatie\Period\PeriodDuration;
 use Spatie\Period\Precision;
 
@@ -48,6 +49,15 @@ trait PeriodGetters
     public function includedEnd(): DateTimeImmutable
     {
         return $this->includedEnd;
+    }
+
+    public function ceilingEnd(Precision $precision): DateTimeImmutable
+    {
+        if ($precision->higherThan($this->precision)) {
+            throw CannotCeilLowerPrecision::precisionIsLower($this->precision, $precision);
+        }
+
+        return $this->precision->ceilDate($this->includedEnd, $precision);
     }
 
     public function length(): int
