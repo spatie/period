@@ -22,7 +22,7 @@ class Period implements IteratorAggregate
 
     private DateTimeImmutable $includedStart;
 
-    private DateTimeImmutable|false $includedEnd;
+    private DateTimeImmutable $includedEnd;
 
     private int $boundaryExclusionMask;
 
@@ -329,7 +329,7 @@ class Period implements IteratorAggregate
         );
     }
 
-    public function overlapSingle(Period $period): ?static
+    public function overlap(Period $period): ?static
     {
         $this->ensurePrecisionMatches($period);
 
@@ -353,12 +353,12 @@ class Period implements IteratorAggregate
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function overlap(Period ...$periods): PeriodCollection
+    public function overlapAny(Period ...$periods): PeriodCollection
     {
         $overlapCollection = new PeriodCollection();
 
         foreach ($periods as $period) {
-            $overlap = $this->overlapSingle($period);
+            $overlap = $this->overlap($period);
 
             if ($overlap === null) {
                 continue;
@@ -379,7 +379,7 @@ class Period implements IteratorAggregate
         }
 
         foreach ($periods as $period) {
-            $overlap = $overlap->overlapSingle($period);
+            $overlap = $overlap->overlap($period);
 
             if ($overlap === null) {
                 return null;
@@ -394,7 +394,7 @@ class Period implements IteratorAggregate
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function diffSingle(Period $period): PeriodCollection
+    public function diff(Period $period): PeriodCollection
     {
         $this->ensurePrecisionMatches($period);
 
@@ -407,7 +407,7 @@ class Period implements IteratorAggregate
             return $periodCollection;
         }
 
-        $overlap = $this->overlapSingle($period);
+        $overlap = $this->overlap($period);
 
         $start = $this->getIncludedStart() < $period->getIncludedStart()
             ? $this->getIncludedStart()
@@ -441,24 +441,12 @@ class Period implements IteratorAggregate
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function diff(Period ...$periods): PeriodCollection
+    public function subtract(Period ...$periods): PeriodCollection
     {
-        if (count($periods) === 1 && ! $this->overlapsWith($periods[0])) {
-            $collection = new PeriodCollection();
-
-            $gap = $this->gap($periods[0]);
-
-            if ($gap !== null) {
-                $collection[] = $gap;
-            }
-
-            return $collection;
-        }
-
         $diffs = [];
 
         foreach ($periods as $period) {
-            $diffs[] = $this->diffSingle($period);
+            $diffs[] = $this->diff($period);
         }
 
         $collection = (new PeriodCollection($this))->overlap(...$diffs);

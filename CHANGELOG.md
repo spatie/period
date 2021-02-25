@@ -4,14 +4,18 @@ All notable changes to `period` will be documented in this file
 
 ## 2.0.0 - 2019-??-??
 
-- `\Spatie\Period\PeriodCollection::overlapSingle` is no longer available,
-`\Spatie\Period\PeriodCollection::overlap` should be used.
+- `PeriodCollection::overlapSingle` is no longer available, `PeriodCollection::overlap` should be used.
 - Fix bug with `overlapAll` when no overlap
-- `\Spatie\Period\Period::duration()` returns an instance of `\Spatie\Period\PeriodDuration`
+- `Period::duration()` returns an instance of `PeriodDuration`
 - Bump required PHP version to `^8.0`
 - `Period::length()` now uses the Period's precision instead of always returning days
 - All period properties are now typed
 - Return types of several methods have been changed from `Period` to `static`
+- `Period::overlap()` renamed to `Period::overlapAny()`
+- `Period::overlapSingle()` renamed to `Period::overlap()`
+- `Period::diff()` renamed to `Period::subtract()`
+- `Period::diffSingle()` renamed to `Period::diff()`
+- `Period::subtract()` no longer returns the gap when there's no overlap
 
 ## 1.6.0 - 2021-02-24
 

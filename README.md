@@ -129,14 +129,14 @@ $period->gap(Period $period): ?Period
 ```
 
 ```php
-$period->overlapSingle(Period $period): ?Period
-$period->overlap(Period ...$periods): PeriodCollection
+$period->overlap(Period $period): ?Period
+$period->overlapAny(Period ...$periods): PeriodCollection
 $period->overlapAll(Period ...$periods): Period
 ```
 
 ```php
-$period->diffSingle(Period $period): PeriodCollection
-$period->diff(Period ...$periods): PeriodCollection
+$period->diff(Period $period): PeriodCollection
+$period->subtract(Period ...$periods): PeriodCollection
 ```
 
 ```php
@@ -157,7 +157,25 @@ $periodCollection->gaps(): PeriodCollection
 
 ### Comparing periods
 
+**Overlap with one period**
+
+```php
+/*
+ * A        [===========]
+ * B            [============]
+ *
+ * OVERLAP      [=======]
+ */
+ 
+$a = Period::make('2018-01-01', '2018-01-15');
+$b = Period::make('2018-01-10', '2018-01-30');
+
+$overlap = Period::make('2018-01-10', '2018-01-15');
+
+```
+
 **Overlaps with any other period**: 
+
 This method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
 
 ```php
@@ -176,10 +194,11 @@ $c = Period::make('2018-03-01', '2018-03-31');
 
 $current = Period::make('2018-01-20', '2018-03-10');
 
-$overlaps = $current->overlap($a, $b, $c); 
+$overlaps = $current->overlapAny($a, $b, $c); 
 ```
 
 **Overlap with all periods**: 
+
 This method only returns one period where all periods overlap.
 
 ```php
@@ -198,18 +217,20 @@ $c = Period::make('2018-01-10', '2018-01-31');
 $overlap = $a->overlapAll($b, $c);
 ```
 
-**Diff between multiple periods**: 
+**Subtract from period**: 
+
 This method returns a `PeriodCollection` multiple `Period` objects 
-representing the diffs between several periods and one.
+representing the subtraction between several periods and one.
 
 ```php
 /*
+ * CURRENT      [========================]
+ * 
  * A                   [====]
  * B                               [========]
  * C         [=====]
- * CURRENT      [========================]
  *
- * DIFF             [=]      [====]
+ * RES              [=]      [====]
  */
 
 $a = Period::make('2018-01-05', '2018-01-10');
@@ -218,7 +239,26 @@ $c = Period::make('2017-01-01', '2018-01-02');
 
 $current = Period::make('2018-01-01', '2018-01-31');
 
-$diff = $current->diff($a, $b, $c);
+$result = $current->subtract($a, $b, $c);
+```
+
+**Diff between periods**: 
+
+This method returns a `PeriodCollection` multiple `Period` objects 
+representing the difference between two periods.
+
+```php
+/*
+ * A        [===========]
+ * B            [===========]
+ *
+ * DIFF     [==]         [==]
+ */
+
+$a = Period::make('2018-01-01', '2018-01-15');
+$b = Period::make('2018-01-10', '2018-01-30');
+
+$diffs = $a->diff($b);
 ```
 
 **Overlaps with**: This method returns a boolean indicating of two periods overlap or not.

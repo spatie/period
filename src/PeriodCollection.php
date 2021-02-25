@@ -85,7 +85,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return static::make();
         }
 
-        return $boundaries->diff(...$this);
+        return $boundaries->subtract(...$this);
     }
 
     /**
@@ -98,7 +98,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         $intersected = static::make();
 
         foreach ($this as $period) {
-            $overlap = $intersection->overlapSingle($period);
+            $overlap = $intersection->overlap($period);
 
             if ($overlap === null) {
                 continue;
@@ -184,11 +184,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         foreach ($this as $period) {
             foreach ($periodCollection as $otherPeriod) {
-                if (! $period->overlapSingle($otherPeriod)) {
+                if (! $period->overlap($otherPeriod)) {
                     continue;
                 }
 
-                $overlaps[] = $period->overlapSingle($otherPeriod);
+                $overlaps[] = $period->overlap($otherPeriod);
             }
         }
 

@@ -164,7 +164,7 @@ class PeriodTest extends TestCase
 
         $overlapPeriod = Period::make('2018-01-10', '2018-01-15');
 
-        $this->assertTrue($a->overlapSingle($b)->equals($overlapPeriod));
+        $this->assertTrue($a->overlap($b)->equals($overlapPeriod));
     }
 
     /**
@@ -184,7 +184,7 @@ class PeriodTest extends TestCase
         $c = Period::make('2018-03-01', '2018-03-31');
         $d = Period::make('2018-01-20', '2018-03-10');
 
-        $overlapPeriods = $d->overlap($a, $b, $c);
+        $overlapPeriods = $d->overlapAny($a, $b, $c);
 
         $this->assertCount(3, $overlapPeriods);
 
@@ -239,7 +239,7 @@ class PeriodTest extends TestCase
         $a = Period::make('2019-01-01', '2019-01-31');
         $b = Period::make('2019-02-01', '2019-02-28');
 
-        $this->assertTrue($a->overlap($b)->isEmpty());
+        $this->assertTrue($a->overlapAny($b)->isEmpty());
     }
 
     /** @test */
@@ -248,7 +248,7 @@ class PeriodTest extends TestCase
         $a = Period::make('2018-01-05', '2018-01-10');
         $b = Period::make('2018-01-22', '2018-01-30');
 
-        $overlap = $a->overlapSingle($b);
+        $overlap = $a->overlap($b);
 
         $this->assertNull($overlap);
     }
@@ -343,7 +343,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-10', '2018-01-30');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->diff($b);
 
         $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
         $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
@@ -363,7 +363,7 @@ class PeriodTest extends TestCase
 
         $b = Period::make('2018-01-01', '2018-01-15');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->diff($b);
 
         $this->assertTrue($diffs[0]->equals(Period::make('2018-01-01', '2018-01-09')));
         $this->assertTrue($diffs[1]->equals(Period::make('2018-01-16', '2018-01-30')));
@@ -375,40 +375,41 @@ class PeriodTest extends TestCase
      * A                    [=====]
      * B        [=====]
      *
-     * DIFF     [=====]     [=====]
+     * RES                  [=====]
      */
-    public function it_can_determine_the_diff_if_periods_do_not_overlap_at_all()
+    public function subtraction_without_overlap_returns_the_original_period()
     {
         $a = Period::make('2018-01-10', '2018-01-15');
-
         $b = Period::make('2018-02-10', '2018-02-15');
 
-        $diffs = $a->diffSingle($b);
+        $diffs = $a->subtract($b);
 
-        $this->assertTrue($diffs[0]->equals(Period::make('2018-01-10', '2018-01-15')));
-        $this->assertTrue($diffs[1]->equals(Period::make('2018-02-10', '2018-02-15')));
+        $this->assertCount(1, $diffs);
+
+        $this->assertTrue($diffs[0]->equals($a));
     }
 
     /**
      * @test
      *
+     * CURRENT         [===========]
+     *
      * A       [=========]
      * B                     [==]
      * C                      [=========]
-     * CURRENT         [===========]
      *
      * OVERLAP         [=]    [====]
      * DIFF               [=]
      */
-    public function it_can_determine_the_diff_for_periods_with_multiple_overlaps()
+    public function it_can_determine_subtract_for_periods_with_multiple_overlaps()
     {
+        $current = Period::make('2018-01-20', '2018-03-15');
+
         $a = Period::make('2018-01-01', '2018-01-31');
         $b = Period::make('2018-02-10', '2018-02-20');
         $c = Period::make('2018-02-11', '2018-03-31');
 
-        $current = Period::make('2018-01-20', '2018-03-15');
-
-        $diff = $current->diff($a, $b, $c);
+        $diff = $current->subtract($a, $b, $c);
 
         $this->assertCount(1, $diff);
 
@@ -432,7 +433,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a, $b);
+        $diff = $current->subtract($a, $b);
 
         $this->assertCount(0, $diff);
     }
@@ -440,22 +441,22 @@ class PeriodTest extends TestCase
     /**
      * @test
      *
-     * A                            [========]
      * CURRENT         [=======]
      *
-     * DIFF                     [==]
+     * A                            [========]
+     *
+     * DIFF             [=======]
      */
-    public function it_can_determine_that_there_is_a_diff()
+    public function it_can_subtract()
     {
         $a = Period::make('2018-02-15', '2018-02-20');
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a);
+        $diff = $current->subtract($a);
 
         $this->assertCount(1, $diff);
-
-        $this->assertTrue($diff[0]->equals(Period::make('2018-02-01', '2018-02-14')));
+        $this->assertTrue($diff[0]->equals($current));
     }
 
     /**
@@ -476,7 +477,7 @@ class PeriodTest extends TestCase
 
         $current = Period::make('2018-01-01', '2018-01-31');
 
-        $diff = $current->diff($a, $b, $c);
+        $diff = $current->subtract($a, $b, $c);
 
         $this->assertCount(2, $diff);
 
@@ -487,20 +488,21 @@ class PeriodTest extends TestCase
     /**
      * @test
      *
+     * CURRENT  [=============================]
+     *
      * A                            [====]
      * B                [====]
-     * CURRENT  [=============================]
      *
      * DIFF     [======]      [====]      [===]
      */
     public function it_can_determine_multiple_diffs_for_sure()
     {
+        $current = Period::make('2018-01-01', '2018-01-31');
+
         $a = Period::make('2018-01-15', '2018-01-20');
         $b = Period::make('2018-01-05', '2018-01-10');
 
-        $current = Period::make('2018-01-01', '2018-01-31');
-
-        $diff = $current->diff($a, $b);
+        $diff = $current->subtract($a, $b);
 
         $this->assertCount(3, $diff);
 
@@ -576,18 +578,6 @@ class PeriodTest extends TestCase
         $period = Period::make('2018-01-01', '2018-01-15');
 
         $this->assertInstanceOf(DateTimeImmutable::class, current($period));
-    }
-
-    /** @test */
-    public function diff_filters_out_null_object_if_no_gap()
-    {
-        $a = Period::make('2019-02-01', '2019-02-01');
-
-        $b = Period::make('2019-02-02', '2019-02-02');
-
-        $diff = $a->diff($b);
-
-        $this->assertEmpty($diff);
     }
 
     /** @test */
