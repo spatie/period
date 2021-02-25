@@ -11,13 +11,12 @@ class PeriodFactory
 {
     public static function make(
         string $periodClass,
-        string|DateTimeInterface $start,
-        string|DateTimeInterface $end,
+        string | DateTimeInterface $start,
+        string | DateTimeInterface $end,
         ?Precision $precision = null,
         ?Boundaries $boundaries = null,
         ?string $format = null
-    ): Period
-    {
+    ): Period {
         $boundaries ??= Boundaries::EXCLUDE_NONE();
         $precision ??= Precision::DAY();
         $interval = $precision->interval();
@@ -39,7 +38,7 @@ class PeriodFactory
     }
 
     protected static function resolveDate(
-        DateTimeInterface|string $date,
+        DateTimeInterface | string $date,
         ?string $format
     ): DateTimeImmutable {
         if ($date instanceof DateTimeImmutable) {

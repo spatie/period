@@ -113,7 +113,7 @@ trait PeriodComparisons
         return true;
     }
 
-    public function contains(DateTimeInterface|Period $other): bool
+    public function contains(DateTimeInterface | Period $other): bool
     {
         if ($other instanceof Period) {
             return $this->includedStart() <= $other->includedStart()

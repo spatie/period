@@ -41,8 +41,8 @@ class Period implements IteratorAggregate
     }
 
     public static function make(
-        DateTimeInterface|string $start,
-        DateTimeInterface|string $end,
+        DateTimeInterface | string $start,
+        DateTimeInterface | string $end,
         ?Precision $precision = null,
         ?Boundaries $boundaries = null,
         ?string $format = null
