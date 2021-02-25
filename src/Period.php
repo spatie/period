@@ -280,7 +280,7 @@ class Period implements IteratorAggregate
         )->getTimestamp();
     }
 
-    public function contains(DateTimeInterface|Period $other): bool
+    public function contains(DateTimeInterface | Period $other): bool
     {
         if ($other instanceof Period) {
             return $this->getIncludedStart() <= $other->getIncludedStart()
