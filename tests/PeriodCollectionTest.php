@@ -149,26 +149,6 @@ class PeriodCollectionTest extends TestCase
     /**
      * @test
      *
-     * A    [===============]
-     * B        |
-     * C  |
-     * D                        |
-     */
-    public function it_can_determine_whether_a_period_has_a_date()
-    {
-        $period = Period::make('2018-01-01', '2018-01-31');
-
-        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-01')));
-        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-31')));
-        $this->assertTrue($period->contains(new DateTimeImmutable('2018-01-10')));
-
-        $this->assertFalse($period->contains(new DateTimeImmutable('2017-12-31')));
-        $this->assertFalse($period->contains(new DateTimeImmutable('2018-02-01')));
-    }
-
-    /**
-     * @test
-     *
      * A        [========================]
      * B    [================]
      * C                    [=====================]
