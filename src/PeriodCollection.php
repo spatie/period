@@ -12,14 +12,9 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     use IterableImplementation;
 
     /** @var \Spatie\Period\Period[] */
-    protected $periods;
+    protected array $periods;
 
-    /**
-     * @param \Spatie\Period\Period ...$periods
-     *
-     * @return static
-     */
-    public static function make(Period ...$periods): PeriodCollection
+    public static function make(Period ...$periods): static
     {
         return new static(...$periods);
     }
@@ -34,12 +29,12 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $this->periods[$this->position];
     }
 
-    public function overlap(PeriodCollection ...$periodCollections): PeriodCollection
+    public function overlapAll(PeriodCollection ...$periodCollections): PeriodCollection
     {
         $overlap = clone $this;
 
         foreach ($periodCollections as $periodCollection) {
-            $overlap = $overlap->overlapSingle($periodCollection);
+            $overlap = $overlap->overlap($periodCollection);
         }
 
         return $overlap;
@@ -74,10 +69,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         );
     }
 
-    /**
-     * @return static
-     */
-    public function gaps(): PeriodCollection
+    public function gaps(): static
     {
         $boundaries = $this->boundaries();
 
@@ -88,12 +80,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $boundaries->subtract(...$this);
     }
 
-    /**
-     * @param \Spatie\Period\Period $intersection
-     *
-     * @return static
-     */
-    public function intersect(Period $intersection): PeriodCollection
+    public function intersect(Period $intersection): static
     {
         $intersected = static::make();
 
@@ -110,12 +97,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $intersected;
     }
 
-    /**
-     * @param \Spatie\Period\Period ...$periods
-     *
-     * @return static
-     */
-    public function add(Period ...$periods): PeriodCollection
+    public function add(Period ...$periods): static
     {
         $collection = clone $this;
 
@@ -126,12 +108,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $collection;
     }
 
-    /**
-     * @param \Closure $closure
-     *
-     * @return static
-     */
-    public function map(Closure $closure): PeriodCollection
+    public function map(Closure $closure): static
     {
         $collection = clone $this;
 
@@ -142,13 +119,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $collection;
     }
 
-    /**
-     * @param \Closure $closure
-     * @param mixed $initial
-     *
-     * @return mixed|null
-     */
-    public function reduce(Closure $closure, $initial = null)
+    public function reduce(Closure $closure, $initial = null): mixed
     {
         $carry = $initial;
 
@@ -159,12 +130,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $carry;
     }
 
-    /**
-     * @param  \Closure  $closure
-     *
-     * @return static
-     */
-    public function filter(Closure $closure): PeriodCollection
+    public function filter(Closure $closure): static
     {
         $collection = clone $this;
 
@@ -178,7 +144,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return count($this->periods) === 0;
     }
 
-    private function overlapSingle(PeriodCollection $periodCollection): PeriodCollection
+    private function overlap(PeriodCollection $periodCollection): PeriodCollection
     {
         $overlaps = new PeriodCollection();
 
