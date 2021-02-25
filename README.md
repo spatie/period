@@ -140,11 +140,15 @@ The `Period` class offers a rich API to interact and compare with other periods 
 
 On top of comparisons, the `Period` class also offers a bunch of operations:
 
-- `overlap(Period ...$others): ?static`: overlap two or more periods on each other. The resulting period will be the union of all other periods combined.
+### `overlap(Period ...$others): ?static`
+
+Overlap two or more periods on each other. The resulting period will be the union of all other periods combined.
 
 ![](./docs/img/period-overlap.png)
 
-- `overlapAny(Period ...$periods): PeriodCollection`: overlap two or more periods on each other. Whenever two or periods overlap, that overlapping period is added to a collection that's the final result.
+### `overlapAny(Period ...$periods): PeriodCollection`
+
+Overlap two or more periods on each other. Whenever two or periods overlap, that overlapping period is added to a collection that's the final result.
 
 ![](./docs/img/period-overlap-any.png)
 
