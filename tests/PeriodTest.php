@@ -138,45 +138,45 @@ class PeriodTest extends TestCase
         yield [
             Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::MINUTE()),
             Precision::MINUTE(),
-            Carbon::make('2018-01-15 11:30:15')->endOfMinute()
+            Carbon::make('2018-01-15 11:30:15')->endOfMinute(),
         ];
 
         yield [
             Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::HOUR()),
             Precision::HOUR(),
-            Carbon::make('2018-01-15 11:30:15')->endOfHour()
+            Carbon::make('2018-01-15 11:30:15')->endOfHour(),
         ];
 
         yield [
             Period::make('2018-01-01', '2018-01-15', Precision::DAY()),
             Precision::DAY(),
-            Carbon::make('2018-01-15')->endOfDay()
+            Carbon::make('2018-01-15')->endOfDay(),
         ];
 
         yield [
             Period::make('2018-01-01', '2018-01-15', Precision::MONTH()),
             Precision::MONTH(),
-            Carbon::make('2018-01-15')->endOfMonth()
+            Carbon::make('2018-01-15')->endOfMonth(),
         ];
 
         yield [
             Period::make('2018-01-01', '2018-01-15', Precision::YEAR()),
             Precision::YEAR(),
-            Carbon::make('2018-01-15')->endOfYear()
+            Carbon::make('2018-01-15')->endOfYear(),
         ];
 
         // Test higher precision
         yield [
             Period::make('2018-01-01', '2018-01-15', Precision::DAY()),
             Precision::MONTH(),
-            Carbon::make('2018-01-15')->endOfMonth()
+            Carbon::make('2018-01-15')->endOfMonth(),
         ];
 
         // Test exclusive period
         yield [
             Period::make('2018-01-01', '2018-01-15', Precision::DAY(), Boundaries::EXCLUDE_END()),
             Precision::DAY(),
-            Carbon::make('2018-01-15')->subDay()->endOfDay()
+            Carbon::make('2018-01-15')->subDay()->endOfDay(),
         ];
     }
 

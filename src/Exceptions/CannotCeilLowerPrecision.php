@@ -15,7 +15,8 @@ class CannotCeilLowerPrecision extends Exception
         return new self("Cannot get the latest $from of a $to.");
     }
 
-    protected static function unitName(Precision $precision) {
+    protected static function unitName(Precision $precision)
+    {
         return match ($precision->intervalName()) {
             'y' => 'year',
             'm' => 'month',
