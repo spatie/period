@@ -148,5 +148,4 @@ class SubtractTest extends TestCase
         $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
         $this->assertTrue($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')));
     }
-
 }
