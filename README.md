@@ -138,6 +138,8 @@ The `Period` class offers a rich API to interact and compare with other periods 
 - `contains(DateTimeInterface|Period $other): bool`: whether a period contains another period _or_ a single date.
 - `equals(Period $period): bool`: whether a period equals another period.
 
+---
+
 On top of comparisons, the `Period` class also offers a bunch of operations:
 
 ### `overlap(Period ...$others): ?static`
@@ -193,17 +195,41 @@ Next, the `Period` class also has some getters:
 - `precision(): Precision`
 - `boundaries(): Boundaries`
 
+---
+
 The `PeriodCollection` class represents a collection of periods and has some useful methods on its own:
 
-- `overlapAll(PeriodCollection ...$periodCollections): PeriodCollection`: overlap several collections on each other.
-- `boundaries(): ?Period`: create a new period representing the outer boundaries of the collection.
-- `gaps(): static`: gives the gaps for all periods within this collection.
-- `intersect(Period $intersection): static`: 
-- `add(Period ...$periods): static`: 
-- `map(Closure $closure): static`: 
+### `overlapAll(PeriodCollection ...$periodCollections): PeriodCollection`
+
+Overlap several collections on each other.
+
+![](./docs/img/collection-overlap-all.png)
+
+### `boundaries(): ?Period` 
+
+Create a new period representing the outer boundaries of the collection.
+
+![](./docs/img/collection-boundaries.png)
+
+### `gaps(): static`
+
+Gives the gaps for all periods within this collection.
+
+![](./docs/img/collection-gaps.png)
+
+### `intersect(Period $intersection): static`
+
+Intersect all periods within a collection with a given period. The result is a new collection with, per period in the original collection, the overlap with the intersection period. When there's no overlap, the original period is discarded.
+
+![](./docs/img/collection-intersect.png)
+
+
+
+- `add(Period ...$periods): static`
+- `map(Closure $closure): static`:
 - `reduce(Closure $closure, $initial = null): mixed`: 
 - `filter(Closure $closure): static`: 
-- `isEmpty(): bool`: 
+- `isEmpty(): bool`:
 
 ### Compatibility
 
