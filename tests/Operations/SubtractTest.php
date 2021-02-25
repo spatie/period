@@ -10,21 +10,97 @@ class SubtractTest extends TestCase
     /**
      * @test
      *
-     * A                    [=====]
-     * B        [=====]
+     * A      [=====]
+     * B                [=====]
      *
-     * RES                  [=====]
+     * RES    [=====]
      */
-    public function subtraction_without_overlap_returns_the_original_period()
+    public function subtraction_without_overlap()
     {
-        $a = Period::make('2018-01-10', '2018-01-15');
-        $b = Period::make('2018-02-10', '2018-02-15');
+        $a = Period::make('2020-01-01', '2020-01-02');
+        $b = Period::make('2020-02-01', '2020-02-02');
 
-        $diffs = $a->subtract($b);
+        $result = $a->subtract($b);
 
-        $this->assertCount(1, $diffs);
+        $this->assertCount(1, $result);
 
-        $this->assertTrue($diffs[0]->equals($a));
+        $this->assertTrue($result[0]->equals($a));
+    }
+
+    /**
+     * @test
+     *
+     * A        [=======]
+     * B            [=======]
+     *
+     * RES     [==]
+     */
+    public function subtraction_right()
+    {
+        $a = Period::make('2020-01-01', '2020-01-31');
+        $b = Period::make('2020-01-11', '2020-01-31');
+
+        $result = $a->subtract($b);
+
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[0]->equals(Period::make('2020-01-01', '2020-01-10')));
+    }
+
+    /**
+     * @test
+     *
+     * A            [=======]
+     * B        [=======]
+     *
+     * RES               [==]
+     */
+    public function subtraction_left()
+    {
+        $a = Period::make('2020-01-01', '2020-01-31');
+        $b = Period::make('2020-01-01', '2020-01-09');
+
+        $result = $a->subtract($b);
+
+        $this->assertCount(1, $result);
+        $this->assertTrue($result[0]->equals(Period::make('2020-01-10', '2020-01-31')));
+    }
+
+    /**
+     * @test
+     *
+     * A        [=================]
+     * B             [=======]
+     *
+     * RES      [==]          [==]
+     */
+    public function subtraction_left_and_right()
+    {
+        $a = Period::make('2020-01-01', '2020-01-31');
+        $b = Period::make('2020-01-11', '2020-01-14');
+
+        $result = $a->subtract($b);
+
+        $this->assertCount(2, $result);
+        $this->assertTrue($result[0]->equals(Period::make('2020-01-01', '2020-01-10')));
+        $this->assertTrue($result[1]->equals(Period::make('2020-01-15', '2020-01-31')));
+    }
+
+    /**
+     * @test
+     *
+     * A             [=======]
+     * B        [=================]
+     *
+     * RES      [==]          [==]
+     */
+    public function subtraction_full()
+    {
+        $a = Period::make('2020-01-11', '2020-01-14');
+        $b = Period::make('2020-01-01', '2020-01-31');
+
+        $result = $a->subtract($b);
+
+        $this->assertCount(0, $result);
     }
 
     /**
@@ -36,10 +112,9 @@ class SubtractTest extends TestCase
      * B                     [==]
      * C                      [=========]
      *
-     * OVERLAP         [=]    [====]
-     * DIFF               [=]
+     * RESULT             [=]
      */
-    public function it_can_determine_subtract_for_periods_with_multiple_overlaps()
+    public function subtraction_many()
     {
         $current = Period::make('2018-01-20', '2018-03-15');
 

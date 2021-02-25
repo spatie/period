@@ -55,7 +55,7 @@ class PeriodTest extends TestCase
         $period = Period::make('2018-01-01 01:02:03', '2018-01-02 04:05:06');
 
         $this->assertTrue($period->equals(
-            new Period(
+            Period::make(
                 DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 01:02:03'),
                 DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 04:05:06')
             )
@@ -68,7 +68,7 @@ class PeriodTest extends TestCase
         $period = Period::make('2018-01-01', '2018-01-02');
 
         $this->assertTrue($period->equals(
-            new Period(
+            Period::make(
                 DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00'),
                 DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')
             )
@@ -84,12 +84,25 @@ class PeriodTest extends TestCase
         $this->assertSame($expectedCount, iterator_count($period));
     }
 
+    public function expectedPeriodLengths(): Generator
+    {
+        yield [1, Period::make('2018-01-01', '2018-01-01')];
+        yield [15, Period::make('2018-01-01', '2018-01-15')];
+        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START())];
+        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END())];
+        yield [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL())];
+        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR())];
+        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR(), Boundaries::EXCLUDE_END())];
+    }
+
     /** @test */
     public function its_iterator_returns_immutable_dates()
     {
         $period = Period::make('2018-01-01', '2018-01-15');
 
-        $this->assertInstanceOf(DateTimeImmutable::class, current($period));
+        $current = $period->getIterator()->start;
+
+        $this->assertInstanceOf(DateTimeImmutable::class, $current);
     }
 
     /** @test */
@@ -98,19 +111,8 @@ class PeriodTest extends TestCase
         $timeZone = new DateTimeZone('Europe/London');
         $start = new DateTimeImmutable('2000-01-01', $timeZone);
         $end = new DateTimeImmutable('2000-02-01', $timeZone);
-        $period = new Period($start, $end);
-        $this->assertEquals($period->getStart()->getTimezone(), $timeZone);
-        $this->assertEquals($period->getEnd()->getTimezone(), $timeZone);
-    }
-
-    public function expectedPeriodLengths(): Generator
-    {
-        yield [1, Period::make('2018-01-01', '2018-01-01')];
-        yield [15, Period::make('2018-01-01', '2018-01-15')];
-        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START)];
-        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END)];
-        yield [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL)];
-        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR)];
-        yield [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR, Boundaries::EXCLUDE_END)];
+        $period = Period::make($start, $end);
+        $this->assertEquals($period->start()->getTimezone(), $timeZone);
+        $this->assertEquals($period->end()->getTimezone(), $timeZone);
     }
 }

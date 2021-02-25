@@ -105,13 +105,13 @@ class Visualizer
      */
     private function coords(Period $period, Period $bounds, int $width): array
     {
-        $boundsStart = $bounds->getStart()->getTimestamp();
-        $boundsEnd = $bounds->getEnd()->getTimestamp();
+        $boundsStart = $bounds->start()->getTimestamp();
+        $boundsEnd = $bounds->end()->getTimestamp();
         $boundsLength = $boundsEnd - $boundsStart;
 
         // Get the bounds
-        $start = $period->getStart()->getTimestamp() - $boundsStart;
-        $end = $period->getEnd()->getTimestamp() - $boundsStart;
+        $start = $period->start()->getTimestamp() - $boundsStart;
+        $end = $period->end()->getTimestamp() - $boundsStart;
 
         // Rescale from timestamps to width units
         $start *= $width / $boundsLength;

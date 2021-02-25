@@ -6,14 +6,11 @@ namespace Spatie\Period;
 
 use DateTimeImmutable;
 
-final class PeriodDuration
+class PeriodDuration
 {
-    /** @var Period */
-    private $period;
-
-    public function __construct(Period $period)
-    {
-        $this->period = $period;
+    public function __construct(
+        private Period $period
+    ) {
     }
 
     public function equals(PeriodDuration $other): bool
@@ -36,30 +33,30 @@ final class PeriodDuration
 
     public function compareTo(PeriodDuration $other): int
     {
-        $now = new DateTimeImmutable('@'.time()); // Ensure a TimeZone independent instance
+        $now = new DateTimeImmutable('@' . time()); // Ensure a TimeZone independent instance
 
-        $here = $this->period->getIncludedEnd()->diff($this->period->getIncludedStart(), true);
-        $there = $other->period->getIncludedEnd()->diff($other->period->getIncludedStart(), true);
+        $here = $this->period->includedEnd()->diff($this->period->includedStart(), true);
+        $there = $other->period->includedEnd()->diff($other->period->includedStart(), true);
 
         return $now->add($here)->getTimestamp() <=> $now->add($there)->getTimestamp();
     }
 
     private function startAndEndDatesAreTheSameAs(PeriodDuration $other): bool
     {
-        return $this->period->getStart() == $other->period->getStart()
-            && $this->period->getEnd() == $other->period->getEnd();
+        return $this->period->start() == $other->period->start()
+            && $this->period->end() == $other->period->end();
     }
 
     private function includedStartAndEndDatesAreTheSameAs(PeriodDuration $other): bool
     {
-        return $this->period->getIncludedStart() == $other->period->getIncludedStart()
-            && $this->period->getIncludedEnd() == $other->period->getIncludedEnd();
+        return $this->period->includedStart() == $other->period->includedStart()
+            && $this->period->includedEnd() == $other->period->includedEnd();
     }
 
     private function numberOfDaysIsTheSameAs(PeriodDuration $other)
     {
-        $here = $this->period->getIncludedEnd()->diff($this->period->getIncludedStart(), true);
-        $there = $other->period->getIncludedEnd()->diff($other->period->getIncludedStart(), true);
+        $here = $this->period->includedEnd()->diff($this->period->includedStart(), true);
+        $there = $other->period->includedEnd()->diff($other->period->includedStart(), true);
 
         return $here->format('%a') === $there->format('%a');
     }

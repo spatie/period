@@ -49,7 +49,7 @@ class ContainsTest extends TestCase
     /** @test */
     public function precision_is_kept_when_testing_contains()
     {
-        $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY);
+        $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY());
 
         $this->assertTrue($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00')));
         $this->assertTrue($a->contains(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')));

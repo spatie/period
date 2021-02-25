@@ -21,7 +21,8 @@
     "require-dev": {
         "larapack/dd": "^1.0",
         "nesbot/carbon": "^2.40",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.0",
+        "spatie/ray": "^1.20"
     },
     "autoload": {
         "psr-4": {

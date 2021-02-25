@@ -18,6 +18,7 @@ All notable changes to `period` will be documented in this file
 - `Period::diffSingle()` renamed to `Period::diff()`
 - `Period::subtract()` no longer returns the gap when there's no overlap
 - `Period::contains` now accepts both `DateTimeInterface` and `Period`
+
 ## 1.6.0 - 2021-02-24
 
 - Add `Period::renew` (#74)

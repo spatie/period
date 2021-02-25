@@ -46,12 +46,12 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         $end = null;
 
         foreach ($this as $period) {
-            if ($start === null || $start > $period->getIncludedStart()) {
-                $start = $period->getIncludedStart();
+            if ($start === null || $start > $period->includedStart()) {
+                $start = $period->includedStart();
             }
 
-            if ($end === null || $end < $period->getIncludedEnd()) {
-                $end = $period->getIncludedEnd();
+            if ($end === null || $end < $period->includedEnd()) {
+                $end = $period->includedEnd();
             }
         }
 
@@ -61,11 +61,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         [$firstPeriod] = $this->periods;
 
-        return new Period(
+        return Period::make(
             $start,
             $end,
-            $firstPeriod->getPrecisionMask(),
-            Boundaries::EXCLUDE_NONE
+            $firstPeriod->precision(),
+            Boundaries::EXCLUDE_NONE()
         );
     }
 
