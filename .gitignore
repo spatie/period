@@ -4,3 +4,4 @@ docs
 phpunit.xml
 vendor
 coverage
+.php_cs.cache
