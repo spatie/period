@@ -37,7 +37,6 @@ class PeriodTest extends TestCase
         $b = Period::make('2018-02-01', '2018-02-15');
 
         $this->assertTrue($a->duration()->equals($b->duration()));
-
     }
 
     /**
@@ -86,7 +85,6 @@ class PeriodTest extends TestCase
             Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND)
                 ->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND))
         );
-
     }
 
     /**
@@ -595,12 +593,12 @@ class PeriodTest extends TestCase
     /** @test */
     public function it_keeps_timezone_when_boundaries_are_timezoned()
     {
-      $timeZone = new \DateTimeZone('Europe/London');
-      $start = new DateTimeImmutable('2000-01-01', $timeZone);
-      $end = new DateTimeImmutable('2000-02-01', $timeZone);
-      $period = new Period($start, $end);
-      $this->assertEquals($period->getStart()->getTimezone(), $timeZone);
-      $this->assertEquals($period->getEnd()->getTimezone(), $timeZone);
+        $timeZone = new \DateTimeZone('Europe/London');
+        $start = new DateTimeImmutable('2000-01-01', $timeZone);
+        $end = new DateTimeImmutable('2000-02-01', $timeZone);
+        $period = new Period($start, $end);
+        $this->assertEquals($period->getStart()->getTimezone(), $timeZone);
+        $this->assertEquals($period->getEnd()->getTimezone(), $timeZone);
     }
 
     public function expectedPeriodLengths()

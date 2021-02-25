@@ -192,26 +192,31 @@ class Visualizer
                 // The current period is only one unit long so display a "="
                 case $curr && $curr !== $prev && $curr !== $next:
                     $tmp .= '=';
+
                     break;
 
                 // We've hit the start of a period
                 case $curr && $curr !== $prev && $curr === $next:
                     $tmp .= '[';
+
                     break;
 
                 // We've hit the end of the period
                 case $curr && $curr !== $next:
                     $tmp .= ']';
+
                     break;
 
                 // We're adding segments to the current period
                 case $curr && $curr === $prev:
                     $tmp .= '=';
+
                     break;
 
                 // Otherwise it's just empty space
                 default:
                     $tmp .= ' ';
+
                     break;
             }
         }

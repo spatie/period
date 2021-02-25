@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Spatie\Period\Tests;
 
-use Spatie\Period\Period;
-use Spatie\Period\Precision;
-use Spatie\Period\Boundaries;
 use PHPUnit\Framework\TestCase;
+use Spatie\Period\Boundaries;
+use Spatie\Period\Period;
 use Spatie\Period\PeriodDuration;
+use Spatie\Period\Precision;
 
 class PeriodDurationTest extends TestCase
 {
