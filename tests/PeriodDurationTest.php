@@ -60,7 +60,7 @@ class PeriodDurationTest extends TestCase
             Period::make('2020-01-01', '2020-12-31', Precision::YEAR()),
         ];
 
-// todo: I don't see how this one could ever have worked. TBI…
+        // todo: I don't see how this one could ever have worked. TBI…
 //        yield '1 month' => [ // P1M , but P30D vs P28D
 //            Period::make('2019-04-01', '2019-04-30', Precision::MONTH()),
 //            Period::make('2019-02-01', '2019-02-28', Precision::MONTH()),
@@ -105,7 +105,6 @@ class PeriodDurationTest extends TestCase
             Period::make('2019-04-23', '2019-04-23', Precision::DAY(), Boundaries::EXCLUDE_NONE()),
             Period::make('2019-04-23', '2019-04-24', Precision::DAY(), Boundaries::EXCLUDE_END()),
         ];
-
     }
 
     /**
