@@ -152,10 +152,31 @@ Overlap two or more periods on each other. Whenever two or periods overlap, that
 
 ![](./docs/img/period-overlap-any.png)
 
-- `subtract(Period ...$others): PeriodCollection`: subtract one or more periods from the main period. This is the inverse operation from overlap.
-- `gap(Period $period): ?static`: get the gap between two periods, or 0 if the periods overlap.
-- `diffSymmetric(Period $other): PeriodCollection`: perform a [symmetric diff](https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html) between two periods.
-- `renew(): static`: renew the current period, creating a new period with the same length that happens _after_ the current period.
+### `subtract(Period ...$others): PeriodCollection`
+
+Subtract one or more periods from the main period. This is the inverse operation from overlap.
+
+![](./docs/img/period-subtract.png)
+
+### `gap(Period $period): ?static`
+
+Get the gap between two periods, or 0 if the periods overlap.
+
+![](./docs/img/period-gap.png)
+
+### `diffSymmetric(Period $other): PeriodCollection`
+
+Perform a [symmetric diff](https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html) between two periods.
+
+![](./docs/img/period-diff-symmetric.png)
+
+### `renew(): static`
+
+Renew the current period, creating a new period with the same length that happens _after_ the current period.
+
+![](./docs/img/period-renew.png)
+
+---
 
 Next, the `Period` class also has some getters:
 
