@@ -14,29 +14,21 @@ use Spatie\Period\Exceptions\InvalidPeriod;
 
 class Period implements IteratorAggregate
 {
-    /** @var \DateTimeImmutable */
-    protected $start;
+    protected DateTimeImmutable $start;
 
-    /** @var \DateTimeImmutable */
-    protected $end;
+    protected DateTimeImmutable $end;
 
-    /** @var \DateInterval */
-    protected $interval;
+    protected DateInterval $interval;
 
-    /** @var \DateTimeImmutable */
-    private $includedStart;
+    private DateTimeImmutable $includedStart;
 
-    /** @var \DateTimeImmutable */
-    private $includedEnd;
+    private DateTimeImmutable|false $includedEnd;
 
-    /** @var int */
-    private $boundaryExclusionMask;
+    private int $boundaryExclusionMask;
 
-    /** @var int */
-    private $precisionMask;
+    private int $precisionMask;
 
-    /** @var PeriodDuration */
-    private $duration;
+    private PeriodDuration $duration;
 
     public function __construct(
         DateTimeImmutable $start,
@@ -66,22 +58,13 @@ class Period implements IteratorAggregate
         $this->duration = new PeriodDuration($this);
     }
 
-    /**
-     * @param string|DateTimeInterface $start
-     * @param string|DateTimeInterface $end
-     * @param int|null $precisionMask
-     * @param int|null $boundaryExclusionMask
-     * @param string|null $format
-     *
-     * @return static
-     */
     public static function make(
         $start,
         $end,
         ?int $precisionMask = null,
         ?int $boundaryExclusionMask = null,
         ?string $format = null
-    ): Period {
+    ): static {
         if ($start === null) {
             throw InvalidDate::cannotBeNull('Start date');
         }
@@ -98,14 +81,14 @@ class Period implements IteratorAggregate
         );
     }
 
-    public function renew(): Period
+    public function renew(): static
     {
         $length = $this->includedStart->diff($this->includedEnd);
 
         $start = $this->includedEnd->add($this->interval);
         $end = $start->add($length);
 
-        return new self($start, $end, $this->precisionMask, $this->boundaryExclusionMask);
+        return new static($start, $end, $this->precisionMask, $this->boundaryExclusionMask);
     }
 
     public function startIncluded(): bool
@@ -151,6 +134,7 @@ class Period implements IteratorAggregate
     public function length(): int
     {
         // Length of month and year are not fixed, so we can't predict the length without iterate
+        // TODO: maybe we can use cal_days_in_month ?
         if (in_array($this->precisionMask, [Precision::MONTH, Precision::YEAR])) {
             return iterator_count($this);
         }
@@ -318,13 +302,7 @@ class Period implements IteratorAggregate
         return true;
     }
 
-    /**
-     * @param \Spatie\Period\Period $period
-     *
-     * @return static|null
-     * @throws \Exception
-     */
-    public function gap(Period $period): ?Period
+    public function gap(Period $period): ?static
     {
         $this->ensurePrecisionMatches($period);
 
@@ -351,12 +329,7 @@ class Period implements IteratorAggregate
         );
     }
 
-    /**
-     * @param \Spatie\Period\Period $period
-     *
-     * @return static|null
-     */
-    public function overlapSingle(Period $period): ?Period
+    public function overlapSingle(Period $period): ?static
     {
         $this->ensurePrecisionMatches($period);
 
@@ -397,12 +370,7 @@ class Period implements IteratorAggregate
         return $overlapCollection;
     }
 
-    /**
-     * @param \Spatie\Period\Period ...$periods
-     *
-     * @return static
-     */
-    public function overlapAll(Period ...$periods): ?Period
+    public function overlapAll(Period ...$periods): ?static
     {
         $overlap = clone $this;
 
@@ -421,6 +389,11 @@ class Period implements IteratorAggregate
         return $overlap;
     }
 
+    /**
+     * @param \Spatie\Period\Period ...$periods
+     *
+     * @return \Spatie\Period\PeriodCollection|static[]
+     */
     public function diffSingle(Period $period): PeriodCollection
     {
         $this->ensurePrecisionMatches($period);
@@ -498,7 +471,7 @@ class Period implements IteratorAggregate
         return $this->precisionMask;
     }
 
-    public function getIterator()
+    public function getIterator(): DatePeriod
     {
         return new DatePeriod(
             $this->getIncludedStart(),
@@ -529,7 +502,7 @@ class Period implements IteratorAggregate
             throw InvalidDate::forFormat($date, $format);
         }
 
-        if (strpos($format, ' ') === false) {
+        if (! str_contains($format, ' ')) {
             $dateTime = $dateTime->setTime(0, 0, 0);
         }
 
@@ -542,7 +515,7 @@ class Period implements IteratorAggregate
             return $format;
         }
 
-        if (strpos($format, ' ') === false && strpos($date, ' ') !== false) {
+        if (! str_contains($format, ' ') && str_contains($date, ' ')) {
             return 'Y-m-d H:i:s';
         }
 
