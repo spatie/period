@@ -223,7 +223,9 @@ Intersect all periods within a collection with a given period. The result is a n
 
 ![](./docs/img/collection-intersect.png)
 
+---
 
+Finally, there are a few utility methods available on `PeriodCollection` as well:
 
 - `add(Period ...$periods): static`
 - `map(Closure $closure): static`:
