@@ -206,4 +206,13 @@ class PrecisionTest extends TestCase
 
         $this->assertEquals(Precision::MINUTE(), $gap->precision());
     }
+
+    /** @test */
+    public function precision_seconds_is_more_precise_than_hours()
+    {
+        $hours = Precision::HOUR();
+        $seconds = Precision::SECOND();
+
+        $this->assertTrue($seconds->higherThan($hours));
+    }
 }

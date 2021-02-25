@@ -108,6 +108,23 @@ class Precision
         );
     }
 
+    public function ceilDate(DateTimeInterface $date, Precision $precision): DateTimeImmutable
+    {
+        [$year, $month, $day, $hour, $minute, $second] = explode(' ', $date->format('Y m d H i s'));
+
+        $month = (self::MONTH & $precision->mask) === self::MONTH ? $month : '12';
+        $day = (self::DAY & $precision->mask) === self::DAY ? $day : cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $hour = (self::HOUR & $precision->mask) === self::HOUR ? $hour : '23';
+        $minute = (self::MINUTE & $precision->mask) === self::MINUTE ? $minute : '59';
+        $second = (self::SECOND & $precision->mask) === self::SECOND ? $second : '59';
+
+        return DateTimeImmutable::createFromFormat(
+            'Y m d H i s',
+            implode(' ', [$year, $month, $day, $hour, $minute, $second]),
+            $date->getTimezone()
+        );
+    }
+
     public function equals(Precision ...$others): bool
     {
         foreach ($others as $other) {
@@ -119,6 +136,11 @@ class Precision
         }
 
         return false;
+    }
+
+    public function higherThan(Precision $other): bool
+    {
+        return strlen($this->dateFormat()) > strlen($other->dateFormat());
     }
 
     public function dateFormat(): string

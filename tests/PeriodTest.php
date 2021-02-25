@@ -8,6 +8,7 @@ use DateTimeZone;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Boundaries;
+use Spatie\Period\Exceptions\CannotCeilLowerPrecision;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
 
@@ -114,5 +115,79 @@ class PeriodTest extends TestCase
         $period = Period::make($start, $end);
         $this->assertEquals($period->start()->getTimezone(), $timeZone);
         $this->assertEquals($period->end()->getTimezone(), $timeZone);
+    }
+
+    /**
+     * @test
+     * @dataProvider ceilingDates
+    */
+    public function it_gets_the_correct_ceiling_of_a_precision(Period $period, Precision $precision, Carbon $expected)
+    {
+        $this->assertEquals($expected->startOfSecond(), $period->ceilingEnd($precision));
+    }
+
+    public function ceilingDates(): Generator
+    {
+        // Test inclusive Period's at same precision
+        yield [
+            Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::SECOND()),
+            Precision::SECOND(),
+            Carbon::make('2018-01-15 11:30:15')->endOfSecond(),
+        ];
+
+        yield [
+            Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::MINUTE()),
+            Precision::MINUTE(),
+            Carbon::make('2018-01-15 11:30:15')->endOfMinute()
+        ];
+
+        yield [
+            Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::HOUR()),
+            Precision::HOUR(),
+            Carbon::make('2018-01-15 11:30:15')->endOfHour()
+        ];
+
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::DAY()),
+            Precision::DAY(),
+            Carbon::make('2018-01-15')->endOfDay()
+        ];
+
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::MONTH()),
+            Precision::MONTH(),
+            Carbon::make('2018-01-15')->endOfMonth()
+        ];
+
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::YEAR()),
+            Precision::YEAR(),
+            Carbon::make('2018-01-15')->endOfYear()
+        ];
+
+        // Test higher precision
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::DAY()),
+            Precision::MONTH(),
+            Carbon::make('2018-01-15')->endOfMonth()
+        ];
+
+        // Test exclusive period
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::DAY(), Boundaries::EXCLUDE_END()),
+            Precision::DAY(),
+            Carbon::make('2018-01-15')->subDay()->endOfDay()
+        ];
+    }
+
+    /** @test */
+    public function it_throws_if_trying_to_get_a_ceiling_of_a_lower_precision()
+    {
+        $seconds = Period::make('2018-01-01 11:30:15', '2018-01-15 11:30:15', Precision::HOUR());
+
+        $this->expectException(CannotCeilLowerPrecision::class);
+        $this->expectExceptionMessage("Cannot get the latest hour of a second.");
+
+        $seconds->ceilingEnd(Precision::SECOND());
     }
 }
