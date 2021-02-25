@@ -51,8 +51,10 @@ trait PeriodGetters
         return $this->includedEnd;
     }
 
-    public function ceilingEnd(Precision $precision): DateTimeImmutable
+    public function ceilingEnd(?Precision $precision = null): DateTimeImmutable
     {
+        $precision ??= $this->precision;
+
         if ($precision->higherThan($this->precision)) {
             throw CannotCeilLowerPrecision::precisionIsLower($this->precision, $precision);
         }

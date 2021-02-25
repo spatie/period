@@ -121,7 +121,7 @@ class PeriodTest extends TestCase
      * @test
      * @dataProvider ceilingDates
     */
-    public function it_gets_the_correct_ceiling_of_a_precision(Period $period, Precision $precision, Carbon $expected)
+    public function it_gets_the_correct_ceiling_of_a_precision(Period $period, ?Precision $precision, Carbon $expected)
     {
         $this->assertEquals($expected->startOfSecond(), $period->ceilingEnd($precision));
     }
@@ -163,6 +163,13 @@ class PeriodTest extends TestCase
             Period::make('2018-01-01', '2018-01-15', Precision::YEAR()),
             Precision::YEAR(),
             Carbon::make('2018-01-15')->endOfYear(),
+        ];
+
+        // Test defaults to same precision as period
+        yield [
+            Period::make('2018-01-01', '2018-01-15', Precision::MONTH()),
+            null,
+            Carbon::make('2018-01-15')->endOfMonth(),
         ];
 
         // Test higher precision
