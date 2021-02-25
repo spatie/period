@@ -2,7 +2,7 @@
 
 All notable changes to `period` will be documented in this file
 
-## 2.0.0 - 2019-??-??
+## 2.0.0 - ?
 
 - `PeriodCollection::overlapSingle` is no longer available, `PeriodCollection::overlap` should be used.
 - Fix bug with `overlapAll` when no overlap
