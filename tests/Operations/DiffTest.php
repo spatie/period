@@ -20,7 +20,7 @@ class DiffTest extends TestCase
         $a = Period::make('2020-01-01', '2020-01-15');
         $b = Period::make('2020-02-01', '2020-02-15');
 
-        $diff = $a->diff($b);
+        $diff = $a->diffSymmetric($b);
 
         $this->assertCount(2, $diff);
         $this->assertTrue($diff[0]->equals($a));
@@ -41,7 +41,7 @@ class DiffTest extends TestCase
 
         $b = Period::make('2020-01-15', '2020-02-15');
 
-        $diff = $a->diff($b);
+        $diff = $a->diffSymmetric($b);
 
         $this->assertCount(2, $diff);
         $this->assertTrue($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')));
@@ -61,7 +61,7 @@ class DiffTest extends TestCase
         $a = Period::make('2020-01-15', '2020-02-15');
         $b = Period::make('2020-01-01', '2020-01-31');
 
-        $diff = $a->diff($b);
+        $diff = $a->diffSymmetric($b);
 
         $this->assertCount(2, $diff);
         $this->assertTrue($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')));
@@ -81,7 +81,7 @@ class DiffTest extends TestCase
         $a = Period::make('2020-01-01', '2020-01-31');
         $b = Period::make('2020-01-10', '2020-01-15');
 
-        $diffs = $a->diff($b);
+        $diffs = $a->diffSymmetric($b);
 
         $this->assertCount(2, $diffs);
         $this->assertTrue($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')));
@@ -101,7 +101,7 @@ class DiffTest extends TestCase
         $a = Period::make('2020-01-10', '2020-01-15');
         $b = Period::make('2020-01-01', '2020-01-31');
 
-        $diffs = $a->diff($b);
+        $diffs = $a->diffSymmetric($b);
 
         $this->assertCount(2, $diffs);
         $this->assertTrue($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')));

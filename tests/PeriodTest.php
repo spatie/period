@@ -88,9 +88,9 @@ class PeriodTest extends TestCase
     {
         yield [1, Period::make('2018-01-01', '2018-01-01')];
         yield [15, Period::make('2018-01-01', '2018-01-15')];
-        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_START())];
-        yield [14, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_END())];
-        yield [13, Period::make('2018-01-01', '2018-01-15', null, Boundaries::EXCLUDE_ALL())];
+        yield [14, Period::make('2018-01-01', '2018-01-15', boundaries: Boundaries::EXCLUDE_START())];
+        yield [14, Period::make('2018-01-01', '2018-01-15', boundaries: Boundaries::EXCLUDE_END())];
+        yield [13, Period::make('2018-01-01', '2018-01-15', boundaries: Boundaries::EXCLUDE_ALL())];
         yield [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:59', Precision::HOUR())];
         yield [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR(), Boundaries::EXCLUDE_END())];
     }

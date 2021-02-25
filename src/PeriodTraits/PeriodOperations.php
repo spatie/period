@@ -38,7 +38,7 @@ trait PeriodOperations
     public function overlap(Period ...$others): ?static
     {
         if (count($others) > 1) {
-            return $this->overlapAll($others);
+            return $this->overlapAll(...$others);
         } else {
             $other = $others[0];
         }
@@ -60,7 +60,7 @@ trait PeriodOperations
         return static::make($start, $end, $this->precision(), $this->boundaries);
     }
 
-    public function overlapAll(Period ...$periods): ?static
+    protected function overlapAll(Period ...$periods): ?static
     {
         $overlap = clone $this;
 
@@ -114,6 +114,8 @@ trait PeriodOperations
             $other = $others[0];
         }
 
+        $this->ensurePrecisionMatches($other);
+
         $collection = new PeriodCollection();
 
         if (! $this->overlapsWith($other)) {
@@ -139,7 +141,7 @@ trait PeriodOperations
         return $collection;
     }
 
-    public function subtractAll(Period ...$others): PeriodCollection
+    protected function subtractAll(Period ...$others): PeriodCollection
     {
         $subtractions = [];
 
@@ -151,11 +153,11 @@ trait PeriodOperations
     }
 
     /**
-     * @param \Spatie\Period\Period ...$periods
+     * @param \Spatie\Period\Period $other
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function diff(Period $other): PeriodCollection
+    public function diffSymmetric(Period $other): PeriodCollection
     {
         $this->ensurePrecisionMatches($other);
 

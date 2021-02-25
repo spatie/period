@@ -19,7 +19,6 @@ class PeriodFactory
     ): Period {
         $boundaries ??= Boundaries::EXCLUDE_NONE();
         $precision ??= Precision::DAY();
-        $interval = $precision->interval();
         $start = $precision->roundDate(self::resolveDate($start, $format));
         $end = $precision->roundDate(self::resolveDate($end, $format));
 
@@ -27,9 +26,6 @@ class PeriodFactory
         $period = new $periodClass(
             start: $start,
             end: $end,
-            includedStart: $boundaries->startIncluded() ? $start : $start->add($interval),
-            includedEnd: $boundaries->endIncluded() ? $end : $end->sub($interval),
-            interval: $interval,
             precision: $precision,
             boundaries: $boundaries,
         );
