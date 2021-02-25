@@ -251,9 +251,9 @@ class Period implements IteratorAggregate
     public function startsAt(DateTimeInterface $date): bool
     {
         return $this->getIncludedStart()->getTimestamp() === $this->roundDate(
-                $date,
-                $this->precisionMask
-            )->getTimestamp();
+            $date,
+            $this->precisionMask
+        )->getTimestamp();
     }
 
     public function endsBefore(DateTimeInterface $date): bool
@@ -261,7 +261,7 @@ class Period implements IteratorAggregate
         return $this->getIncludedEnd() < $this->roundDate(
             $date,
             $this->precisionMask
-            );
+        );
     }
 
     public function endsBeforeOrAt(DateTimeInterface $date): bool
@@ -269,7 +269,7 @@ class Period implements IteratorAggregate
         return $this->getIncludedEnd() <= $this->roundDate(
             $date,
             $this->precisionMask
-            );
+        );
     }
 
     public function endsAfter(DateTimeInterface $date): bool
@@ -277,7 +277,7 @@ class Period implements IteratorAggregate
         return $this->getIncludedEnd() > $this->roundDate(
             $date,
             $this->precisionMask
-            );
+        );
     }
 
     public function endsAfterOrAt(DateTimeInterface $date): bool
@@ -285,7 +285,7 @@ class Period implements IteratorAggregate
         return $this->getIncludedEnd() >= $this->roundDate(
             $date,
             $this->precisionMask
-            );
+        );
     }
 
     public function endsAt(DateTimeInterface $date): bool
@@ -293,7 +293,7 @@ class Period implements IteratorAggregate
         return $this->getIncludedEnd()->getTimestamp() === $this->roundDate(
             $date,
             $this->precisionMask
-            )->getTimestamp();
+        )->getTimestamp();
     }
 
     public function contains(DateTimeInterface $date): bool
