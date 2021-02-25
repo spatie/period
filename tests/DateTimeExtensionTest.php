@@ -51,11 +51,9 @@ class DateTimeExtension extends DateTimeImmutable
  */
 class TestPeriod extends Period
 {
-    /** @var DateTimeExtension */
-    protected $start;
+    protected DateTimeImmutable $start;
 
-    /** @var DateTimeExtension */
-    protected $end;
+    protected DateTimeImmutable $end;
 
     public function __construct(DateTimeExtension $start, DateTimeExtension $end, ?int $precisionMask = null, ?int $boundaryExclusionMask = null)
     {

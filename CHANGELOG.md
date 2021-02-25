@@ -6,10 +6,12 @@ All notable changes to `period` will be documented in this file
 
 - `\Spatie\Period\PeriodCollection::overlapSingle` is no longer available,
 `\Spatie\Period\PeriodCollection::overlap` should be used.
-- Breaking Change: `Period::length()` now uses the Period's precision instead of always returning days
 - Fix bug with `overlapAll` when no overlap
 - `\Spatie\Period\Period::duration()` returns an instance of `\Spatie\Period\PeriodDuration`
 - Bump required PHP version to `^8.0`
+- `Period::length()` now uses the Period's precision instead of always returning days
+- All period properties are now typed
+- Return types of several methods have been changed from `Period` to `static`
 
 ## 1.6.0 - 2021-02-24
 
