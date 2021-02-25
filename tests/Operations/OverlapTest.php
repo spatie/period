@@ -110,7 +110,7 @@ class OverlapTest extends TestCase
         $b = Period::make('2018-01-10', '2018-01-15');
         $c = Period::make('2018-01-10', '2018-01-31');
 
-        $overlap = $a->overlapAll($b, $c);
+        $overlap = $a->overlap($b, $c);
 
         $this->assertTrue($overlap->equals(Period::make('2018-01-10', '2018-01-15')));
     }
@@ -130,7 +130,7 @@ class OverlapTest extends TestCase
         $b = Period::make('2018-05-10', '2018-06-01');
         $c = Period::make('2018-01-10', '2018-02-01');
 
-        $overlap = $a->overlapAll($b, $c);
+        $overlap = $a->overlap($b, $c);
 
         $this->assertNull($overlap);
     }

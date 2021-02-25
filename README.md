@@ -36,411 +36,28 @@ composer require spatie/period
 
 ## Usage
 
-### Quick reference
+### Creating periods
 
-#### Creating a period
-
-```php
-$period = new Period(
-     DateTimeImmutable $start
-   , DateTimeImmutable $end
-  [, ?int $precisionMask = Precision::DAY]
-  [, ?int $boundaryExclusionMask = Boundaries::EXCLUDE_NONE]
-)
-```
-
-The static `::make` constructor can also take strings and other implementations of `DateTimeInterface`, 
-as well as an extra format string, in case the textual dates passed aren't of the format `Y-m-d` or `Y-m-d H:i:s`. 
+You're encouraged to create periods using their static constructor:
 
 ```php
-$period = Period::make(
-     string|DateTimeInterface $start
-   , string|DateTimeInterface $end
-  [, ?int Precision::DAY]
-  [, ?int Boundaries::EXCLUDE_NONE]
-  [, string $format]
-)
+$period = Period::make('2021-01-01', '2020-01-31');
 ```
 
-#### Length and boundaries
+You can manually construct a period, but you'll need to manually provide its **precision** and **boundaries**. Using `Period::make`, the default precision (`Precision::DAY()`) and default boundaries (`Boundaries::EXCLUDE_NONE()`) are used. 
 
-```php
-$period->length(): int
-$period->duration(): PeriodDuration
-```
+Before discussing the API provided by this package, it's important to understand both how precision and boundaries are used.
 
-```php
-$period->startIncluded(): bool
-$period->startExcluded(): bool
-$period->endIncluded(): bool
-$period->endExcluded(): bool
-```
-
-```php
-$period->getStart(): DateTimeImmutable
-$period->getStartIncluded(): DateTimeImmutable
-$period->getEnd(): DateTimeImmutable
-$period->getEndIncluded(): DateTimeImmutable
-```
-
-#### Renewing a Period
-
-This function allows to repeat or renew a period into the next term. 
-
-```php
-$period = Period::make('2018-01-01', '2018-01-15');
-$renewal = $period->renew(); // '2018-01-16' to '2018-01-31'
-```
-
-#### Comparisons
-
-```php
-$period->contains(DateTimeInterface $date): bool
-$period->equals(Period $period): bool
-
-$period->overlapsWith(Period $period): bool
-$period->touchesWith(Period $period): bool
-```
-
-```php
-$period->startsAt(DateTimeInterface $date): bool
-$period->startsBefore(DateTimeInterface $date): bool
-$period->startsBeforeOrAt(DateTimeInterface $date): bool
-$period->startsAfter(DateTimeInterface $date): bool
-$period->startsAfterOrAt(DateTimeInterface $date): bool
-```
-
-```php
-$period->endsAt(DateTimeInterface $date): bool
-$period->endsBefore(DateTimeInterface $date): bool
-$period->endsBeforeOrAt(DateTimeInterface $date): bool
-$period->endsAfter(DateTimeInterface $date): bool
-$period->endsAfterOrAt(DateTimeInterface $date): bool
-```
-
-```php
-$period->duration()->equals(PeriodDuration $other): bool
-$period->duration()->isLargerThan(PeriodDuration $other): bool
-$period->duration()->isSmallerThan(PeriodDuration $other): bool 
-```
-
-```php
-$period->gap(Period $period): ?Period
-```
-
-```php
-$period->overlap(Period $period): ?Period
-$period->overlapAny(Period ...$periods): PeriodCollection
-$period->overlapAll(Period ...$periods): Period
-```
-
-```php
-$period->diff(Period $period): PeriodCollection
-$period->subtract(Period ...$periods): PeriodCollection
-```
-
-```php
-$periodCollection->overlap(PeriodCollection ...$periodCollections): PeriodCollection
-$periodCollection->overlapSingle(PeriodCollection $periodCollection): PeriodCollection
-$periodCollection->map(Closure<Period> $closure): PeriodCollection
-$periodCollection->filter(Closure<Period> $closure): PeriodCollection
-$periodCollection->reduce(Closure<mixed, Period> $closure): mixed
-```
-
-```php
-$periodCollection->boundaries(): ?Period
-```
-
-```php
-$periodCollection->gaps(): PeriodCollection
-```
-
-### Comparing periods
-
-**Overlap with one period**
-
-```php
-/*
- * A        [===========]
- * B            [============]
- *
- * OVERLAP      [=======]
- */
- 
-$a = Period::make('2018-01-01', '2018-01-15');
-$b = Period::make('2018-01-10', '2018-01-30');
-
-$overlap = Period::make('2018-01-10', '2018-01-15');
-
-```
-
-**Overlaps with any other period**: 
-
-This method returns a `PeriodCollection` multiple `Period` objects representing the overlaps.
-
-```php
-/*
- * A       [========]
- * B                    [==]
- * C                            [=====]
- * CURRENT        [===============]
- *
- * OVERLAP        [=]   [==]    [=]
- */
- 
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-02-10', '2018-02-20');
-$c = Period::make('2018-03-01', '2018-03-31');
-
-$current = Period::make('2018-01-20', '2018-03-10');
-
-$overlaps = $current->overlapAny($a, $b, $c); 
-```
-
-**Overlap with all periods**: 
-
-This method only returns one period where all periods overlap.
-
-```php
-/*
- * A              [============]
- * B                   [==]
- * C                  [=======]
- *
- * OVERLAP             [==]
- */
-
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-01-10', '2018-01-15');
-$c = Period::make('2018-01-10', '2018-01-31');
-
-$overlap = $a->overlapAll($b, $c);
-```
-
-**Subtract from period**: 
-
-This method returns a `PeriodCollection` multiple `Period` objects 
-representing the subtraction between several periods and one.
-
-```php
-/*
- * CURRENT      [========================]
- * 
- * A                   [====]
- * B                               [========]
- * C         [=====]
- *
- * RES              [=]      [====]
- */
-
-$a = Period::make('2018-01-05', '2018-01-10');
-$b = Period::make('2018-01-15', '2018-03-01');
-$c = Period::make('2017-01-01', '2018-01-02');
-
-$current = Period::make('2018-01-01', '2018-01-31');
-
-$result = $current->subtract($a, $b, $c);
-```
-
-**Diff between periods**: 
-
-This method returns a `PeriodCollection` multiple `Period` objects 
-representing the difference between two periods.
-
-```php
-/*
- * A        [===========]
- * B            [===========]
- *
- * DIFF     [==]         [==]
- */
-
-$a = Period::make('2018-01-01', '2018-01-15');
-$b = Period::make('2018-01-10', '2018-01-30');
-
-$diffs = $a->diff($b);
-```
-
-**Overlaps with**: This method returns a boolean indicating of two periods overlap or not.
-
-```php
-/*
- * A              [============]
- * B                   [===========]
- */
-
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-01-10', '2018-02-15');
-
-$overlap = $a->overlapsWith($b); // true
-```
-
-**Touches with**: This method determines if two periods touch each other.
-
-```php
-/*
- * A              [========]
- * B                        [===========]
- */
-
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-02-01', '2018-02-15');
-
-$overlap = $a->touchesWith($b); // true
-```
-
-**Gap**: Returns the gap between two periods. 
-If no gap exists, `null` is returned. 
-
-```php
-/*
- * A              [========]
- * B                           [===========]
- */
-
-$a = Period::make('2018-01-01', '2018-01-31');
-$b = Period::make('2018-02-05', '2018-02-15');
-
-$overlap = $a->gap($b); // Period('2018-02-01', '2018-02-04')
-```
-
-**Duration**: returns the duration of a period to compare it to other durations
-
-```php
-$january = Period::make('2018-01-01', '2018-01-31', Precision::MONTH);
-$february = Period::make('2018-02-01', '2018-02-28', Precision::MONTH);
-
-// both represent a month
-$january->duration()->equals($february->duration()); // true
-
-$march = Period::make('2018-03-01', '2018-03-31', Precision::DAY);
-$may = Period::make('2018-05-01', '2018-05-31', Precision::DAY);
-
-// both have 31 days
-$march->duration()->equals($may->duration()); // true
-
-$twoDays = Period::make('2018-01-01', '2018-01-02', Precision::DAY);
-$threeDays = Period::make('2018-01-01', '2018-01-03', Precision::DAY);
-
-$twoDays->duration()->isSmallerThan($threeDays->duration()); // true
-$threeDays->duration()->isLargerThan($twoDays->duration()); // true
-```
-
-**Boundaries of a collection**: Get one period representing the boundaries of a collection.
-
-```php
-/*
- * A                   [====]
- * B                               [========]
- * C           [=====]
- * D                                             [====]
- *
- * BOUNDARIES  [======================================]
- */
- 
-$collection = new PeriodCollection(
-    Period::make('2018-01-01', '2018-01-05'),
-    Period::make('2018-01-10', '2018-01-15'),
-    Period::make('2018-01-20', '2018-01-25'),
-    Period::make('2018-01-30', '2018-01-31')
-);
-
-$boundaries = $collection->boundaries();
-```
-
-**Gaps of a collection**: Get all the gaps of a collection.
-
-```php
-/*
- * A                   [====]
- * B                               [========]
- * C         [=====]
- * D                                             [====]
- *
- * GAPS             [=]      [====]          [==]
- */
-
-$collection = new PeriodCollection(
-    Period::make('2018-01-01', '2018-01-05'),
-    Period::make('2018-01-10', '2018-01-15'),
-    Period::make('2018-01-20', '2018-01-25'),
-    Period::make('2018-01-30', '2018-01-31')
-);
-
-$gaps = $collection->gaps();
-```
-
-**Overlap multiple collections**: Returns the overlap between collections. 
-This means an AND operation between collections, and an OR operation within the same collection.
-
-```php
-/*
- * A            [=====]      [===========]
- * B            [=================]
- * C                [====================]
- *
- * OVERLAP          [=]      [====]
- */
-
-$a = new PeriodCollection(
-    Period::make('2018-01-01', '2018-01-07'),
-    Period::make('2018-01-15', '2018-01-25')
-);
-
-$b = new PeriodCollection(
-    Period::make('2018-01-01', '2018-01-20')
-);
-
-$c = new PeriodCollection(
-    Period::make('2018-01-06', '2018-01-25')
-);
-
-$overlap = $a->overlap($b, $c);
-```
-
-### Working with `PeriodCollection`
-
-Period collections are constructed from several periods:
-
-```php
-$collection = new PeriodCollection(
-    Period::make('2018-01-01', '2018-01-02'),
-    // …
-);
-```
-
-They may be looped over directly and its contents will be recognised by your IDE:
-
-```php
-$collection = new PeriodCollection(/* … */);
-
-foreach ($collection as $period) {
-    $period->…
-}
-```
-
-You may destruct them:
-
-```php
-[$firstPeriod, $secondPeriod, $thirdPeriod] = $collection;
-```
-
-And finally construct one collection from another:
-
-```php
-$newCollection = new PeriodCollection(...$otherCollection);
-```
-
-### Precision
+#### Precision
 
 Date precision is of utmost importance if you want to reliably compare two periods.
 The following example:
 
-> Given two periods: `[2018-01-01, 2018-01-15]` and `[2018-01-15, 2018-01-31]`; do they overlap?
+> Given two periods: `[2021-01-01, 2021-01-15]` and `[2021-01-15, 2021-01-31]`; do they overlap?
 
-At first glance the answer is "yes": they overlap on `2018-01-15`. 
-But what if the first period ends at `2018-01-15 10:00:00`, 
-while the second starts at `2018-01-15 15:00:00`? 
+At first glance the answer is "yes": they overlap on `2021-01-15`. 
+But what if the first period ends at `2021-01-15 10:00:00`, 
+while the second starts at `2021-01-15 15:00:00`? 
 Now they don't anymore!
 
 This is why this package requires you to specify a precision with each period. 
@@ -450,28 +67,28 @@ A more in-depth explanation on why precision is so important can be found [here]
 A period's precision can be specified when constructing that period:
 
 ```php
-Period::make('2018-01-01', '2018-02-01', Precision::DAY);
+Period::make('2021-01-01', '2021-02-01', Precision::DAY());
 ```
 
 The default precision is set on days. These are the available precision options:
 
 ```php
-Precision::YEAR
-Precision::MONTH
-Precision::DAY
-Precision::HOUR
-Precision::MINUTE
-Precision::SECOND
+Precision::YEAR()
+Precision::MONTH()
+Precision::DAY()
+Precision::HOUR()
+Precision::MINUTE()
+Precision::SECOND()
 ```
 
-### Boundaries
+#### Boundaries
 
 By default, period comparisons are done with included boundaries. 
 This means that these two periods overlap:
 
 ```php
-$a = Period::make('2018-01-01', '2018-02-01');
-$b = Period::make('2018-02-01', '2018-02-28');
+$a = Period::make('2021-01-01', '2021-02-01');
+$b = Period::make('2021-02-01', '2021-02-28');
 
 $a->overlapsWith($b); // true
 ```
@@ -479,7 +96,7 @@ $a->overlapsWith($b); // true
 The length of a period will also include both boundaries:
 
 ```php
-$a = Period::make('2018-01-01', '2018-01-31');
+$a = Period::make('2021-01-01', '2021-01-31');
 
 $a->length(); // 31
 ```
@@ -487,8 +104,8 @@ $a->length(); // 31
 It's possible to override the boundary behaviour:
 
 ```php
-$a = Period::make('2018-01-01', '2018-02-01', null, Boundaries::EXCLUDE_END);
-$b = Period::make('2018-02-01', '2018-02-28', null, Boundaries::EXCLUDE_END);
+$a = Period::make('2021-01-01', '2021-02-01', boundaries: Boundaries::EXCLUDE_END());
+$b = Period::make('2021-02-01', '2021-02-28', boundaries: Boundaries::EXCLUDE_END());
 
 $a->overlapsWith($b); // false
 ```
@@ -496,18 +113,79 @@ $a->overlapsWith($b); // false
 There are four types of boundary exclusion:
 
 ```php
-Boundaries::EXCLUDE_NONE;
-Boundaries::EXCLUDE_START;
-Boundaries::EXCLUDE_END;
-Boundaries::EXCLUDE_ALL;
+Boundaries::EXCLUDE_NONE();
+Boundaries::EXCLUDE_START();
+Boundaries::EXCLUDE_END();
+Boundaries::EXCLUDE_ALL();
 ```
+
+### Reference
+
+The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared:
+
+- `startsBefore(DateTimeInterface $date): bool`: whether a period starts before a given date.
+- `startsBeforeOrAt(DateTimeInterface $date): bool`: whether a period starts before or at a given date.
+- `startsAfter(DateTimeInterface $date): bool`: whether a period starts after a given date.
+- `startsAfterOrAt(DateTimeInterface $date): bool`: whether a period starts after or at a given date.
+- `startsAt(DateTimeInterface $date): bool`: whether a period starts at a given date.
+- `endsBefore(DateTimeInterface $date): bool`: whether a period ends before a given date.
+- `endsBeforeOrAt(DateTimeInterface $date): bool`: whether a period end before or at a given date.
+- `endsAfter(DateTimeInterface $date): bool`: whether a period ends after a given date.
+- `endsAfterOrAt(DateTimeInterface $date): bool`: whether a period end after or at a given date.
+- `endsAt(DateTimeInterface $date): bool`: whether a period starts ends at a given date.
+- `overlapsWith(Period $period): bool`: whether a period overlaps with another period.
+- `touchesWith(Period $other): bool`: whether a period touches with another period.
+- `contains(DateTimeInterface|Period $other): bool`: whether a period contains another period _or_ a single date.
+- `equals(Period $period): bool`: whether a period equals another period.
+
+On top of comparisons, the `Period` class also offers a bunch of operations:
+
+- `overlap(Period ...$others): ?static`: overlap two or more periods on each other. The resulting period will be the union of all other periods combined.
+
+![](./docs/img/period-overlap.png)
+
+- `overlapAny(Period ...$periods): PeriodCollection`: overlap two or more periods on each other. Whenever two or periods overlap, that overlapping period is added to a collection that's the final result.
+
+![](./docs/img/period-overlap-any.png)
+
+- `subtract(Period ...$others): PeriodCollection`: subtract one or more periods from the main period. This is the inverse operation from overlap.
+- `gap(Period $period): ?static`: get the gap between two periods, or 0 if the periods overlap.
+- `diffSymmetric(Period $other): PeriodCollection`: perform a [symmetric diff](https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html) between two periods.
+- `renew(): static`: renew the current period, creating a new period with the same length that happens _after_ the current period.
+
+Next, the `Period` class also has some getters:
+
+- `isStartIncluded(): bool`
+- `isStartExcluded(): bool`
+- `isEndIncluded(): bool`
+- `isEndExcluded(): bool`
+- `start(): DateTimeImmutable`
+- `includedStart(): DateTimeImmutable`
+- `end(): DateTimeImmutable`
+- `includedEnd(): DateTimeImmutable`
+- `length(): int`
+- `duration(): PeriodDuration`
+- `precision(): Precision`
+- `boundaries(): Boundaries`
+
+The `PeriodCollection` class represents a collection of periods and has some useful methods on its own:
+
+- `overlapAll(PeriodCollection ...$periodCollections): PeriodCollection`: overlap several collections on each other.
+- `boundaries(): ?Period`: create a new period representing the outer boundaries of the collection.
+- `gaps(): static`: gives the gaps for all periods within this collection.
+- `intersect(Period $intersection): static`: 
+- `add(Period ...$periods): static`: 
+- `map(Closure $closure): static`: 
+- `reduce(Closure $closure, $initial = null): mixed`: 
+- `filter(Closure $closure): static`: 
+- `isEmpty(): bool`: 
 
 ### Compatibility
 
 You can construct a `Period` from any type of `DateTime` object such as Carbon:
 
 ```php
-Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-02'));
+Period::make(Carbon::make('2021-01-01'), Carbon::make('2021-01-02'));
 ```
 
 Note that as soon as a period is constructed, all further operations on it are immutable.
@@ -516,22 +194,22 @@ There's never the danger of changing the input dates.
 You can iterate a `Period` like a regular `DatePeriod` with the precision specified on creation:
 
 ```php
-$datePeriod = Period::make(Carbon::make('2018-01-01'), Carbon::make('2018-01-31'));
+$datePeriod = Period::make(Carbon::make('2021-01-01'), Carbon::make('2021-01-31'));
 
 foreach ($datePeriod as $date) {
     /** @var DateTimeImmutable $date */
-    // 2018-01-01
-    // 2018-01-02
+    // 2021-01-01
+    // 2021-01-02
     // ...
     // (31 iterations)
 }
 
-$timePeriod = Period::make(Carbon::make('2018-01-01 00:00:00'), Carbon::make('2018-01-01 23:59:59'), Precision::HOUR);
+$timePeriod = Period::make(Carbon::make('2021-01-01 00:00:00'), Carbon::make('2021-01-01 23:59:59'), Precision::HOUR);
 
 foreach ($timePeriod as $time) {
     /** @var DateTimeImmutable $time */
-    // 2018-01-01 00:00:00
-    // 2018-01-01 01:00:00
+    // 2021-01-01 00:00:00
+    // 2021-01-01 01:00:00
     // ...
     // (24 iterations)
 }
@@ -546,14 +224,14 @@ objects to see how they related to one another:
 $visualizer = new Visualizer(["width" => 27]);
 
 $visualizer->visualize([
-    "A" => Period::make('2018-01-01', '2018-01-31'),
-    "B" => Period::make('2018-02-10', '2018-02-20'),
-    "C" => Period::make('2018-03-01', '2018-03-31'),
-    "D" => Period::make('2018-01-20', '2018-03-10'),
+    "A" => Period::make('2021-01-01', '2021-01-31'),
+    "B" => Period::make('2021-02-10', '2021-02-20'),
+    "C" => Period::make('2021-03-01', '2021-03-31'),
+    "D" => Period::make('2021-01-20', '2021-03-10'),
     "OVERLAP" => new PeriodCollection(
-        Period::make('2018-01-20', '2018-01-31'),
-        Period::make('2018-02-10', '2018-02-20'),
-        Period::make('2018-03-01', '2018-03-10')
+        Period::make('2021-01-20', '2021-01-31'),
+        Period::make('2021-02-10', '2021-02-20'),
+        Period::make('2021-03-01', '2021-03-10')
     ),
 ]);
 ```
@@ -597,7 +275,7 @@ If you discover any security related issues, please email freek@spatie.be instea
 
 You're free to use this package, but if it makes it to your production environment we highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
 
-Our address is: Spatie, Kruikstraat 22, 2018 Antwerp, Belgium.
+Our address is: Spatie, Kruikstraat 22, 2021 Antwerp, Belgium.
 
 We publish all received postcards [on our company website](https://spatie.be/en/opensource/postcards).
 

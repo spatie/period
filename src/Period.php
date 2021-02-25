@@ -19,16 +19,19 @@ class Period implements IteratorAggregate
     use PeriodComparisons;
     use PeriodOperations;
 
-    private string $asString;
+    protected string $asString;
 
-    private PeriodDuration $duration;
+    protected PeriodDuration $duration;
+
+    protected DateTimeImmutable $includedStart;
+
+    protected DateTimeImmutable $includedEnd;
+
+    protected DateInterval $interval;
 
     public function __construct(
         protected DateTimeImmutable $start,
         protected DateTimeImmutable $end,
-        protected DateTimeImmutable $includedStart,
-        protected DateTimeImmutable $includedEnd,
-        protected DateInterval $interval,
         protected Precision $precision,
         protected Boundaries $boundaries
     ) {
@@ -36,6 +39,9 @@ class Period implements IteratorAggregate
             throw InvalidPeriod::endBeforeStart($start, $end);
         }
 
+        $this->interval = $this->precision->interval();
+        $this->includedStart = $boundaries->startIncluded() ? $start : $start->add($this->interval);
+        $this->includedEnd = $boundaries->endIncluded() ? $end : $end->sub($this->interval);
         $this->duration = new PeriodDuration($this);
         $this->asString = $this->resolveString();
     }

@@ -13,7 +13,7 @@ class BoundaryTest extends TestCase
     /** @test */
     public function exclude_none()
     {
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_NONE());
+        $period = Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_NONE());
 
         $this->assertFalse($period->isStartExcluded());
         $this->assertFalse($period->isEndExcluded());
@@ -22,7 +22,7 @@ class BoundaryTest extends TestCase
     /** @test */
     public function exclude_start()
     {
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_START());
+        $period = Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_START());
 
         $this->assertTrue($period->isStartExcluded());
         $this->assertFalse($period->isEndExcluded());
@@ -31,7 +31,7 @@ class BoundaryTest extends TestCase
     /** @test */
     public function exclude_end()
     {
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_END());
+        $period = Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_END());
 
         $this->assertFalse($period->isStartExcluded());
         $this->assertTrue($period->isEndExcluded());
@@ -40,7 +40,7 @@ class BoundaryTest extends TestCase
     /** @test */
     public function exclude_all()
     {
-        $period = Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_ALL());
+        $period = Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_ALL());
 
         $this->assertTrue($period->isStartExcluded());
         $this->assertTrue($period->isEndExcluded());
@@ -67,10 +67,10 @@ class BoundaryTest extends TestCase
         yield [42, Period::make('2016-01-01', '2019-07-05', Precision::MONTH(), Boundaries::EXCLUDE_END())];
         yield [41, Period::make('2016-01-01', '2019-07-05', Precision::MONTH(), Boundaries::EXCLUDE_ALL())];
 
-        yield [31, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_NONE())];
-        yield [30, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_START())];
-        yield [30, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_END())];
-        yield [29, Period::make('2018-01-01', '2018-01-31', null, Boundaries::EXCLUDE_ALL())];
+        yield [31, Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_NONE())];
+        yield [30, Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_START())];
+        yield [30, Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_END())];
+        yield [29, Period::make('2018-01-01', '2018-01-31', boundaries: Boundaries::EXCLUDE_ALL())];
 
         yield [24, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:00', Precision::HOUR(), Boundaries::EXCLUDE_NONE())];
         yield [23, Period::make('2018-01-01 00:00:00', '2018-01-01 23:59:00', Precision::HOUR(), Boundaries::EXCLUDE_START())];
@@ -91,12 +91,12 @@ class BoundaryTest extends TestCase
     /** @test */
     public function overlap_with_excluded_boundaries()
     {
-        $a = Period::make('2018-01-01', '2018-01-05', null, Boundaries::EXCLUDE_END());
+        $a = Period::make('2018-01-01', '2018-01-05', boundaries: Boundaries::EXCLUDE_END());
         $b = Period::make('2018-01-05', '2018-01-10');
         $this->assertFalse($a->overlapsWith($b));
 
         $a = Period::make('2018-01-01', '2018-01-05');
-        $b = Period::make('2018-01-05', '2018-01-10', null, Boundaries::EXCLUDE_START());
+        $b = Period::make('2018-01-05', '2018-01-10', boundaries: Boundaries::EXCLUDE_START());
         $this->assertFalse($a->overlapsWith($b));
 
         $a = Period::make('2018-01-01', '2018-01-05');
