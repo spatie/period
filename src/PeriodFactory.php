@@ -37,8 +37,8 @@ class PeriodFactory
 
     public static function make(
         string $periodClass,
-        string|DateTimeInterface $start,
-        string|DateTimeInterface $end,
+        string | DateTimeInterface $start,
+        string | DateTimeInterface $end,
         ?Precision $precision = null,
         ?Boundaries $boundaries = null,
         ?string $format = null
@@ -81,7 +81,7 @@ class PeriodFactory
     }
 
     protected static function resolveDate(
-        DateTimeInterface|string $date,
+        DateTimeInterface | string $date,
         ?string $format = null
     ): DateTimeImmutable {
         if ($date instanceof DateTimeImmutable) {
