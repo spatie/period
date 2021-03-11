@@ -22,6 +22,6 @@ class PeriodFactoryTest extends TestCase
             Boundaries::EXCLUDE_END()
         );
 
-        $this->assertEquals('[2021-01-01,2021-01-21)', $period->asString());
+        $this->assertTrue(Period::fromString('[2021-01-01,2021-01-21)')->equals($period));
     }
 }
