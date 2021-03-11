@@ -2,6 +2,8 @@
 
 namespace Spatie\Period;
 
+use DateTimeImmutable;
+
 class Boundaries
 {
     private const EXCLUDE_NONE = 0;
@@ -12,6 +14,16 @@ class Boundaries
     private function __construct(
         private int $mask
     ) {
+    }
+
+    public static function fromString(string $startBoundary, string $endBoundary): self
+    {
+        return match("{$startBoundary}{$endBoundary}") {
+            '[]' => self::EXCLUDE_NONE(),
+            '[)' => self::EXCLUDE_END(),
+            '(]' => self::EXCLUDE_START(),
+            '()' => self::EXCLUDE_ALL(),
+        };
     }
 
     public static function EXCLUDE_NONE(): self
@@ -52,5 +64,23 @@ class Boundaries
     public function endIncluded(): bool
     {
         return ! $this->endExcluded();
+    }
+
+    public function realStart(DateTimeImmutable $includedStart, Precision $precision): DateTimeImmutable
+    {
+        if ($this->startIncluded()) {
+            return $includedStart;
+        }
+
+        return $precision->decrement($includedStart);
+    }
+
+    public function realEnd(DateTimeImmutable $includedEnd, Precision $precision): DateTimeImmutable
+    {
+        if ($this->endIncluded()) {
+            return $includedEnd;
+        }
+
+        return $precision->increment($includedEnd);
     }
 }

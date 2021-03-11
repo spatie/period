@@ -63,6 +63,11 @@ class Period implements IteratorAggregate
         );
     }
 
+    public static function fromString(string $string): static
+    {
+        return PeriodFactory::fromString(static::class, $string);
+    }
+
     public function getIterator(): DatePeriod
     {
         return new DatePeriod(

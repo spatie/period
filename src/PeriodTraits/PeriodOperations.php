@@ -4,6 +4,7 @@ namespace Spatie\Period\PeriodTraits;
 
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\PeriodFactory;
 
 /** @mixin Period */
 trait PeriodOperations
@@ -45,19 +46,25 @@ trait PeriodOperations
 
         $this->ensurePrecisionMatches($other);
 
-        $start = $this->start() > $other->start()
-            ? $this->start()
-            : $other->start();
+        $includedStart = $this->includedStart() > $other->includedStart()
+            ? $this->includedStart()
+            : $other->includedStart();
 
-        $end = $this->end() < $other->end()
-            ? $this->end()
-            : $other->end();
+        $includedEnd = $this->includedEnd() < $other->includedEnd()
+            ? $this->includedEnd()
+            : $other->includedEnd();
 
-        if ($start > $end) {
+        if ($includedStart > $includedEnd) {
             return null;
         }
 
-        return static::make($start, $end, $this->precision(), $this->boundaries);
+        return PeriodFactory::makeWithBoundaries(
+            static::class,
+            $includedStart,
+            $includedEnd,
+            $this->precision(),
+            $this->boundaries(),
+        );
     }
 
     protected function overlapAll(Period ...$periods): ?static
@@ -125,16 +132,22 @@ trait PeriodOperations
         }
 
         if ($this->includedStart() < $other->includedStart()) {
-            $collection[] = static::make(
+            $collection[] = PeriodFactory::makeWithBoundaries(
+                static::class,
                 $this->includedStart(),
-                $other->includedStart()->sub($this->interval)
+                $other->includedStart()->sub($this->interval),
+                $this->precision(),
+                $this->boundaries(),
             );
         }
 
         if ($this->includedEnd() > $other->includedEnd()) {
-            $collection[] = static::make(
+            $collection[] = PeriodFactory::makeWithBoundaries(
+                static::class,
                 $other->includedEnd()->add($this->interval),
                 $this->includedEnd(),
+                $this->precision(),
+                $this->boundaries(),
             );
         }
 

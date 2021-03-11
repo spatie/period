@@ -35,6 +35,20 @@ class Precision
     ) {
     }
 
+    public static function fromString(string $string): self
+    {
+        preg_match('/([\d]{4})(-[\d]{2})?(-[\d]{2})?(\s[\d]{2})?(:[\d]{2})?(:[\d]{2})?/', $string, $matches);
+
+        return match (count($matches) - 1) {
+            1 => self::YEAR(),
+            2 => self::MONTH(),
+            3 => self::DAY(),
+            4 => self::HOUR(),
+            5 => self::MINUTE(),
+            6 => self::SECOND(),
+        };
+    }
+
     public static function YEAR(): self
     {
         return new self(self::YEAR);
@@ -136,6 +150,16 @@ class Precision
         }
 
         return false;
+    }
+
+    public function increment(DateTimeImmutable $date): DateTimeImmutable
+    {
+        return $this->roundDate($date->add($this->interval()));
+    }
+
+    public function decrement(DateTimeImmutable $date): DateTimeImmutable
+    {
+        return $this->roundDate($date->sub($this->interval()));
     }
 
     public function higherThan(Precision $other): bool

@@ -103,4 +103,9 @@ trait PeriodGetters
     {
         return $this->boundaries;
     }
+
+    public function asString(): string
+    {
+        return $this->asString;
+    }
 }

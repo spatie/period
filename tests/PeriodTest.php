@@ -197,4 +197,17 @@ class PeriodTest extends TestCase
 
         $seconds->ceilingEnd(Precision::SECOND());
     }
+
+    /** @test */
+    public function test_from_string()
+    {
+        $this->assertEquals('(2021-01-01 00:00:00,2021-01-22 12:12:12]', Period::fromString('(2021-01-01 00:00:00 , 2021-01-22 12:12:12]')->asString());
+        $this->assertEquals('(2021-01-01 00:00,2021-01-22 12:12]', Period::fromString('(2021-01-01 00:00 , 2021-01-22 12:12]')->asString());
+        $this->assertEquals('(2021-01-01 00,2021-01-22 12]', Period::fromString('(2021-01-01 00 , 2021-01-22 12]')->asString());
+        $this->assertEquals('(2021-01-01,2021-01-22]', Period::fromString('(2021-01-01 , 2021-01-22]')->asString());
+        $this->assertEquals('(2021-01,2021-01]', Period::fromString('(2021-01 , 2021-01]')->asString());
+        $this->assertEquals('(2021,2021]', Period::fromString('(2021 , 2021]')->asString());
+        $this->assertEquals('(2021,2021)', Period::fromString('( 2021 , 2021 )')->asString());
+        $this->assertEquals('[2021,2021]', Period::fromString('[ 2021 , 2021 ]')->asString());
+    }
 }
