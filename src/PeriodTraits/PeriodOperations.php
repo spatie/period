@@ -87,15 +87,15 @@ trait PeriodOperations
     }
 
     /**
-     * @param \Spatie\Period\Period ...$periods
+     * @param \Spatie\Period\Period ...$others
      *
      * @return \Spatie\Period\PeriodCollection|static[]
      */
-    public function overlapAny(Period ...$periods): PeriodCollection
+    public function overlapAny(Period ...$others): PeriodCollection
     {
         $overlapCollection = new PeriodCollection();
 
-        foreach ($periods as $period) {
+        foreach ($others as $period) {
             $overlap = $this->overlap($period);
 
             if ($overlap === null) {

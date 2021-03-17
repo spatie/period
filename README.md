@@ -148,7 +148,7 @@ Overlap two or more periods on each other. The resulting period will be the unio
 
 ![](./docs/img/period-overlap.png)
 
-### `overlapAny(Period ...$periods): PeriodCollection`
+### `overlapAny(Period ...$others): PeriodCollection`
 
 Overlap two or more periods on each other. Whenever two or periods overlap, that overlapping period is added to a collection that's the final result.
 
