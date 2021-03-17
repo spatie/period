@@ -2,21 +2,21 @@
 
 All notable changes to `period` will be documented in this file
 
-## 2.0.0 - ?
+## 2.0.0 - 2021-03-17
 
 - Bump required PHP version to `^8.0`
 - Fix bug with `overlapAll` when no overlap
+- All period properties are now typed, this affects you if you extend from `Period` or `PeriodCollection`
+- Return types of several methods have been changed from `Period` to `static`
 - `Period::duration()` returns an instance of `PeriodDuration`
 - `Period::length()` now uses the Period's precision instead of always returning days
-- All period properties are now typed
-- Return types of several methods have been changed from `Period` to `static`
-- `PeriodCollection::overlap()` now accepts one or several periods
 - `Period::overlap()` renamed to `Period::overlapAny()`
 - `Period::overlapSingle()` renamed to `Period::overlap()`
 - `Period::diff()` renamed to `Period::subtract()`
 - `Period::subtract()` (previously `diff`) no longer returns the gap when there's no overlap
 - `Period::diffSingle()` renamed to `Period::diffSymmetric()`
 - `Period::contains()` now accepts both `DateTimeInterface` and `Period`
+- `PeriodCollection::overlap()` now accepts one or several periods
 - Renamed all getters like `getIncludedEnd()` and `getStart()` to `includedEnd()` and `start()`, etc. 
 - Add `Period::fromString()`
 - Add `Period::asString()`
