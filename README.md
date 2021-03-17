@@ -16,8 +16,6 @@ convert directly from and to CarbonPeriod).
 
 Periods are always immutable, there's never the worry about your input dates being changed. 
 
-This package is still a work in progress.
-
 ## Support us
 
 [<img src="https://github-ads.s3.eu-central-1.amazonaws.com/period.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/period)
