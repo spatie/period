@@ -1,4 +1,4 @@
-# Complex period comparisons
+# Complex period comparisons and operations
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/period.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/period)
@@ -67,7 +67,7 @@ A more in-depth explanation on why precision is so important can be found [here]
 A period's precision can be specified when constructing that period:
 
 ```php
-Period::make('2021-01-01', '2021-02-01', Precision::DAY());
+Period::make('2021-01-01', '2021-02-01', precision: Precision::DAY());
 ```
 
 The default precision is set on days. These are the available precision options:
