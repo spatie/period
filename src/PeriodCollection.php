@@ -147,7 +147,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     public function subtract(PeriodCollection|Period $periods)
     {
         if ($periods instanceof Period) {
-            $periods = static::make($periods);
+            $periods = new self($periods);
         }
 
         $collection = new self();
