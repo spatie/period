@@ -209,6 +209,43 @@ class PeriodCollectionTest extends TestCase
     }
 
     /** @test */
+    public function subtract_a_period()
+    {
+        $collection = new PeriodCollection(
+            Period::make('1987-02-01', '1987-02-10'),
+            Period::make('1987-02-11', '1987-02-28')
+        );
+
+        $removePeriod = Period::make('1987-02-20', '1987-02-21');
+
+        $this->assertEquals(1, $collection->overlapAll(new PeriodCollection($removePeriod))->count());
+
+        $result = $collection->subtract($removePeriod);
+
+        $this->assertEquals(0, $result->overlapAll(new PeriodCollection($removePeriod))->count());
+    }
+
+    /** @test */
+    public function subtract_a_period_collection()
+    {
+        $collection = new PeriodCollection(
+            Period::make('1987-02-01', '1987-02-10'),
+            Period::make('1987-02-11', '1987-02-28')
+        );
+
+        $removePeriods = new PeriodCollection(
+            Period::make('1987-02-05', '1987-02-06'),
+            Period::make('1987-02-20', '1987-02-21'),
+        );
+
+        $this->assertEquals(2, $collection->overlapAll($removePeriods)->count());
+
+        $result = $collection->subtract($removePeriods);
+
+        $this->assertEquals(0, $result->overlapAll($removePeriods)->count());
+    }
+
+    /** @test */
     public function filter()
     {
         $collection = new PeriodCollection(
