@@ -217,7 +217,7 @@ class PeriodCollectionTest extends TestCase
      *
      * RESULT      [=======] [======]   [====]
      */
-    public function subtract_a_period_to_a_period_collection()
+    public function subtract_a_period_from_period_collection()
     {
         $collection = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
@@ -242,7 +242,7 @@ class PeriodCollectionTest extends TestCase
      *
      * RESULT      [=]   [=] [======]   [====]
      */
-    public function subtract_a_period_collection_to_a_period_collection()
+    public function subtract_a_period_collection_from_period_collection()
     {
         $collection = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
