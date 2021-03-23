@@ -208,8 +208,16 @@ class PeriodCollectionTest extends TestCase
         $this->assertEquals(4, $totalLength);
     }
 
-    /** @test */
-    public function subtract_a_period()
+    /**
+     * @test
+     *
+     * A           [=======] [===============]
+     *
+     * SUBTRACT                      [=]
+     *
+     * RESULT      [=======] [======]   [====]
+     */
+    public function subtract_a_period_to_a_period_collection()
     {
         $collection = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
@@ -225,8 +233,16 @@ class PeriodCollectionTest extends TestCase
         $this->assertEquals(0, $result->overlapAll(new PeriodCollection($removePeriod))->count());
     }
 
-    /** @test */
-    public function subtract_a_period_collection()
+    /**
+     * @test
+     *
+     * A           [=======] [===============]
+     *
+     * SUBTRACT       [=]            [=]
+     *
+     * RESULT      [=]   [=] [======]   [====]
+     */
+    public function subtract_a_period_collection_to_a_period_collection()
     {
         $collection = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
