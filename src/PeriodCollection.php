@@ -159,17 +159,17 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $collection;
     }
 
-    private function overlap(PeriodCollection $periodCollection): PeriodCollection
+    private function overlap(PeriodCollection $others): PeriodCollection
     {
         $overlaps = new PeriodCollection();
 
         foreach ($this as $period) {
-            foreach ($periodCollection as $otherPeriod) {
-                if (! $period->overlap($otherPeriod)) {
+            foreach ($others as $other) {
+                if (! $period->overlap($other)) {
                     continue;
                 }
 
-                $overlaps[] = $period->overlap($otherPeriod);
+                $overlaps[] = $period->overlap($other);
             }
         }
 

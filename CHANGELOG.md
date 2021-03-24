@@ -2,6 +2,12 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.1.0 - 2021-03-24
+
+- Add `PeriodCollection::subtract(PeriodCollection|Period $others)` (#84)
+- Rename parameter `PeriodCollection::overlap(PeriodCollection $others)`
+- Rename parameter `PeriodCollection::overlapAll(PeriodCollection ...$others)`
+
 ## 2.0.0 - 2021-03-17
 
 - Bump required PHP version to `^8.0`
