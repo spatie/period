@@ -204,6 +204,12 @@ Overlap several collections on each other.
 
 ![](./docs/img/collection-overlap-all.png)
 
+### `subtract(PeriodCollection|Period ...$others): PeriodCollection`
+
+Subtract a period or a collection of periods from a period collection.
+
+![](./docs/img/collection-subtract.png)
+
 ### `boundaries(): ?Period` 
 
 Create a new period representing the outer boundaries of the collection.
