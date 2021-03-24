@@ -144,6 +144,21 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return count($this->periods) === 0;
     }
 
+    public function subtract(PeriodCollection|Period $others): static
+    {
+        if ($others instanceof Period) {
+            $others = new static($others);
+        }
+
+        $collection = new static();
+
+        foreach ($this as $period) {
+            $collection = $collection->add(...$period->subtract(...$others));
+        }
+
+        return $collection;
+    }
+
     private function overlap(PeriodCollection $periodCollection): PeriodCollection
     {
         $overlaps = new PeriodCollection();

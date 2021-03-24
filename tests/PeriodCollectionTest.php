@@ -208,6 +208,60 @@ class PeriodCollectionTest extends TestCase
         $this->assertEquals(4, $totalLength);
     }
 
+    /**
+     * @test
+     *
+     * A           [=======] [===============]
+     *
+     * SUBTRACT                      [=]
+     *
+     * RESULT      [=======] [======]   [====]
+     */
+    public function subtract_a_period_from_period_collection()
+    {
+        $a = new PeriodCollection(
+            Period::make('1987-02-01', '1987-02-10'),
+            Period::make('1987-02-11', '1987-02-28')
+        );
+
+        $subtract = Period::make('1987-02-20', '1987-02-21');
+
+        $result = $a->subtract($subtract);
+
+        $this->assertTrue(Period::make('1987-02-01','1987-02-10')->equals($result[0]));
+        $this->assertTrue(Period::make('1987-02-11','1987-02-19')->equals($result[1]));
+        $this->assertTrue(Period::make('1987-02-22','1987-02-28')->equals($result[2]));
+    }
+
+    /**
+     * @test
+     *
+     * A           [=======] [===============]
+     *
+     * SUBTRACT       [=]            [=]
+     *
+     * RESULT      [=]   [=] [======]   [====]
+     */
+    public function subtract_a_period_collection_from_period_collection()
+    {
+        $a = new PeriodCollection(
+            Period::make('1987-02-01', '1987-02-10'),
+            Period::make('1987-02-11', '1987-02-28')
+        );
+
+        $subtract = new PeriodCollection(
+            Period::make('1987-02-05', '1987-02-06'),
+            Period::make('1987-02-20', '1987-02-21'),
+        );
+
+        $result = $a->subtract($subtract);
+
+        $this->assertTrue(Period::make('1987-02-01','1987-02-04')->equals($result[0]));
+        $this->assertTrue(Period::make('1987-02-07','1987-02-10')->equals($result[1]));
+        $this->assertTrue(Period::make('1987-02-11','1987-02-19')->equals($result[2]));
+        $this->assertTrue(Period::make('1987-02-22','1987-02-28')->equals($result[3]));
+    }
+
     /** @test */
     public function filter()
     {
