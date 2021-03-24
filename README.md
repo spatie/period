@@ -198,7 +198,7 @@ Next, the `Period` class also has some getters:
 
 The `PeriodCollection` class represents a collection of periods and has some useful methods on its own:
 
-### `overlapAll(PeriodCollection ...$periodCollections): PeriodCollection`
+### `overlapAll(PeriodCollection ...$others): PeriodCollection`
 
 Overlap several collections on each other.
 

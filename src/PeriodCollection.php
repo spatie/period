@@ -29,12 +29,12 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $this->periods[$this->position];
     }
 
-    public function overlapAll(PeriodCollection ...$periodCollections): PeriodCollection
+    public function overlapAll(PeriodCollection ...$others): PeriodCollection
     {
         $overlap = clone $this;
 
-        foreach ($periodCollections as $periodCollection) {
-            $overlap = $overlap->overlap($periodCollection);
+        foreach ($others as $other) {
+            $overlap = $overlap->overlap($other);
         }
 
         return $overlap;
