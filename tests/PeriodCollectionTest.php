@@ -219,18 +219,18 @@ class PeriodCollectionTest extends TestCase
      */
     public function subtract_a_period_from_period_collection()
     {
-        $collection = new PeriodCollection(
+        $a = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
             Period::make('1987-02-11', '1987-02-28')
         );
 
-        $removePeriod = Period::make('1987-02-20', '1987-02-21');
+        $subtract = Period::make('1987-02-20', '1987-02-21');
 
-        $this->assertEquals(1, $collection->overlapAll(new PeriodCollection($removePeriod))->count());
+        $result = $a->subtract($subtract);
 
-        $result = $collection->subtract($removePeriod);
-
-        $this->assertEquals(0, $result->overlapAll(new PeriodCollection($removePeriod))->count());
+        $this->assertTrue(Period::make('1987-02-01','1987-02-10')->equals($result[0]));
+        $this->assertTrue(Period::make('1987-02-11','1987-02-19')->equals($result[1]));
+        $this->assertTrue(Period::make('1987-02-22','1987-02-28')->equals($result[2]));
     }
 
     /**
@@ -244,21 +244,22 @@ class PeriodCollectionTest extends TestCase
      */
     public function subtract_a_period_collection_from_period_collection()
     {
-        $collection = new PeriodCollection(
+        $a = new PeriodCollection(
             Period::make('1987-02-01', '1987-02-10'),
             Period::make('1987-02-11', '1987-02-28')
         );
 
-        $removePeriods = new PeriodCollection(
+        $subtract = new PeriodCollection(
             Period::make('1987-02-05', '1987-02-06'),
             Period::make('1987-02-20', '1987-02-21'),
         );
 
-        $this->assertEquals(2, $collection->overlapAll($removePeriods)->count());
+        $result = $a->subtract($subtract);
 
-        $result = $collection->subtract($removePeriods);
-
-        $this->assertEquals(0, $result->overlapAll($removePeriods)->count());
+        $this->assertTrue(Period::make('1987-02-01','1987-02-04')->equals($result[0]));
+        $this->assertTrue(Period::make('1987-02-07','1987-02-10')->equals($result[1]));
+        $this->assertTrue(Period::make('1987-02-11','1987-02-19')->equals($result[2]));
+        $this->assertTrue(Period::make('1987-02-22','1987-02-28')->equals($result[3]));
     }
 
     /** @test */

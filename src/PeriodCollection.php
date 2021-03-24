@@ -144,16 +144,16 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return count($this->periods) === 0;
     }
 
-    public function subtract(PeriodCollection|Period $periods)
+    public function subtract(PeriodCollection|Period $others): static
     {
-        if ($periods instanceof Period) {
-            $periods = new self($periods);
+        if ($others instanceof Period) {
+            $others = new static($others);
         }
 
-        $collection = new self();
+        $collection = new static();
 
         foreach ($this as $period) {
-            $collection = $collection->add(...$period->subtract(...$periods));
+            $collection = $collection->add(...$period->subtract(...$others));
         }
 
         return $collection;
