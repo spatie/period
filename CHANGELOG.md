@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.1.1 - 2021-06-11
+
+- reindex collection array after filtering values (#87)
+
 ## 2.1.0 - 2021-03-24
 
 - Add `PeriodCollection::subtract(PeriodCollection|Period $others)` (#84)
