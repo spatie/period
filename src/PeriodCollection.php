@@ -134,7 +134,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $collection = clone $this;
 
-        $collection->periods = array_filter($collection->periods, $closure);
+        $collection->periods = array_values(array_filter($collection->periods, $closure));
 
         return $collection;
     }

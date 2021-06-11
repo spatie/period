@@ -277,4 +277,25 @@ class PeriodCollectionTest extends TestCase
         $this->assertCount(1, $filtered);
         $this->assertTrue($filtered[0]->equals($collection[0]));
     }
+
+    /** @test */
+    public function it_loops_after_filter()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-10', '2018-01-15'),
+            Period::make('2018-01-20', '2018-01-25'),
+            Period::make('2018-01-30', '2018-01-31')
+        );
+
+        $filtered = $collection->filter(function (Period $period) {
+            return $period->length() > 2;
+        });
+
+        $items = [];
+        foreach ($filtered as $item) {
+            $items[] = $item;
+        }
+        $this->assertEquals($filtered->count(), count($items));
+    }
 }
