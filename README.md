@@ -133,7 +133,7 @@ The `Period` class offers a rich API to interact and compare with other periods 
 - `endsAt(DateTimeInterface $date): bool`: whether a period starts ends at a given date.
 - `overlapsWith(Period $period): bool`: whether a period overlaps with another period.
 - `touchesWith(Period $other): bool`: whether a period touches with another period.
-- `contains(DateTimeInterface|Period $other): bool`: whether a period contains another period _or_ a single date.
+- `contains(DateTimeInterface $other): bool`: whether a period contains another single date.
 - `equals(Period $period): bool`: whether a period equals another period.
 
 ---
