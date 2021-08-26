@@ -142,31 +142,31 @@ On top of comparisons, the `Period` class also offers a bunch of operations:
 
 ### `overlap(Period ...$others): ?static`
 
-Overlap two or more periods on each other. The resulting period will be the union of all other periods combined.
+Overlaps two or more periods on each other. The resulting period will be the union of all other periods combined.
 
 ![](./docs/img/period-overlap.png)
 
 ### `overlapAny(Period ...$others): PeriodCollection`
 
-Overlap two or more periods on each other. Whenever two or periods overlap, that overlapping period is added to a collection that's the final result.
+Overlaps two or more periods on each other. Whenever two or more periods overlap, that overlapping period is added to a collection which will be returned as the final result.
 
 ![](./docs/img/period-overlap-any.png)
 
 ### `subtract(Period ...$others): PeriodCollection`
 
-Subtract one or more periods from the main period. This is the inverse operation from overlap.
+Subtracts one or more periods from the main period. This is the inverse operation of overlap.
 
 ![](./docs/img/period-subtract.png)
 
 ### `gap(Period $period): ?static`
 
-Get the gap between two periods, or 0 if the periods overlap.
+Gets the gap between two periods, or 0 if the periods overlap.
 
 ![](./docs/img/period-gap.png)
 
 ### `diffSymmetric(Period $other): PeriodCollection`
 
-Perform a [symmetric diff](https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html) between two periods.
+Performs a [symmetric diff](https://www.math-only-math.com/symmetric-difference-using-Venn-diagram.html) between two periods.
 
 ![](./docs/img/period-diff-symmetric.png)
 
@@ -200,19 +200,19 @@ The `PeriodCollection` class represents a collection of periods and has some use
 
 ### `overlapAll(PeriodCollection ...$others): PeriodCollection`
 
-Overlap several collections on each other.
+Overlaps all collection periods on each other.
 
 ![](./docs/img/collection-overlap-all.png)
 
 ### `subtract(PeriodCollection|Period ...$others): PeriodCollection`
 
-Subtract a period or a collection of periods from a period collection.
+Subtracts a period or a collection of periods from a period collection.
 
 ![](./docs/img/collection-subtract.png)
 
 ### `boundaries(): ?Period` 
 
-Create a new period representing the outer boundaries of the collection.
+Creates a new period representing the outer boundaries of the collection.
 
 ![](./docs/img/collection-boundaries.png)
 
@@ -224,7 +224,7 @@ Gives the gaps for all periods within this collection.
 
 ### `intersect(Period $intersection): static`
 
-Intersect all periods within a collection with a given period. The result is a new collection with, per period in the original collection, the overlap with the intersection period. When there's no overlap, the original period is discarded.
+Intersects given period with every period within a collection. The result is a new collection of overlapping periods between given period and every period in the collection. When there's no overlap, the original period is discarded.
 
 ![](./docs/img/collection-intersect.png)
 
