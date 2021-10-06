@@ -11,6 +11,8 @@ use Spatie\Period\Precision;
 /** @mixin \Spatie\Period\Period */
 trait PeriodGetters
 {
+    protected string $asString;
+
     public function isStartIncluded(): bool
     {
         return $this->boundaries->startIncluded();
@@ -106,6 +108,35 @@ trait PeriodGetters
 
     public function asString(): string
     {
+        if (!isset($this->asString)) {
+            $this->asString = $this->resolveString();
+        }
+
         return $this->asString;
+    }
+
+    private function resolveString(): string
+    {
+        $string = '';
+
+        if ($this->isStartIncluded()) {
+            $string .= '[';
+        } else {
+            $string .= '(';
+        }
+
+        $string .= $this->start()->format($this->precision->dateFormat());
+
+        $string .= ',';
+
+        $string .= $this->end()->format($this->precision->dateFormat());
+
+        if ($this->isEndIncluded()) {
+            $string .= ']';
+        } else {
+            $string .= ')';
+        }
+
+        return $string;
     }
 }

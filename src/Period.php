@@ -19,8 +19,6 @@ class Period implements IteratorAggregate
     use PeriodComparisons;
     use PeriodOperations;
 
-    protected string $asString;
-
     protected PeriodDuration $duration;
 
     protected DateTimeImmutable $includedStart;
@@ -43,7 +41,6 @@ class Period implements IteratorAggregate
         $this->includedStart = $boundaries->startIncluded() ? $start : $start->add($this->interval);
         $this->includedEnd = $boundaries->endIncluded() ? $end : $end->sub($this->interval);
         $this->duration = new PeriodDuration($this);
-        $this->asString = $this->resolveString();
     }
 
     public static function make(
@@ -85,30 +82,5 @@ class Period implements IteratorAggregate
         }
 
         throw CannotComparePeriods::precisionDoesNotMatch();
-    }
-
-    private function resolveString(): string
-    {
-        $string = '';
-
-        if ($this->isStartIncluded()) {
-            $string .= '[';
-        } else {
-            $string .= '(';
-        }
-
-        $string .= $this->start()->format($this->precision->dateFormat());
-
-        $string .= ',';
-
-        $string .= $this->end()->format($this->precision->dateFormat());
-
-        if ($this->isEndIncluded()) {
-            $string .= ']';
-        } else {
-            $string .= ')';
-        }
-
-        return $string;
     }
 }
