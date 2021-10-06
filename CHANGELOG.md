@@ -2,9 +2,13 @@
 
 All notable changes to `period` will be documented in this file
 
+## Unreleased
+
+- Fix subtraction of empty PeriodCollection
+
 ## 2.1.1 - 2021-06-11
 
-- reindex collection array after filtering values (#87)
+- Reindex collection array after filtering values (#87)
 
 ## 2.1.0 - 2021-03-24
 

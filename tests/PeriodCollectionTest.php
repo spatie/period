@@ -298,4 +298,21 @@ class PeriodCollectionTest extends TestCase
         }
         $this->assertEquals($filtered->count(), count($items));
     }
+
+    /** @test */
+    public function it_substracts_empty_period_collection()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-10', '2018-01-15'),
+            Period::make('2018-01-20', '2018-01-25'),
+            Period::make('2018-01-30', '2018-01-31')
+        );
+
+        $emptyCollection = new PeriodCollection();
+
+        $collection->subtract($emptyCollection);
+
+        $this->assertCount(4, $collection);
+    }
 }
