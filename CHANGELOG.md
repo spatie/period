@@ -2,7 +2,7 @@
 
 All notable changes to `period` will be documented in this file
 
-## Unreleased
+## 2.1.2 - 2021-10-07
 
 - Fix subtraction of empty PeriodCollection
 
