@@ -2,7 +2,7 @@
 
 All notable changes to `period` will be documented in this file
 
-## Unreleased
+## 2.1.3 - 2021-10-07
 
 - Don't initialize Period::asString in constructor
 
