@@ -150,6 +150,10 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             $others = new static($others);
         }
 
+        if ($others->count() === 0) {
+            return clone $this;
+        }
+
         $collection = new static();
 
         foreach ($this as $period) {
