@@ -335,4 +335,24 @@ class PeriodCollectionTest extends TestCase
         $this->assertTrue($unique[0]->equals($collection[0]));
         $this->assertTrue($unique[1]->equals($collection[5]));
     }
+
+    /** @test */
+    public function it_sorts_collection()
+    {
+        $periods = [
+            3 => Period::make('2018-01-30', '2018-01-31'),
+            1 => Period::make('2018-01-10', '2018-01-15'),
+            2 => Period::make('2018-01-20', '2018-01-25'),
+            0 => Period::make('2018-01-01', '2018-01-02'),
+        ];
+
+        $collection = new PeriodCollection(... $periods);
+
+        $sorted = $collection->sort();
+
+        $this->assertTrue($sorted[0]->equals($periods[0]));
+        $this->assertTrue($sorted[1]->equals($periods[1]));
+        $this->assertTrue($sorted[2]->equals($periods[2]));
+        $this->assertTrue($sorted[3]->equals($periods[3]));
+    }
 }
