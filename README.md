@@ -39,7 +39,7 @@ composer require spatie/period
 You're encouraged to create periods using their static constructor:
 
 ```php
-$period = Period::make('2021-01-01', '2020-01-31');
+$period = Period::make('2021-01-01', '2021-01-31');
 ```
 
 You can manually construct a period, but you'll need to manually provide its **precision** and **boundaries**. Using `Period::make`, the default precision (`Precision::DAY()`) and default boundaries (`Boundaries::EXCLUDE_NONE()`) are used. 
