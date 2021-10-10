@@ -108,7 +108,7 @@ trait PeriodGetters
 
     public function asString(): string
     {
-        if (!isset($this->asString)) {
+        if (! isset($this->asString)) {
             $this->asString = $this->resolveString();
         }
 

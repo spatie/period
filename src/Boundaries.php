@@ -18,7 +18,7 @@ class Boundaries
 
     public static function fromString(string $startBoundary, string $endBoundary): self
     {
-        return match("{$startBoundary}{$endBoundary}") {
+        return match ("{$startBoundary}{$endBoundary}") {
             '[]' => self::EXCLUDE_NONE(),
             '[)' => self::EXCLUDE_END(),
             '(]' => self::EXCLUDE_START(),
