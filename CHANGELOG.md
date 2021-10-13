@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.2.0 - 2021-10-13
+
+- Add `PeriodCollection::unique()` (#96)
+
 ## 2.1.3 - 2021-10-07
 
 - Don't initialize Period::asString in constructor
