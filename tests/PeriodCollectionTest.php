@@ -315,4 +315,24 @@ class PeriodCollectionTest extends TestCase
 
         $this->assertCount(4, $collection);
     }
+
+    /** @test */
+    public function it_filters_duplicate_periods_in_collection()
+    {
+        $collection = new PeriodCollection(
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-01', '2018-01-02'),
+            Period::make('2018-01-30', '2018-01-31')
+        );
+
+        $unique = $collection->unique();
+
+        $this->assertCount(6, $collection);
+        $this->assertCount(2, $unique);
+        $this->assertTrue($unique[0]->equals($collection[0]));
+        $this->assertTrue($unique[1]->equals($collection[5]));
+    }
 }
