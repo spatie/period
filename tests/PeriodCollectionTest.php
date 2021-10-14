@@ -346,7 +346,7 @@ class PeriodCollectionTest extends TestCase
             0 => Period::make('2018-01-01', '2018-01-02'),
         ];
 
-        $collection = new PeriodCollection(... $periods);
+        $collection = new PeriodCollection(...$periods);
 
         $sorted = $collection->sort();
 
