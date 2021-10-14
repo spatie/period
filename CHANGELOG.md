@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.3.0 - 2021-10-14
+
+- Add `PeriodCollection::sort()` (#97)
+
 ## 2.2.0 - 2021-10-13
 
 - Add `PeriodCollection::unique()` (#96)
