@@ -189,4 +189,15 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         return new static(...array_values($uniquePeriods));
     }
+
+    public function sort(): PeriodCollection
+    {
+        $collection = clone $this;
+
+        usort($collection->periods, static function (Period $a, Period $b) {
+            return $a->includedStart() <=> $b->includedStart();
+        });
+
+        return $collection;
+    }
 }
