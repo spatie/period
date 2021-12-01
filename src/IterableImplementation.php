@@ -6,12 +6,12 @@ trait IterableImplementation
 {
     protected $position = 0;
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->periods[$offset] ?? null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
             $this->periods[] = $value;
@@ -22,32 +22,32 @@ trait IterableImplementation
         $this->periods[$offset] = $value;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($offset, $this->periods);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->periods[$offset]);
     }
 
-    public function next()
+    public function next(): void
     {
         $this->position++;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return array_key_exists($this->position, $this->periods);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
