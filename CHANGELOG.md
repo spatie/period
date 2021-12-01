@@ -2,6 +2,20 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.3.1 - 2021-12-01
+
+## What's Changed
+
+- Add PHP 8.1 Support by @patinthehat in https://github.com/spatie/period/pull/102
+- Improve PHP 8.1.0 support by @kyryl-bogach in https://github.com/spatie/period/pull/103
+
+## New Contributors
+
+- @patinthehat made their first contribution in https://github.com/spatie/period/pull/102
+- @kyryl-bogach made their first contribution in https://github.com/spatie/period/pull/103
+
+**Full Changelog**: https://github.com/spatie/period/compare/2.3.0...2.3.1
+
 ## 2.3.0 - 2021-10-14
 
 - Add `PeriodCollection::sort()` (#97)
@@ -43,7 +57,7 @@ All notable changes to `period` will be documented in this file
 - `Period::diffSingle()` renamed to `Period::diffSymmetric()`
 - `Period::contains()` now accepts both `DateTimeInterface` and `Period`
 - `PeriodCollection::overlap()` now accepts one or several periods
-- Renamed all getters like `getIncludedEnd()` and `getStart()` to `includedEnd()` and `start()`, etc. 
+- Renamed all getters like `getIncludedEnd()` and `getStart()` to `includedEnd()` and `start()`, etc.
 - Add `Period::fromString()`
 - Add `Period::asString()`
 
@@ -65,7 +79,7 @@ All notable changes to `period` will be documented in this file
 
 ## 1.5.0 - 2020-03-31
 
-- Add `filter` to `PeriodCollection` 
+- Add `filter` to `PeriodCollection`
 
 ## 1.4.5 - 2020-02-05
 
