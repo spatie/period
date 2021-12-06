@@ -42,7 +42,7 @@ You're encouraged to create periods using their static constructor:
 $period = Period::make('2021-01-01', '2021-01-31');
 ```
 
-You can manually construct a period, but you'll need to manually provide its **precision** and **boundaries**. Using `Period::make`, the default precision (`Precision::DAY()`) and default boundaries (`Boundaries::EXCLUDE_NONE()`) are used. 
+You can manually construct a period, but you'll need to manually provide its **precision** and **boundaries**. Using `Period::make`, the default precision (`Precision::DAY`) and default boundaries (`Boundaries::EXCLUDE_NONE`) are used. 
 
 Before discussing the API provided by this package, it's important to understand both how precision and boundaries are used.
 
@@ -65,18 +65,18 @@ A more in-depth explanation on why precision is so important can be found [here]
 A period's precision can be specified when constructing that period:
 
 ```php
-Period::make('2021-01-01', '2021-02-01', Precision::DAY());
+Period::make('2021-01-01', '2021-02-01', Precision::DAY);
 ```
 
 The default precision is set on days. These are the available precision options:
 
 ```php
-Precision::YEAR()
-Precision::MONTH()
-Precision::DAY()
-Precision::HOUR()
-Precision::MINUTE()
-Precision::SECOND()
+Precision::YEAR
+Precision::MONTH
+Precision::DAY
+Precision::HOUR
+Precision::MINUTE
+Precision::SECOND
 ```
 
 #### Boundaries
@@ -102,8 +102,8 @@ $a->length(); // 31
 It's possible to override the boundary behaviour:
 
 ```php
-$a = Period::make('2021-01-01', '2021-02-01', boundaries: Boundaries::EXCLUDE_END());
-$b = Period::make('2021-02-01', '2021-02-28', boundaries: Boundaries::EXCLUDE_END());
+$a = Period::make('2021-01-01', '2021-02-01', boundaries: Boundaries::EXCLUDE_END);
+$b = Period::make('2021-02-01', '2021-02-28', boundaries: Boundaries::EXCLUDE_END);
 
 $a->overlapsWith($b); // false
 ```
@@ -111,10 +111,10 @@ $a->overlapsWith($b); // false
 There are four types of boundary exclusion:
 
 ```php
-Boundaries::EXCLUDE_NONE();
-Boundaries::EXCLUDE_START();
-Boundaries::EXCLUDE_END();
-Boundaries::EXCLUDE_ALL();
+Boundaries::EXCLUDE_NONE;
+Boundaries::EXCLUDE_START;
+Boundaries::EXCLUDE_END;
+Boundaries::EXCLUDE_ALL;
 ```
 
 ### Reference
