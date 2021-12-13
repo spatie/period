@@ -471,6 +471,7 @@ class Period implements IteratorAggregate
         return $this->precisionMask;
     }
 
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new DatePeriod(
@@ -515,7 +516,7 @@ class Period implements IteratorAggregate
             return $format;
         }
 
-        if (strpos($format, ' ') === false && strpos($date, ' ') !== false) {
+        if (strpos($date, ' ') !== false) {
             return 'Y-m-d H:i:s';
         }
 

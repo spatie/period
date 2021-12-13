@@ -547,7 +547,9 @@ class PeriodTest extends TestCase
     {
         $period = Period::make('2018-01-01', '2018-01-15');
 
-        $this->assertInstanceOf(DateTimeImmutable::class, current($period));
+        foreach ($period as $date) {
+            $this->assertInstanceOf(DateTimeImmutable::class, $date);
+        }
     }
 
     /** @test */
