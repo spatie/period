@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 1.6.1 - 2021-12-13
+
+- Support PHP 8.1
+
 ## 1.6.0 - 2021-02-24
 
 - Add `Period::renew` (#74)
