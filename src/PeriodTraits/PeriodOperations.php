@@ -38,7 +38,9 @@ trait PeriodOperations
 
     public function overlap(Period ...$others): ?static
     {
-        if (count($others) > 1) {
+        if (count($others) === 0) {
+            return null;
+        } else if (count($others) > 1) {
             return $this->overlapAll(...$others);
         } else {
             $other = $others[0];
@@ -115,7 +117,9 @@ trait PeriodOperations
      */
     public function subtract(Period ...$others): PeriodCollection
     {
-        if (count($others) > 1) {
+        if (count($others) === 0)
+            return PeriodCollection::make($this);
+        } else if (count($others) > 1) {
             return $this->subtractAll(...$others);
         } else {
             $other = $others[0];
