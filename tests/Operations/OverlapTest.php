@@ -5,6 +5,7 @@ namespace Spatie\Period\Tests\Operations;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
+use Spatie\Period\PeriodCollection;
 
 class OverlapTest extends TestCase
 {
@@ -177,5 +178,16 @@ class OverlapTest extends TestCase
          * B    [===]
          */
         yield [Period::make('2018-02-01', '2018-02-28'), Period::make('2018-01-01', '2018-01-31')];
+    }
+
+    /** @test */
+    public function passing_empty_period_collection_returns_null()
+    {
+        $current = Period::make('2018-01-01', '2018-01-31');
+        $emptyCollection = new PeriodCollection;
+
+        $diff = $current->overlap(... $emptyCollection);
+
+        $this->assertNull($diff);
     }
 }
