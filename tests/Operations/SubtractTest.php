@@ -231,7 +231,7 @@ class SubtractTest extends TestCase
         $current = Period::make('2018-01-01', '2018-01-31');
         $emptyCollection = new PeriodCollection;
 
-        $diff = $current->subtract(... $emptyCollection);
+        $diff = $current->subtract(...$emptyCollection);
 
         $this->assertInstanceOf(PeriodCollection::class, $diff);
         $this->assertCount(1, $diff);

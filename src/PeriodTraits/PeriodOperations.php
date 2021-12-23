@@ -40,7 +40,7 @@ trait PeriodOperations
     {
         if (count($others) === 0) {
             return null;
-        } else if (count($others) > 1) {
+        } elseif (count($others) > 1) {
             return $this->overlapAll(...$others);
         } else {
             $other = $others[0];
@@ -119,7 +119,7 @@ trait PeriodOperations
     {
         if (count($others) === 0) {
             return PeriodCollection::make($this);
-        } else if (count($others) > 1) {
+        } elseif (count($others) > 1) {
             return $this->subtractAll(...$others);
         } else {
             $other = $others[0];
