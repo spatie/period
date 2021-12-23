@@ -4,6 +4,7 @@ namespace Spatie\Period\Tests\Operations;
 
 use PHPUnit\Framework\TestCase;
 use Spatie\Period\Period;
+use Spatie\Period\PeriodCollection;
 
 class SubtractTest extends TestCase
 {
@@ -222,5 +223,18 @@ class SubtractTest extends TestCase
         $this->assertTrue($diff[0]->equals(Period::make('2018-01-01', '2018-01-04')));
         $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
         $this->assertTrue($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')));
+    }
+
+    /** @test */
+    public function passing_empty_period_collection_returns_same_period_within_collection()
+    {
+        $current = Period::make('2018-01-01', '2018-01-31');
+        $emptyCollection = new PeriodCollection;
+
+        $diff = $current->subtract(... $emptyCollection);
+
+        $this->assertInstanceOf(PeriodCollection::class, $diff);
+        $this->assertCount(1, $diff);
+        $this->assertTrue($diff[0]->equals($current));
     }
 }
