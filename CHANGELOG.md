@@ -2,6 +2,18 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.3.2 - 2021-12-23
+
+## What's Changed
+
+- Error "Undefined array key 0" fix by @aliowacom in https://github.com/spatie/period/pull/105
+
+## New Contributors
+
+- @aliowacom made their first contribution in https://github.com/spatie/period/pull/105
+
+**Full Changelog**: https://github.com/spatie/period/compare/2.3.1...2.3.2
+
 ## 2.3.1 - 2021-12-01
 
 ## What's Changed
