@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.3.3 - 2022-03-03
+
+**Full Changelog**: https://github.com/spatie/period/compare/2.3.2...2.3.3
+
 ## 2.3.2 - 2021-12-23
 
 ## What's Changed
