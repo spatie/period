@@ -119,7 +119,7 @@ class PeriodFactory
             return $format;
         }
 
-        if (! str_contains($format, ' ') && str_contains($date, ' ')) {
+        if (str_contains($date, ' ')) {
             return 'Y-m-d H:i:s';
         }
 
