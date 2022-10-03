@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.3.5 - 2022-10-03
+
+Revert previous release
+
 ## Make Precision consts public - 2022-10-03
 
 **Full Changelog**: https://github.com/spatie/period/compare/2.3.3...2.3.4
