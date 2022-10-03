@@ -8,12 +8,12 @@ use DateTimeInterface;
 
 class Precision
 {
-    public const YEAR = 0b100000;
-    public const MONTH = 0b110000;
-    public const DAY = 0b111000;
-    public const HOUR = 0b111100;
-    public const MINUTE = 0b111110;
-    public const SECOND = 0b111111;
+    private const YEAR = 0b100000;
+    private const MONTH = 0b110000;
+    private const DAY = 0b111000;
+    private const HOUR = 0b111100;
+    private const MINUTE = 0b111110;
+    private const SECOND = 0b111111;
 
     /**
      * @return self[]
