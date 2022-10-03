@@ -184,7 +184,7 @@ class OverlapTest extends TestCase
     public function passing_empty_period_collection_returns_null()
     {
         $current = Period::make('2018-01-01', '2018-01-31');
-        $emptyCollection = new PeriodCollection;
+        $emptyCollection = new PeriodCollection();
 
         $diff = $current->overlap(...$emptyCollection);
 

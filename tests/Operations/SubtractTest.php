@@ -229,7 +229,7 @@ class SubtractTest extends TestCase
     public function passing_empty_period_collection_returns_same_period_within_collection()
     {
         $current = Period::make('2018-01-01', '2018-01-31');
-        $emptyCollection = new PeriodCollection;
+        $emptyCollection = new PeriodCollection();
 
         $diff = $current->subtract(...$emptyCollection);
 
