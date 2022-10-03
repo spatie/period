@@ -195,25 +195,25 @@ class Visualizer
 
                     break;
 
-                // We've hit the start of a period
+                    // We've hit the start of a period
                 case $curr && $curr !== $prev && $curr === $next:
                     $tmp .= '[';
 
                     break;
 
-                // We've hit the end of the period
+                    // We've hit the end of the period
                 case $curr && $curr !== $next:
                     $tmp .= ']';
 
                     break;
 
-                // We're adding segments to the current period
+                    // We're adding segments to the current period
                 case $curr && $curr === $prev:
                     $tmp .= '=';
 
                     break;
 
-                // Otherwise it's just empty space
+                    // Otherwise it's just empty space
                 default:
                     $tmp .= ' ';
 
