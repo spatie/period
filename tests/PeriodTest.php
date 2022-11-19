@@ -38,8 +38,8 @@ it('will preserve the time', function () {
 
     $this->assertTrue($period->equals(
         Period::make(
-        DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 01:02:03'),
-        DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 04:05:06')
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 01:02:03'),
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 04:05:06')
         )
     ));
 });
@@ -49,8 +49,8 @@ it('will use the start of day when passing strings to a period', function () {
 
     $this->assertTrue($period->equals(
         Period::make(
-        DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00'),
-        DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 00:00:00'),
+            DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00')
         )
     ));
 });
