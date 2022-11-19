@@ -8,5 +8,5 @@ it('can visualize periods', function ($options, $expected, $blocks) {
     $actual = $visualizer->visualize($blocks);
     $actual = explode("\n", $actual);
 
-    $this->assertEquals($expected, $actual);
+    expect($actual)->toEqual($expected);
 })->with('overlapping', 'non_overlapping', 'single_overlaps', 'multiple_overlaps');

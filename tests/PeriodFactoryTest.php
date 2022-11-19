@@ -14,5 +14,5 @@ it('make with boundaries', function () {
         Boundaries::EXCLUDE_END()
     );
 
-    $this->assertTrue(Period::fromString('[2021-01-01,2021-01-21)')->equals($period));
+    expect(Period::fromString('[2021-01-01,2021-01-21)')->equals($period))->toBeTrue();
 });

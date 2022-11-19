@@ -14,9 +14,9 @@ it('diff with no overlap', function () {
 
     $diff = $a->diffSymmetric($b);
 
-    $this->assertCount(2, $diff);
-    $this->assertTrue($diff[0]->equals($a));
-    $this->assertTrue($diff[1]->equals($b));
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals($a))->toBeTrue();
+    expect($diff[1]->equals($b))->toBeTrue();
 });
 
 /**
@@ -32,9 +32,9 @@ it('diff right', function () {
 
     $diff = $a->diffSymmetric($b);
 
-    $this->assertCount(2, $diff);
-    $this->assertTrue($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')));
-    $this->assertTrue($diff[1]->equals(Period::make('2020-02-01', '2020-02-15')));
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2020-02-01', '2020-02-15')))->toBeTrue();
 });
 
 /**
@@ -49,9 +49,9 @@ it('diff left', function () {
 
     $diff = $a->diffSymmetric($b);
 
-    $this->assertCount(2, $diff);
-    $this->assertTrue($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')));
-    $this->assertTrue($diff[1]->equals(Period::make('2020-02-01', '2020-02-15')));
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2020-01-01', '2020-01-14')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2020-02-01', '2020-02-15')))->toBeTrue();
 });
 
 /**
@@ -66,9 +66,9 @@ it('diff within', function () {
 
     $diffs = $a->diffSymmetric($b);
 
-    $this->assertCount(2, $diffs);
-    $this->assertTrue($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')));
-    $this->assertTrue($diffs[1]->equals(Period::make('2020-01-16', '2020-01-31')));
+    expect($diffs)->toHaveCount(2);
+    expect($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')))->toBeTrue();
+    expect($diffs[1]->equals(Period::make('2020-01-16', '2020-01-31')))->toBeTrue();
 });
 
 /**
@@ -83,7 +83,7 @@ it('diff within reverse', function () {
 
     $diffs = $a->diffSymmetric($b);
 
-    $this->assertCount(2, $diffs);
-    $this->assertTrue($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')));
-    $this->assertTrue($diffs[1]->equals(Period::make('2020-01-16', '2020-01-31')));
+    expect($diffs)->toHaveCount(2);
+    expect($diffs[0]->equals(Period::make('2020-01-01', '2020-01-09')))->toBeTrue();
+    expect($diffs[1]->equals(Period::make('2020-01-16', '2020-01-31')))->toBeTrue();
 });

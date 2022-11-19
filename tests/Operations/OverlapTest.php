@@ -4,7 +4,7 @@ use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 
 it('can determine if two periods overlap with each other', function (Period $a, Period $b) {
-    $this->assertTrue($a->overlapsWith($b));
+    expect($a->overlapsWith($b))->toBeTrue();
 })->with('overlapping_dates');
 
 /**
@@ -20,7 +20,7 @@ it('can determine an overlap period between two other periods', function () {
 
     $overlapPeriod = Period::make('2018-01-10', '2018-01-15');
 
-    $this->assertTrue($a->overlap($b)->equals($overlapPeriod));
+    expect($a->overlap($b)->equals($overlapPeriod))->toBeTrue();
 });
 
 /**
@@ -39,11 +39,11 @@ it('can determine multiple overlap periods between two other periods', function 
 
     $overlapPeriods = $d->overlapAny($a, $b, $c);
 
-    $this->assertCount(3, $overlapPeriods);
+    expect($overlapPeriods)->toHaveCount(3);
 
-    $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-20', '2018-01-31')));
-    $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-02-10', '2018-02-20')));
-    $this->assertTrue($overlapPeriods[2]->equals(Period::make('2018-03-01', '2018-03-10')));
+    expect($overlapPeriods[0]->equals(Period::make('2018-01-20', '2018-01-31')))->toBeTrue();
+    expect($overlapPeriods[1]->equals(Period::make('2018-02-10', '2018-02-20')))->toBeTrue();
+    expect($overlapPeriods[2]->equals(Period::make('2018-03-01', '2018-03-10')))->toBeTrue();
 });
 
 /**
@@ -60,7 +60,7 @@ it('can determine the overlap between multiple periods', function () {
 
     $overlap = $a->overlap($b, $c);
 
-    $this->assertTrue($overlap->equals(Period::make('2018-01-10', '2018-01-15')));
+    expect($overlap->equals(Period::make('2018-01-10', '2018-01-15')))->toBeTrue();
 });
 
 /**
@@ -77,14 +77,14 @@ it('overlap all returns null when no overlaps', function () {
 
     $overlap = $a->overlap($b, $c);
 
-    $this->assertNull($overlap);
+    expect($overlap)->toBeNull();
 });
 
 it('non overlapping dates return an empty collection', function () {
     $a = Period::make('2019-01-01', '2019-01-31');
     $b = Period::make('2019-02-01', '2019-02-28');
 
-    $this->assertTrue($a->overlapAny($b)->isEmpty());
+    expect($a->overlapAny($b)->isEmpty())->toBeTrue();
 });
 
 it('can determine that two periods do not overlap', function () {
@@ -93,11 +93,11 @@ it('can determine that two periods do not overlap', function () {
 
     $overlap = $a->overlap($b);
 
-    $this->assertNull($overlap);
+    expect($overlap)->toBeNull();
 });
 
 it('can determine that two periods do not overlap with each other', function (Period $a, Period $b) {
-    $this->assertFalse($a->overlapsWith($b));
+    expect($a->overlapsWith($b))->toBeFalse();
 })->with('no_overlapping_dates');
 
 it('passing empty period collection returns null', function () {
@@ -106,5 +106,5 @@ it('passing empty period collection returns null', function () {
 
     $diff = $current->overlap(...$emptyCollection);
 
-    $this->assertNull($diff);
+    expect($diff)->toBeNull();
 });

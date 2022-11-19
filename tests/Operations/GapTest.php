@@ -15,7 +15,7 @@ it('can determine the gap between two periods', function () {
 
     $gap = $a->gap($b);
 
-    $this->assertTrue($gap->equals(Period::make('2018-01-11', '2018-01-14')));
+    expect($gap->equals(Period::make('2018-01-11', '2018-01-14')))->toBeTrue();
 });
 
 /**
@@ -31,7 +31,7 @@ it('can still determine the gap between two periods even when the periods are no
 
     $gap = $a->gap($b);
 
-    $this->assertTrue($gap->equals(Period::make('2018-01-11', '2018-01-14')));
+    expect($gap->equals(Period::make('2018-01-11', '2018-01-14')))->toBeTrue();
 });
 
 /**
@@ -47,7 +47,7 @@ it('will determine that there is no gap if the periods only touch but do not ove
 
     $gap = $a->gap($b);
 
-    $this->assertNull($gap);
+    expect($gap)->toBeNull();
 });
 
 /**
@@ -63,5 +63,5 @@ it('will determine that there is no gap when periods overlap', function () {
 
     $gap = $a->gap($b);
 
-    $this->assertNull($gap);
+    expect($gap)->toBeNull();
 });

@@ -23,10 +23,10 @@ it('can determine multiple overlaps for a single collection', function () {
 
     $overlapPeriods = $a->overlapAll($b);
 
-    $this->assertCount(2, $overlapPeriods);
+    expect($overlapPeriods)->toHaveCount(2);
 
-    $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-05', '2018-01-10')));
-    $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-01-22', '2018-01-25')));
+    expect($overlapPeriods[0]->equals(Period::make('2018-01-05', '2018-01-10')))->toBeTrue();
+    expect($overlapPeriods[1]->equals(Period::make('2018-01-22', '2018-01-25')))->toBeTrue();
 });
 
 /**
@@ -53,10 +53,10 @@ it('can determine multiple overlaps for multiple collections', function () {
 
     $overlapPeriods = $a->overlapAll($b, $c);
 
-    $this->assertCount(2, $overlapPeriods);
+    expect($overlapPeriods)->toHaveCount(2);
 
-    $this->assertTrue($overlapPeriods[0]->equals(Period::make('2018-01-06', '2018-01-07')));
-    $this->assertTrue($overlapPeriods[1]->equals(Period::make('2018-01-15', '2018-01-20')));
+    expect($overlapPeriods[0]->equals(Period::make('2018-01-06', '2018-01-07')))->toBeTrue();
+    expect($overlapPeriods[1]->equals(Period::make('2018-01-15', '2018-01-20')))->toBeTrue();
 });
 
 /**
@@ -77,7 +77,7 @@ it('can determine the boundaries of a collection', function () {
 
     $boundaries = $collection->boundaries();
 
-    $this->assertTrue($boundaries->equals(Period::make('2018-01-01', '2018-01-31')));
+    expect($boundaries->equals(Period::make('2018-01-01', '2018-01-31')))->toBeTrue();
 });
 
 /**
@@ -98,11 +98,11 @@ it('can determine the gaps of a collection', function () {
 
     $gaps = $collection->gaps();
 
-    $this->assertCount(3, $gaps);
+    expect($gaps)->toHaveCount(3);
 
-    $this->assertTrue($gaps[0]->equals(Period::make('2018-01-06', '2018-01-09')));
-    $this->assertTrue($gaps[1]->equals(Period::make('2018-01-16', '2018-01-19')));
-    $this->assertTrue($gaps[2]->equals(Period::make('2018-01-26', '2018-01-29')));
+    expect($gaps[0]->equals(Period::make('2018-01-06', '2018-01-09')))->toBeTrue();
+    expect($gaps[1]->equals(Period::make('2018-01-16', '2018-01-19')))->toBeTrue();
+    expect($gaps[2]->equals(Period::make('2018-01-26', '2018-01-29')))->toBeTrue();
 });
 
 /**
@@ -121,7 +121,7 @@ it('no gaps when periods fully overlap and end excluded', function () {
 
     $gaps = $collection->gaps();
 
-    $this->assertCount(0, $gaps);
+    expect($gaps)->toHaveCount(0);
 });
 
 /**
@@ -146,11 +146,11 @@ it('intersect test', function () {
 
     $intersect = $collection->intersect(Period::make('2019-01-09', '2019-01-11'));
 
-    $this->assertCount(3, $intersect);
+    expect($intersect)->toHaveCount(3);
 
-    $this->assertTrue($intersect[0]->equals(Period::make('2019-01-09', '2019-01-11')));
-    $this->assertTrue($intersect[1]->equals(Period::make('2019-01-09', '2019-01-10')));
-    $this->assertTrue($intersect[2]->equals(Period::make('2019-01-10', '2019-01-11')));
+    expect($intersect[0]->equals(Period::make('2019-01-09', '2019-01-11')))->toBeTrue();
+    expect($intersect[1]->equals(Period::make('2019-01-09', '2019-01-10')))->toBeTrue();
+    expect($intersect[2]->equals(Period::make('2019-01-10', '2019-01-11')))->toBeTrue();
 });
 
 /**
@@ -170,9 +170,9 @@ it('subtract a period from period collection', function () {
 
     $result = $a->subtract($subtract);
 
-    $this->assertTrue(Period::make('1987-02-01', '1987-02-10')->equals($result[0]));
-    $this->assertTrue(Period::make('1987-02-11', '1987-02-19')->equals($result[1]));
-    $this->assertTrue(Period::make('1987-02-22', '1987-02-28')->equals($result[2]));
+    expect(Period::make('1987-02-01', '1987-02-10')->equals($result[0]))->toBeTrue();
+    expect(Period::make('1987-02-11', '1987-02-19')->equals($result[1]))->toBeTrue();
+    expect(Period::make('1987-02-22', '1987-02-28')->equals($result[2]))->toBeTrue();
 });
 
 /**
@@ -195,10 +195,10 @@ it('subtract a period collection from period collection', function () {
 
     $result = $a->subtract($subtract);
 
-    $this->assertTrue(Period::make('1987-02-01', '1987-02-04')->equals($result[0]));
-    $this->assertTrue(Period::make('1987-02-07', '1987-02-10')->equals($result[1]));
-    $this->assertTrue(Period::make('1987-02-11', '1987-02-19')->equals($result[2]));
-    $this->assertTrue(Period::make('1987-02-22', '1987-02-28')->equals($result[3]));
+    expect(Period::make('1987-02-01', '1987-02-04')->equals($result[0]))->toBeTrue();
+    expect(Period::make('1987-02-07', '1987-02-10')->equals($result[1]))->toBeTrue();
+    expect(Period::make('1987-02-11', '1987-02-19')->equals($result[2]))->toBeTrue();
+    expect(Period::make('1987-02-22', '1987-02-28')->equals($result[3]))->toBeTrue();
 });
 
 it('can filter', function () {
@@ -211,8 +211,8 @@ it('can filter', function () {
         return $period->startsAt(new DateTime('2019-01-01'));
     });
 
-    $this->assertCount(1, $filtered);
-    $this->assertTrue($filtered[0]->equals($collection[0]));
+    expect($filtered)->toHaveCount(1);
+    expect($filtered[0]->equals($collection[0]))->toBeTrue();
 });
 
 it('loops after filter', function () {
@@ -231,7 +231,7 @@ it('loops after filter', function () {
     foreach ($filtered as $item) {
         $items[] = $item;
     }
-    $this->assertEquals($filtered->count(), count($items));
+    expect(count($items))->toEqual($filtered->count());
 });
 
 it('substracts empty period collection', function () {
@@ -246,7 +246,7 @@ it('substracts empty period collection', function () {
 
     $collection->subtract($emptyCollection);
 
-    $this->assertCount(4, $collection);
+    expect($collection)->toHaveCount(4);
 });
 
 it('filters duplicate periods in collection', function () {
@@ -261,10 +261,10 @@ it('filters duplicate periods in collection', function () {
 
     $unique = $collection->unique();
 
-    $this->assertCount(6, $collection);
-    $this->assertCount(2, $unique);
-    $this->assertTrue($unique[0]->equals($collection[0]));
-    $this->assertTrue($unique[1]->equals($collection[5]));
+    expect($collection)->toHaveCount(6);
+    expect($unique)->toHaveCount(2);
+    expect($unique[0]->equals($collection[0]))->toBeTrue();
+    expect($unique[1]->equals($collection[5]))->toBeTrue();
 });
 
 it('sorts collection', function () {
@@ -279,8 +279,8 @@ it('sorts collection', function () {
 
     $sorted = $collection->sort();
 
-    $this->assertTrue($sorted[0]->equals($periods[0]));
-    $this->assertTrue($sorted[1]->equals($periods[1]));
-    $this->assertTrue($sorted[2]->equals($periods[2]));
-    $this->assertTrue($sorted[3]->equals($periods[3]));
+    expect($sorted[0]->equals($periods[0]))->toBeTrue();
+    expect($sorted[1]->equals($periods[1]))->toBeTrue();
+    expect($sorted[2]->equals($periods[2]))->toBeTrue();
+    expect($sorted[3]->equals($periods[3]))->toBeTrue();
 });

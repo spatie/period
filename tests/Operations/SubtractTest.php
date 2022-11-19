@@ -15,9 +15,9 @@ it('subtraction without overlap', function () {
 
     $result = $a->subtract($b);
 
-    $this->assertCount(1, $result);
+    expect($result)->toHaveCount(1);
 
-    $this->assertTrue($result[0]->equals($a));
+    expect($result[0]->equals($a))->toBeTrue();
 });
 
 /**
@@ -32,8 +32,8 @@ it('subtraction right', function () {
 
     $result = $a->subtract($b);
 
-    $this->assertCount(1, $result);
-    $this->assertTrue($result[0]->equals(Period::make('2020-01-01', '2020-01-10')));
+    expect($result)->toHaveCount(1);
+    expect($result[0]->equals(Period::make('2020-01-01', '2020-01-10')))->toBeTrue();
 });
 
 /**
@@ -48,8 +48,8 @@ it('subtraction left', function () {
 
     $result = $a->subtract($b);
 
-    $this->assertCount(1, $result);
-    $this->assertTrue($result[0]->equals(Period::make('2020-01-10', '2020-01-31')));
+    expect($result)->toHaveCount(1);
+    expect($result[0]->equals(Period::make('2020-01-10', '2020-01-31')))->toBeTrue();
 });
 
 /**
@@ -64,9 +64,9 @@ it('subtraction left and right', function () {
 
     $result = $a->subtract($b);
 
-    $this->assertCount(2, $result);
-    $this->assertTrue($result[0]->equals(Period::make('2020-01-01', '2020-01-10')));
-    $this->assertTrue($result[1]->equals(Period::make('2020-01-15', '2020-01-31')));
+    expect($result)->toHaveCount(2);
+    expect($result[0]->equals(Period::make('2020-01-01', '2020-01-10')))->toBeTrue();
+    expect($result[1]->equals(Period::make('2020-01-15', '2020-01-31')))->toBeTrue();
 });
 
 /**
@@ -81,7 +81,7 @@ it('subtraction full', function () {
 
     $result = $a->subtract($b);
 
-    $this->assertCount(0, $result);
+    expect($result)->toHaveCount(0);
 });
 
 /**
@@ -102,9 +102,9 @@ it('subtraction many', function () {
 
     $diff = $current->subtract($a, $b, $c);
 
-    $this->assertCount(1, $diff);
+    expect($diff)->toHaveCount(1);
 
-    $this->assertTrue($diff[0]->equals(Period::make('2018-02-01', '2018-02-09')));
+    expect($diff[0]->equals(Period::make('2018-02-01', '2018-02-09')))->toBeTrue();
 });
 
 /**
@@ -123,7 +123,7 @@ it('if all periods overlap it will determine that there is no diff', function ()
 
     $diff = $current->subtract($a, $b);
 
-    $this->assertCount(0, $diff);
+    expect($diff)->toHaveCount(0);
 });
 
 /**
@@ -140,8 +140,8 @@ it('can subtract', function () {
 
     $diff = $current->subtract($a);
 
-    $this->assertCount(1, $diff);
-    $this->assertTrue($diff[0]->equals($current));
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals($current))->toBeTrue();
 });
 
 /**
@@ -161,10 +161,10 @@ it('can determine multiple diffs', function () {
 
     $diff = $current->subtract($a, $b, $c);
 
-    $this->assertCount(2, $diff);
+    expect($diff)->toHaveCount(2);
 
-    $this->assertTrue($diff[0]->equals(Period::make('2018-01-03', '2018-01-04')));
-    $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
+    expect($diff[0]->equals(Period::make('2018-01-03', '2018-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')))->toBeTrue();
 });
 
 /**
@@ -183,11 +183,11 @@ it('can determine multiple diffs for sure', function () {
 
     $diff = $current->subtract($a, $b);
 
-    $this->assertCount(3, $diff);
+    expect($diff)->toHaveCount(3);
 
-    $this->assertTrue($diff[0]->equals(Period::make('2018-01-01', '2018-01-04')));
-    $this->assertTrue($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')));
-    $this->assertTrue($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')));
+    expect($diff[0]->equals(Period::make('2018-01-01', '2018-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2018-01-11', '2018-01-14')))->toBeTrue();
+    expect($diff[2]->equals(Period::make('2018-01-21', '2018-01-31')))->toBeTrue();
 });
 
 it('passing empty period collection returns same period within collection', function () {
@@ -196,7 +196,7 @@ it('passing empty period collection returns same period within collection', func
 
     $diff = $current->subtract(...$emptyCollection);
 
-    $this->assertInstanceOf(PeriodCollection::class, $diff);
-    $this->assertCount(1, $diff);
-    $this->assertTrue($diff[0]->equals($current));
+    expect($diff)->toBeInstanceOf(PeriodCollection::class);
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals($current))->toBeTrue();
 });
