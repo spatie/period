@@ -5,3 +5,4 @@ vendor
 coverage
 .php-cs-fixer.cache
 .phpunit.result.cache
+.idea

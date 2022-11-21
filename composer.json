@@ -21,6 +21,7 @@
     "require-dev": {
         "larapack/dd": "^1.1",
         "nesbot/carbon": "^2.54",
+        "pestphp/pest": "^1.22",
         "phpunit/phpunit": "^9.5",
         "spatie/ray": "^1.31"
     },
@@ -35,10 +36,13 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

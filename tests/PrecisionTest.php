@@ -1,218 +1,151 @@
 <?php
 
-namespace Spatie\Period\Tests;
-
-use DateTime;
-use DateTimeImmutable;
-use PHPUnit\Framework\TestCase;
 use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
 
-class PrecisionTest extends TestCase
-{
-    /**
-     * @test
-     * @dataProvider roundingDates
-     */
-    public function dates_are_rounded_on_precision(
-        Precision $precision,
-        string $expectedStart,
-        string $expectedEnd
-    ) {
-        $period = Period::make(
-            '2018-02-05 11:11:11',
-            '2018-03-05 11:11:11',
-            $precision
-        );
+it('dates are rounded on precision', function (Precision $precision, string $expectedStart, string $expectedEnd) {
+    $period = Period::make('2018-02-05 11:11:11', '2018-03-05 11:11:11', $precision);
 
-        $this->assertEquals(
-            DateTime::createFromFormat('Y-m-d H:i:s', $expectedStart),
-            $period->start()
-        );
+    expect($period->start())->toEqual(DateTime::createFromFormat('Y-m-d H:i:s', $expectedStart));
+    expect($period->end())->toEqual(DateTime::createFromFormat('Y-m-d H:i:s', $expectedEnd));
+})->with('rounding_dates');
 
-        $this->assertEquals(
-            DateTime::createFromFormat('Y-m-d H:i:s', $expectedEnd),
-            $period->end()
-        );
-    }
+it('comparing two periods with different precision is not allowed', function () {
+    $a = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
+    $b = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
 
-    public function roundingDates(): array
-    {
-        return [
-            [Precision::YEAR(), '2018-01-01 00:00:00', '2018-01-01 00:00:00'],
-            [Precision::MONTH(), '2018-02-01 00:00:00', '2018-03-01 00:00:00'],
-            [Precision::DAY(), '2018-02-05 00:00:00', '2018-03-05 00:00:00'],
-            [Precision::HOUR(), '2018-02-05 11:00:00', '2018-03-05 11:00:00'],
-            [Precision::MINUTE(), '2018-02-05 11:11:00', '2018-03-05 11:11:00'],
-            [Precision::SECOND(), '2018-02-05 11:11:11', '2018-03-05 11:11:11'],
-        ];
-    }
+    $a->overlapsWith($b);
+})->throws(CannotComparePeriods::class);
 
-    /** @test */
-    public function comparing_two_periods_with_different_precision_is_not_allowed()
-    {
-        $a = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
-        $b = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
+it('precision with seconds', function () {
+    $a = Period::make('2018-01-01 00:00:15', '2018-01-01 00:00:15', Precision::SECOND());
+    $b = Period::make('2018-01-01 00:00:15', '2018-01-01 00:00:15', Precision::SECOND());
+    $c = Period::make('2018-01-01 00:00:16', '2018-01-01 00:00:16', Precision::SECOND());
 
-        $this->expectException(CannotComparePeriods::class);
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $a->overlapsWith($b);
-    }
+it('precision with minutes', function () {
+    $a = Period::make('2018-01-01 00:15:00', '2018-01-01 00:15:00', Precision::MINUTE());
+    $b = Period::make('2018-01-01 00:15:00', '2018-01-01 00:15:00', Precision::MINUTE());
+    $c = Period::make('2018-01-01 00:16:00', '2018-01-01 00:16:00', Precision::MINUTE());
 
-    /** @test */
-    public function precision_with_seconds()
-    {
-        $a = Period::make('2018-01-01 00:00:15', '2018-01-01 00:00:15', Precision::SECOND());
-        $b = Period::make('2018-01-01 00:00:15', '2018-01-01 00:00:15', Precision::SECOND());
-        $c = Period::make('2018-01-01 00:00:16', '2018-01-01 00:00:16', Precision::SECOND());
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+it('precision with hours', function () {
+    $a = Period::make('2018-01-01 15:00:00', '2018-01-01 15:00:00', Precision::HOUR());
+    $b = Period::make('2018-01-01 15:00:00', '2018-01-01 15:00:00', Precision::HOUR());
+    $c = Period::make('2018-01-01 16:00:00', '2018-01-01 16:00:00', Precision::HOUR());
 
-    /** @test */
-    public function precision_with_minutes()
-    {
-        $a = Period::make('2018-01-01 00:15:00', '2018-01-01 00:15:00', Precision::MINUTE());
-        $b = Period::make('2018-01-01 00:15:00', '2018-01-01 00:15:00', Precision::MINUTE());
-        $c = Period::make('2018-01-01 00:16:00', '2018-01-01 00:16:00', Precision::MINUTE());
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+it('precision with days', function () {
+    $a = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
+    $b = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
+    $c = Period::make('2018-01-02', '2018-01-02', Precision::DAY());
 
-    /** @test */
-    public function precision_with_hours()
-    {
-        $a = Period::make('2018-01-01 15:00:00', '2018-01-01 15:00:00', Precision::HOUR());
-        $b = Period::make('2018-01-01 15:00:00', '2018-01-01 15:00:00', Precision::HOUR());
-        $c = Period::make('2018-01-01 16:00:00', '2018-01-01 16:00:00', Precision::HOUR());
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+it('precision with months', function () {
+    $a = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
+    $b = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
+    $c = Period::make('2018-02-01', '2018-02-01', Precision::MONTH());
 
-    /** @test */
-    public function precision_with_days()
-    {
-        $a = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
-        $b = Period::make('2018-01-01', '2018-01-01', Precision::DAY());
-        $c = Period::make('2018-01-02', '2018-01-02', Precision::DAY());
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+it('precision with years', function () {
+    $a = Period::make('2018-01-01', '2018-01-01', Precision::YEAR());
+    $b = Period::make('2018-01-01', '2018-01-01', Precision::YEAR());
+    $c = Period::make('2019-01-01', '2019-01-01', Precision::YEAR());
 
-    /** @test */
-    public function precision_with_months()
-    {
-        $a = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
-        $b = Period::make('2018-01-01', '2018-01-01', Precision::MONTH());
-        $c = Period::make('2018-02-01', '2018-02-01', Precision::MONTH());
+    expect($a->overlapsWith($b))->toBeTrue();
+    expect($a->overlapsWith($c))->toBeFalse();
+});
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+it('precision is kept when comparing with the ranges start', function () {
+    $a = Period::make('2018-01-01 11:11:11', '2018-01-31', Precision::DAY());
 
-    /** @test */
-    public function precision_with_years()
-    {
-        $a = Period::make('2018-01-01', '2018-01-01', Precision::YEAR());
-        $b = Period::make('2018-01-01', '2018-01-01', Precision::YEAR());
-        $c = Period::make('2019-01-01', '2019-01-01', Precision::YEAR());
+    $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 11:11:11');
 
-        $this->assertTrue($a->overlapsWith($b));
-        $this->assertFalse($a->overlapsWith($c));
-    }
+    expect($a->startsAt($boundaryDate))->toBeTrue();
 
-    /** @test */
-    public function precision_is_kept_when_comparing_with_the_ranges_start()
-    {
-        $a = Period::make('2018-01-01 11:11:11', '2018-01-31', Precision::DAY());
+    $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00');
 
-        $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 11:11:11');
+    expect($a->startsBefore($includedDate))->toBeTrue();
+    expect($a->startsBeforeOrAt($includedDate))->toBeTrue();
+    expect($a->startsAfter($includedDate))->toBeFalse();
+    expect($a->startsAfterOrAt($includedDate))->toBeFalse();
 
-        $this->assertTrue($a->startsAt($boundaryDate));
+    $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2017-12-31 23:59:59');
 
-        $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-02 00:00:00');
+    expect($a->startsBefore($excludedDate))->toBeFalse();
+    expect($a->startsBeforeOrAt($excludedDate))->toBeFalse();
+    expect($a->startsAfter($excludedDate))->toBeTrue();
+    expect($a->startsAfterOrAt($excludedDate))->toBeTrue();
+});
 
-        $this->assertTrue($a->startsBefore($includedDate));
-        $this->assertTrue($a->startsBeforeOrAt($includedDate));
-        $this->assertFalse($a->startsAfter($includedDate));
-        $this->assertFalse($a->startsAfterOrAt($includedDate));
+it('precision is kept when comparing with the ranges end', function () {
+    $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY());
 
-        $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2017-12-31 23:59:59');
+    $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-31 23:59:59');
 
-        $this->assertFalse($a->startsBefore($excludedDate));
-        $this->assertFalse($a->startsBeforeOrAt($excludedDate));
-        $this->assertTrue($a->startsAfter($excludedDate));
-        $this->assertTrue($a->startsAfterOrAt($excludedDate));
-    }
+    expect($a->endsAt($boundaryDate))->toBeTrue();
 
-    /** @test */
-    public function precision_is_kept_when_comparing_with_the_ranges_end()
-    {
-        $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY());
+    $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-30 23:59:59');
 
-        $boundaryDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-31 23:59:59');
+    expect($a->endsAfter($includedDate))->toBeTrue();
+    expect($a->endsAfterOrAt($includedDate))->toBeTrue();
+    expect($a->endsBefore($includedDate))->toBeFalse();
+    expect($a->endsBeforeOrAt($includedDate))->toBeFalse();
 
-        $this->assertTrue($a->endsAt($boundaryDate));
+    $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-02-01 00:00:00');
 
-        $includedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-30 23:59:59');
+    expect($a->endsBefore($excludedDate))->toBeTrue();
+    expect($a->endsBeforeOrAt($excludedDate))->toBeTrue();
+    expect($a->endsAfter($excludedDate))->toBeFalse();
+    expect($a->endsAfterOrAt($excludedDate))->toBeFalse();
+});
 
-        $this->assertTrue($a->endsAfter($includedDate));
-        $this->assertTrue($a->endsAfterOrAt($includedDate));
-        $this->assertFalse($a->endsBefore($includedDate));
-        $this->assertFalse($a->endsBeforeOrAt($includedDate));
+it('precision is kept with subtract', function () {
+    $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
+    $b = Period::make('2018-01-15 00:00:00', '2018-03-01 00:00:00', Precision::MINUTE());
 
-        $excludedDate = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-02-01 00:00:00');
+    [$diff] = $a->subtract($b);
 
-        $this->assertTrue($a->endsBefore($excludedDate));
-        $this->assertTrue($a->endsBeforeOrAt($excludedDate));
-        $this->assertFalse($a->endsAfter($excludedDate));
-        $this->assertFalse($a->endsAfterOrAt($excludedDate));
-    }
+    expect($diff->precision())->toEqual(Precision::MINUTE());
+});
 
-    /** @test */
-    public function precision_is_kept_with_subtract()
-    {
-        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
-        $b = Period::make('2018-01-15 00:00:00', '2018-03-01 00:00:00', Precision::MINUTE());
+it('precision is kept with overlap', function () {
+    $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
+    $b = Period::make('2018-01-01 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE());
 
-        [$diff] = $a->subtract($b);
+    [$diff] = $a->overlapAny($b);
 
-        $this->assertEquals(Precision::MINUTE(), $diff->precision());
-    }
+    expect($diff->precision())->toEqual(Precision::MINUTE());
+});
 
-    /** @test */
-    public function precision_is_kept_with_overlap()
-    {
-        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
-        $b = Period::make('2018-01-01 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE());
+it('precision is kept with gap', function () {
+    $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
+    $b = Period::make('2018-01-15 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE());
 
-        [$diff] = $a->overlapAny($b);
+    $gap = $a->gap($b);
 
-        $this->assertEquals(Precision::MINUTE(), $diff->precision());
-    }
+    expect($gap->precision())->toEqual(Precision::MINUTE());
+});
 
-    /** @test */
-    public function precision_is_kept_with_gap()
-    {
-        $a = Period::make('2018-01-05 00:00:00', '2018-01-10 00:00:00', Precision::MINUTE());
-        $b = Period::make('2018-01-15 00:00:00', '2018-01-31 00:00:00', Precision::MINUTE());
+it('precision seconds is more precise than hours', function () {
+    $hours = Precision::HOUR();
+    $seconds = Precision::SECOND();
 
-        $gap = $a->gap($b);
-
-        $this->assertEquals(Precision::MINUTE(), $gap->precision());
-    }
-
-    /** @test */
-    public function precision_seconds_is_more_precise_than_hours()
-    {
-        $hours = Precision::HOUR();
-        $seconds = Precision::SECOND();
-
-        $this->assertTrue($seconds->higherThan($hours));
-    }
-}
+    expect($seconds->higherThan($hours))->toBeTrue();
+});
