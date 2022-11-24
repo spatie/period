@@ -284,3 +284,24 @@ it('sorts collection', function () {
     expect($sorted[2]->equals($periods[2]))->toBeTrue();
     expect($sorted[3]->equals($periods[3]))->toBeTrue();
 });
+
+it('unions collection', function () {
+    $collection = new PeriodCollection(
+        Period::make('2018-01-30', '2018-01-31'),
+        Period::make('2018-01-30', '2018-02-2'),
+        Period::make('2018-02-04', '2018-02-05'),
+        Period::make('2018-02-07', '2018-02-09'),
+        Period::make('2018-02-12', '2018-02-14'),
+        Period::make('2018-02-08', '2018-02-13')
+    );
+
+    $unioned = $collection->union();
+
+    expect($unioned)->toHaveCount(3);
+    expect($unioned[0]->start() == $collection[0]->start())->toBeTrue();
+    expect($unioned[0]->end() == $collection[1]->end())->toBeTrue();
+    expect($unioned[1]->start() == $collection[2]->start())->toBeTrue();
+    expect($unioned[1]->end() == $collection[2]->end())->toBeTrue();
+    expect($unioned[2]->start() == $collection[3]->start())->toBeTrue();
+    expect($unioned[2]->end() == $collection[4]->end())->toBeTrue();
+});

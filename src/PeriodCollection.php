@@ -200,4 +200,15 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         return $collection;
     }
+
+    public function union(): PeriodCollection
+    {
+        $boundaries = $this->boundaries();
+
+        if (!$boundaries) {
+            return static::make();
+        }
+
+        return static::make($boundaries)->subtract($boundaries->subtract(...$this));
+    }
 }
