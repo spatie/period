@@ -3,36 +3,36 @@ name: run-tests
 on: [push, pull_request]
 
 jobs:
-    test:
-        runs-on: ${{ matrix.os }}
-        strategy:
-            fail-fast: false
-            matrix:
-                os: [ubuntu-latest]
-                php: [8.2, 8.1, 8.0]
-                dependency-version: [prefer-lowest, prefer-stable]
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.2, 8.1, 8.0]
+        dependency-version: [prefer-lowest, prefer-stable]
 
-        name: P${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+    name: P${{ matrix.php }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
 
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-            -   name: Cache dependencies
-                uses: actions/cache@v3
-                with:
-                    path: ~/.composer/cache/files
-                    key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php }}
-                    extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
-                    coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
 
-            -   name: Install dependencies
-                run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+      - name: Install dependencies
+        run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
-            -   name: Execute tests
-                run: vendor/bin/pest
+      - name: Execute tests
+        run: vendor/bin/pest
