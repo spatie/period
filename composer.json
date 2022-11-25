@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "larapack/dd": "^1.1",
-        "nesbot/carbon": "^2.54",
+        "nesbot/carbon": "^2.63",
         "pestphp/pest": "^1.22",
         "phpunit/phpunit": "^9.5",
         "spatie/ray": "^1.31"
