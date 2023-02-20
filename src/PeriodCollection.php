@@ -205,7 +205,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $boundaries = $this->boundaries();
 
-        if (!$boundaries) {
+        if (! $boundaries) {
             return static::make();
         }
 
