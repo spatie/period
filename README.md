@@ -231,6 +231,12 @@ Intersects given period with every period within a collection. The result is a n
 
 ![](./docs/img/collection-intersect.png)
 
+### `union(): static`
+
+Merges all periods in collection with overlapping ranges.
+
+![](./docs/img/collection-union.png)
+
 ---
 
 Finally, there are a few utility methods available on `PeriodCollection` as well:
