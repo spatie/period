@@ -2,6 +2,24 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.4.0 - 2023-02-20
+
+### What's Changed
+
+- Refactor tests to pest by @AyoobMH in https://github.com/spatie/period/pull/115
+- Add PHP 8.2 support by @patinthehat in https://github.com/spatie/period/pull/118
+- Add Dependabot Automation by @patinthehat in https://github.com/spatie/period/pull/117
+- Bump dependabot/fetch-metadata from 1.3.5 to 1.3.6 by @dependabot in https://github.com/spatie/period/pull/119
+- Implement PeriodCollection Union by @EriBloo in https://github.com/spatie/period/pull/116
+
+### New Contributors
+
+- @AyoobMH made their first contribution in https://github.com/spatie/period/pull/115
+- @dependabot made their first contribution in https://github.com/spatie/period/pull/119
+- @EriBloo made their first contribution in https://github.com/spatie/period/pull/116
+
+**Full Changelog**: https://github.com/spatie/period/compare/2.3.5...2.4.0
+
 ## 2.3.5 - 2022-10-03
 
 Revert previous release
