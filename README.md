@@ -271,7 +271,7 @@ foreach ($datePeriod as $date) {
     // (31 iterations)
 }
 
-$timePeriod = Period::make(Carbon::make('2021-01-01 00:00:00'), Carbon::make('2021-01-01 23:59:59'), Precision::HOUR);
+$timePeriod = Period::make(Carbon::make('2021-01-01 00:00:00'), Carbon::make('2021-01-01 23:59:59'), Precision::HOUR());
 
 foreach ($timePeriod as $time) {
     /** @var DateTimeImmutable $time */
