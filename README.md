@@ -145,7 +145,7 @@ On top of comparisons, the `Period` class also offers a bunch of operations:
 
 ### `overlap(Period ...$others): ?static`
 
-Overlaps two or more periods on each other. The resulting period will be the union of all other periods combined.
+Overlaps two or more periods on each other. The resulting period will be iteratively overlapped with each `$others` periods.
 
 ![](./docs/img/period-overlap.png)
 
