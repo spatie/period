@@ -237,6 +237,31 @@ Merges all periods in collection with overlapping ranges.
 
 ![](./docs/img/collection-union.png)
 
+### `uniqueIntervals(): static`
+
+Returns a collection of unique, non-overlapping intervals by breaking down overlapping or intersecting periods within the original collection.
+
+This method is helpful when you want to understand distinct time ranges across multiple periods without overlapping segments. It iterates through all periods in the collection and recursively splits them until all overlapping sections are fully separated, resulting in a collection of unique, non-overlapping intervals.
+
+```php
+$periods = new PeriodCollection(
+        Period::make('2024-08-01', '2024-08-05'),
+        Period::make('2024-08-03', '2024-08-07'),
+        Period::make('2024-08-06', '2024-08-10')
+    );
+
+$uniqueIntervals = $periods->uniqueIntervals()->sort();
+
+foreach ($uniqueIntervals as $interval) {
+    echo $interval->start()->format('Y-m-d') . ' - ' . $interval->end()->format('Y-m-d') . PHP_EOL;
+}
+
+// Output:
+// 2024-08-01 - 2024-08-02
+// 2024-08-03 - 2024-08-05
+// 2024-08-06 - 2024-08-07
+// 2024-08-08 - 2024-08-10
+```
 ---
 
 Finally, there are a few utility methods available on `PeriodCollection` as well:

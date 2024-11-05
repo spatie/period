@@ -211,4 +211,52 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
 
         return static::make($boundaries)->subtract($boundaries->subtract(...$this));
     }
+
+    public function uniqueIntervals(): PeriodCollection
+    {
+        return $this->processIntervalsRecursively($this->periods);
+    }
+
+    private function processIntervalsRecursively(array $periods): PeriodCollection
+    {
+        $uniquePeriods = [];
+        $newSegments = [];
+
+        foreach ($periods as $i => $currentPeriod) {
+            $hasOverlap = false;
+
+            foreach ($periods as $j => $otherPeriod) {
+                if ($i === $j) continue;
+
+                if (!$currentPeriod->overlapsWith($otherPeriod)) {
+                    continue;
+                }
+                $hasOverlap = true;
+
+                $intersection = $currentPeriod->overlap($otherPeriod);
+                $subtracted = $currentPeriod->subtract($otherPeriod);
+
+                if ($intersection) $newSegments[] = $intersection;
+                if (!empty($subtracted)) {
+                    foreach ($subtracted as $segment) {
+                        $newSegments[] = $segment;
+                    }
+                }
+            }
+
+            if (!$hasOverlap) {
+                $uniquePeriods[] = $currentPeriod;
+            }
+        }
+
+        $newSegments = self::make(...array_filter($newSegments))->unique()->periods;
+
+        if (empty($newSegments)) {
+            return new PeriodCollection(...$uniquePeriods);
+        }
+
+        return $this->processIntervalsRecursively($newSegments)
+            ->add(...$uniquePeriods)
+            ->unique();
+    }
 }

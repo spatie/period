@@ -305,3 +305,110 @@ it('unions collection', function () {
     expect($unioned[2]->start() == $collection[3]->start())->toBeTrue();
     expect($unioned[2]->end() == $collection[4]->end())->toBeTrue();
 });
+
+/**
+ * Given periods:
+ *
+ * A          [==========]
+ * B               [==========]
+ * C                       [==========]
+ * OVERLAP    [==] [=====] [==]  [====]
+ */
+it('can determine unique non-overlapping intervals from overlapping periods', function () {
+    $periods = new PeriodCollection(
+        Period::make('2024-08-01', '2024-08-05'),
+        Period::make('2024-08-03', '2024-08-07'),
+        Period::make('2024-08-06', '2024-08-10')
+    );
+
+    $uniqueIntervals = $periods->uniqueIntervals();
+    $uniqueIntervals = $uniqueIntervals->sort();
+
+    expect($uniqueIntervals)->toHaveCount(4);
+
+    expect($uniqueIntervals[0]->equals(Period::make('2024-08-01', '2024-08-02')))->toBeTrue();
+    expect($uniqueIntervals[1]->equals(Period::make('2024-08-03', '2024-08-05')))->toBeTrue();
+    expect($uniqueIntervals[2]->equals(Period::make('2024-08-06', '2024-08-07')))->toBeTrue();
+    expect($uniqueIntervals[3]->equals(Period::make('2024-08-08', '2024-08-10')))->toBeTrue();
+});
+
+/**
+ * Given periods:
+ *
+ * A          [=====]
+ * B              [====]
+ * C                  [=====]
+ *
+ * Expected unique intervals:
+ *
+ * Result     [==][==][=][==]
+ */
+it('can handle unique intervals from partially overlapping periods', function () {
+    $periods = new PeriodCollection(
+        Period::make('2024-08-01', '2024-08-04'),
+        Period::make('2024-08-03', '2024-08-05'),
+        Period::make('2024-08-05', '2024-08-07')
+    );
+
+    $uniqueIntervals = $periods->uniqueIntervals();
+    $uniqueIntervals = $uniqueIntervals->sort();
+
+    expect($uniqueIntervals)->toHaveCount(4);
+
+    expect($uniqueIntervals[0]->equals(Period::make('2024-08-01', '2024-08-02')))->toBeTrue();
+    expect($uniqueIntervals[1]->equals(Period::make('2024-08-03', '2024-08-04')))->toBeTrue();
+    expect($uniqueIntervals[2]->equals(Period::make('2024-08-05', '2024-08-05')))->toBeTrue();
+    expect($uniqueIntervals[3]->equals(Period::make('2024-08-06', '2024-08-07')))->toBeTrue();
+});
+
+/**
+ * Given periods:
+ *
+ * A        [==========]
+ * B           [===]
+ *
+ * Expected unique intervals:
+ *
+ * Result   [==][===][=====]
+ */
+it('can handle unique intervals from a period that fully contains another period', function () {
+    $periods = new PeriodCollection(
+        Period::make('2024-08-01', '2024-08-10'),
+        Period::make('2024-08-03', '2024-08-05')
+    );
+
+    $uniqueIntervals = $periods->uniqueIntervals();
+    $uniqueIntervals = $uniqueIntervals->sort();
+
+    expect($uniqueIntervals)->toHaveCount(3);
+
+    expect($uniqueIntervals[0]->equals(Period::make('2024-08-01', '2024-08-02')))->toBeTrue();
+    expect($uniqueIntervals[1]->equals(Period::make('2024-08-03', '2024-08-05')))->toBeTrue();
+    expect($uniqueIntervals[2]->equals(Period::make('2024-08-06', '2024-08-10')))->toBeTrue();
+});
+
+/**
+ * Given periods:
+ *
+ * A        [===]
+ * B               [===]
+ * C                       [===]
+ *
+ * Expected unique intervals (no changes since they're non-overlapping):
+ *
+ * Result   [===]  [===]  [===]
+ */
+it('unique intervals returns non-overlapping periods as they are', function () {
+    $periods = new PeriodCollection(
+        Period::make('2024-08-01', '2024-08-03'),
+        Period::make('2024-08-05', '2024-08-07'),
+        Period::make('2024-08-09', '2024-08-11')
+    );
+
+    $uniqueIntervals = $periods->uniqueIntervals();
+    $uniqueIntervals = $uniqueIntervals->sort();
+
+    expect($uniqueIntervals[0]->equals(Period::make('2024-08-01', '2024-08-03')))->toBeTrue();
+    expect($uniqueIntervals[1]->equals(Period::make('2024-08-05', '2024-08-07')))->toBeTrue();
+    expect($uniqueIntervals[2]->equals(Period::make('2024-08-09', '2024-08-11')))->toBeTrue();
+});
