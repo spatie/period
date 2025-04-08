@@ -1,11 +1,18 @@
+<div align="left">
+    <a href="https://spatie.be/open-source?utm_source=github&utm_medium=banner&utm_campaign=period">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://spatie.be/packages/header/period/html/dark.webp">
+        <img alt="Logo for period" src=" https://spatie.be/packages/header/period/html/light.webp" height="190">
+      </picture>
+    </a>
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
-
-# Complex period comparisons
+<h1>Complex period comparisons</h1>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/period.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/period)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/period.svg?style=flat-square)](https://packagist.org/packages/spatie/period)
+    
+</div>
 
 This package adds support for comparing multiple dates with each other.
 You can calculate the overlaps and differences between n-amount of periods,
