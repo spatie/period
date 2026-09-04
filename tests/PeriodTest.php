@@ -11,6 +11,12 @@ it('can determine the period length', function () {
     expect($period->length())->toEqual(15);
 });
 
+it('returns a length of 0 for an empty period, consistent with its iterator', function (Period $period) {
+    expect($period->includedStart())->toBeGreaterThan($period->includedEnd());
+    expect($period->length())->toEqual(0);
+    expect($period->length())->toEqual(iterator_count($period));
+})->with('empty_period_lengths');
+
 it('can renew a period', function () {
     $period = Period::make('2018-01-01', '2018-01-15');
 
