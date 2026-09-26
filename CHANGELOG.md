@@ -2,6 +2,10 @@
 
 All notable changes to `period` will be documented in this file
 
+## Unreleased
+
+- Compare a period start at the period precision
+
 ## 2.4.0 - 2023-02-20
 
 ### What's Changed

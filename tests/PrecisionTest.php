@@ -94,6 +94,17 @@ it('precision is kept when comparing with the ranges start', function () {
     expect($a->startsAfterOrAt($excludedDate))->toBeTrue();
 });
 
+it('compares a start at the period precision', function () {
+    $a = Period::make('2018-01-01 11:11:11', '2018-01-31', Precision::DAY());
+    $start = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2018-01-01 11:11:11');
+
+    expect($a->startsAt($start))->toBeTrue();
+    expect($a->startsAfterOrAt($start))->toBeTrue();
+    expect($a->startsBefore($start))->toBeFalse();
+    expect($a->startsBeforeOrAt($start))->toBeTrue();
+    expect($a->startsAfter($start))->toBeFalse();
+});
+
 it('precision is kept when comparing with the ranges end', function () {
     $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY());
 
