@@ -129,7 +129,7 @@ Boundaries::EXCLUDE_ALL();
 
 ### Reference
 
-The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared:
+The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared. A date is compared at that precision:
 
 - `startsBefore(DateTimeInterface $date): bool`: whether a period starts before a given date.
 - `startsBeforeOrAt(DateTimeInterface $date): bool`: whether a period starts before or at a given date.
