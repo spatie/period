@@ -36,6 +36,8 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Installation
 
+This package requires PHP 8.2 or higher.
+
 You can install the package via composer:
 
 ```bash
@@ -129,7 +131,7 @@ Boundaries::EXCLUDE_ALL();
 
 ### Reference
 
-The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared:
+The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared. Start and end date comparisons use the period's precision and its included boundaries:
 
 - `startsBefore(DateTimeInterface $date): bool`: whether a period starts before a given date.
 - `startsBeforeOrAt(DateTimeInterface $date): bool`: whether a period starts before or at a given date.
