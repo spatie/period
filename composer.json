@@ -16,13 +16,12 @@
         }
     ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.2"
     },
     "require-dev": {
         "larapack/dd": "^1.1",
-        "nesbot/carbon": "^2.63",
-        "pestphp/pest": "^1.22",
-        "phpunit/phpunit": "^9.5",
+        "nesbot/carbon": "^3.10",
+        "pestphp/pest": "^3.8 || ^4.0 || ^5.0",
         "spatie/ray": "^1.31"
     },
     "autoload": {

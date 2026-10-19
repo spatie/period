@@ -5,6 +5,7 @@ All notable changes to `period` will be documented in this file
 ## Unreleased
 
 - Compare a period start at the period precision
+- Require PHP 8.2 or higher and test PHP 8.2–8.5 with current compatible Pest versions
 
 ## 2.4.0 - 2023-02-20
 
