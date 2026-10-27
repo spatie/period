@@ -2,6 +2,12 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.4.2 - 2026-10-27
+
+- Return zero length for day, hour, minute, and second periods whose boundary exclusions reverse the included endpoints and whose iterator yields no dates (#153).
+- Preserve nonempty fractional/manual-constructor lengths, month/year iterator overrides, and existing daylight-saving behavior. PHP requirements and public signatures are unchanged.
+- Use the Spatie-hosted README ad image.
+
 ## 2.4.1 - 2026-10-19
 
 - Compare a period start at the period precision

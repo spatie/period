@@ -72,6 +72,12 @@ trait PeriodGetters
             return iterator_count($this);
         }
 
+        if ($this->includedStart() > $this->includedEnd()) {
+            if (iterator_count($this) === 0) {
+                return 0;
+            }
+        }
+
         if ($this->precision->equals(Precision::HOUR(), Precision::MINUTE(), Precision::SECOND())) {
             $length = abs($this->includedEnd()->getTimestamp() - $this->includedStart()->getTimestamp());
 
