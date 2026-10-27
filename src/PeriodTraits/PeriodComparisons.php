@@ -10,22 +10,22 @@ trait PeriodComparisons
 {
     public function startsBefore(DateTimeInterface $date): bool
     {
-        return $this->includedStart() < $date;
+        return $this->includedStart() < $this->precision->roundDate($date);
     }
 
     public function startsBeforeOrAt(DateTimeInterface $date): bool
     {
-        return $this->includedStart() <= $date;
+        return $this->includedStart() <= $this->precision->roundDate($date);
     }
 
     public function startsAfter(DateTimeInterface $date): bool
     {
-        return $this->includedStart() > $date;
+        return $this->includedStart() > $this->precision->roundDate($date);
     }
 
     public function startsAfterOrAt(DateTimeInterface $date): bool
     {
-        return $this->includedStart() >= $date;
+        return $this->includedStart() >= $this->precision->roundDate($date);
     }
 
     public function startsAt(DateTimeInterface $date): bool

@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\Period\Boundaries;
 use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
@@ -93,6 +94,33 @@ it('precision is kept when comparing with the ranges start', function () {
     expect($a->startsAfter($excludedDate))->toBeTrue();
     expect($a->startsAfterOrAt($excludedDate))->toBeTrue();
 });
+
+it('compares a start at the period precision', function (Precision $precision, string $expectedStart, string $expectedEnd) {
+    $period = Period::make($expectedStart, $expectedEnd, $precision);
+    $start = new DateTime('2018-02-05 11:11:11.123456');
+
+    expect($period->startsAt($start))->toBeTrue();
+    expect($period->startsAfterOrAt($start))->toBeTrue();
+    expect($period->startsBefore($start))->toBeFalse();
+    expect($period->startsBeforeOrAt($start))->toBeTrue();
+    expect($period->startsAfter($start))->toBeFalse();
+    expect($start->format('Y-m-d H:i:s.u'))->toBe('2018-02-05 11:11:11.123456');
+})->with('rounding_dates');
+
+it('compares against the included start when the start is excluded', function (string $date, bool $before, bool $at, bool $after) {
+    $period = Period::make('2018-01-01', '2018-01-31', Precision::DAY(), Boundaries::EXCLUDE_START());
+    $date = new DateTimeImmutable($date);
+
+    expect($period->startsBefore($date))->toBe($before);
+    expect($period->startsBeforeOrAt($date))->toBe($before || $at);
+    expect($period->startsAt($date))->toBe($at);
+    expect($period->startsAfterOrAt($date))->toBe($after || $at);
+    expect($period->startsAfter($date))->toBe($after);
+})->with([
+    'excluded day' => ['2018-01-01 23:59:59', false, false, true],
+    'first included day' => ['2018-01-02 11:11:11', false, true, false],
+    'following day' => ['2018-01-03 00:00:00', true, false, false],
+]);
 
 it('precision is kept when comparing with the ranges end', function () {
     $a = Period::make('2018-01-01', '2018-01-31', Precision::DAY());

@@ -66,20 +66,20 @@ trait PeriodGetters
 
     public function length(): int
     {
-        // Boundary exclusions can push the included start past the included end,
-        // leaving no units at all.
-        if ($this->includedStart() > $this->includedEnd()) {
-            return 0;
-        }
-
         // Length of month and year are not fixed, so we can't predict the length without iterate
         // TODO: maybe we can use cal_days_in_month ?
         if ($this->precision->equals(Precision::MONTH(), Precision::YEAR())) {
             return iterator_count($this);
         }
 
+        if ($this->includedStart() > $this->includedEnd()) {
+            if (iterator_count($this) === 0) {
+                return 0;
+            }
+        }
+
         if ($this->precision->equals(Precision::HOUR(), Precision::MINUTE(), Precision::SECOND())) {
-            $length = $this->includedEnd()->getTimestamp() - $this->includedStart()->getTimestamp();
+            $length = abs($this->includedEnd()->getTimestamp() - $this->includedStart()->getTimestamp());
 
             if ($this->precision->equals(Precision::SECOND())) {
                 return $length + 1;

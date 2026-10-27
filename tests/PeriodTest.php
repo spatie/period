@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Spatie\Period\Boundaries;
 use Spatie\Period\Exceptions\CannotCeilLowerPrecision;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
@@ -16,6 +17,33 @@ it('returns a length of 0 for an empty period, consistent with its iterator', fu
     expect($period->length())->toEqual(0);
     expect($period->length())->toEqual(iterator_count($period));
 })->with('empty_period_lengths');
+
+it('preserves the length of a nonempty fractional period', function (string $precisionName) {
+    $precision = Precision::$precisionName();
+    $start = new DateTimeImmutable('2024-01-01 00:00:00.750000 UTC');
+    $end = $start->add($precision->interval())->modify('-500000 microseconds');
+    $period = new Period($start, $end, $precision, Boundaries::EXCLUDE_START());
+
+    expect(iterator_count($period))->toBe(1);
+    expect($period->length())->toBe(1);
+})->with(['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND']);
+
+it('uses the overridden iterator for month and year lengths', function (string $precisionName) {
+    $period = new class (
+        new DateTimeImmutable('2024-01-01 UTC'),
+        new DateTimeImmutable('2024-01-01 UTC'),
+        Precision::$precisionName(),
+        Boundaries::EXCLUDE_ALL(),
+    ) extends Period {
+        public function getIterator(): DatePeriod
+        {
+            return new DatePeriod($this->start(), $this->precision()->interval(), 1);
+        }
+    };
+
+    expect(iterator_count($period))->toBe(2);
+    expect($period->length())->toBe(2);
+})->with(['MONTH', 'YEAR']);
 
 it('can renew a period', function () {
     $period = Period::make('2018-01-01', '2018-01-15');

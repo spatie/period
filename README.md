@@ -28,13 +28,15 @@ Periods are always immutable, there's never the worry about your input dates bei
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/period.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/period)
+[<img src="https://spatie.be/github-ad-image/period.jpg" width="419px" />](https://spatie.be/github-ad-click/period)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
 We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
 ## Installation
+
+This package requires PHP 8.2 or higher.
 
 You can install the package via composer:
 
@@ -127,9 +129,19 @@ Boundaries::EXCLUDE_END();
 Boundaries::EXCLUDE_ALL();
 ```
 
+For day, hour, minute, and second precision, `length()` returns `0` when boundary exclusions move the included start after the included end and the iterator yields no dates:
+
+```php
+$empty = Period::make('2021-01-01', '2021-01-01', boundaries: Boundaries::EXCLUDE_ALL());
+
+$empty->length(); // 0
+```
+
+Month and year lengths continue to use the period's iterator. Other lengths retain their existing arithmetic when dates are yielded, including manually constructed periods with fractional seconds. Length and iterator count are not generally interchangeable across daylight-saving transitions.
+
 ### Reference
 
-The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared:
+The `Period` class offers a rich API to interact and compare with other periods and collections of periods. Take into account that only periods with the same precision can be compared. Start and end date comparisons use the period's precision and its included boundaries:
 
 - `startsBefore(DateTimeInterface $date): bool`: whether a period starts before a given date.
 - `startsBeforeOrAt(DateTimeInterface $date): bool`: whether a period starts before or at a given date.

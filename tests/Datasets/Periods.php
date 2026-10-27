@@ -89,8 +89,6 @@ dataset('expected_period_lengths', function () {
     yield [24, Period::make('2018-01-01 00:00:00', '2018-01-02 00:00:00', Precision::HOUR(), Boundaries::EXCLUDE_END())];
 });
 
-// Single-unit periods left empty by their boundary exclusions. The
-// iterator yields nothing for these, so length() must return 0.
 dataset('empty_period_lengths', function () {
     yield 'day, exclude start' => [Period::make('2018-01-01', '2018-01-01', Precision::DAY(), Boundaries::EXCLUDE_START())];
     yield 'day, exclude end' => [Period::make('2018-01-01', '2018-01-01', Precision::DAY(), Boundaries::EXCLUDE_END())];
