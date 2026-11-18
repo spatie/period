@@ -196,9 +196,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $collection = clone $this;
 
-        usort($collection->periods, static function (Period $a, Period $b) {
-            return $a->includedStart() <=> $b->includedStart();
-        });
+        $starts = array_map(static fn (Period $period) => $period->includedStart(), $collection->periods);
+        $keys = array_keys($collection->periods);
+
+        // The keys break ties, so equal starts keep their order and periods are never compared
+        array_multisort($starts, $keys, $collection->periods);
 
         return $collection;
     }

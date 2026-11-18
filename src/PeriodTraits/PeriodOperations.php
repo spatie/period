@@ -160,7 +160,11 @@ trait PeriodOperations
 
     protected function subtractAll(Period ...$others): PeriodCollection
     {
-        usort($others, static fn (Period $a, Period $b) => $a->includedStart() <=> $b->includedStart());
+        $starts = array_map(static fn (Period $period) => $period->includedStart(), $others);
+        $keys = array_keys($others);
+
+        // The keys break ties, so equal starts keep their order and periods are never compared
+        array_multisort($starts, $keys, $others);
 
         $collection = new PeriodCollection();
         $start = $this->includedStart();
