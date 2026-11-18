@@ -3,6 +3,7 @@
 use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
 
 /**
  * A      [=====]
@@ -202,7 +203,7 @@ it('passing empty period collection returns same period within collection', func
     expect($diff[0]->equals($current))->toBeTrue();
 });
 
-it('subtracting multiple periods does not duplicate days next to a period without included days', function () {
+it('preserves subtraction fragments next to a period without included days', function () {
     $current = Period::make('2000-01-03', '2000-01-08');
 
     $a = Period::make('2000-01-05', '2000-01-11');
@@ -210,11 +211,12 @@ it('subtracting multiple periods does not duplicate days next to a period withou
 
     $diff = $current->subtract($a, $b);
 
-    expect($diff)->toHaveCount(1);
+    expect($diff)->toHaveCount(2);
     expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2000-01-04', '2000-01-04')))->toBeTrue();
 });
 
-it('subtracting multiple periods does not duplicate days around an uncovered period without included days', function () {
+it('preserves subtraction fragments around an uncovered period without included days', function () {
     $current = Period::make('2000-01-03', '2000-01-08');
 
     $a = Period::make('2000-01-04', '2000-01-04', boundaries: Boundaries::EXCLUDE_ALL());
@@ -224,5 +226,31 @@ it('subtracting multiple periods does not duplicate days around an uncovered per
 
     expect($diff)->toHaveCount(2);
     expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
-    expect($diff[1]->equals(Period::make('2000-01-05', '2000-01-08')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2000-01-04', '2000-01-08')))->toBeTrue();
+});
+
+it('does not lose a month when subtracted periods in other timezones do not overlap', function () {
+    $current = Period::make(
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('Europe/Brussels')),
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('Europe/Brussels')),
+        Precision::MONTH(),
+        Boundaries::EXCLUDE_START(),
+    );
+
+    $before = Period::make(
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('UTC')),
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('UTC')),
+        Precision::MONTH(),
+    );
+
+    $after = Period::make(
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('America/New_York')),
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('America/New_York')),
+        Precision::MONTH(),
+    );
+
+    $diff = $current->subtract($before, $after);
+
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals($current))->toBeTrue();
 });

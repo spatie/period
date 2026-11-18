@@ -107,6 +107,63 @@ it('determines no overlaps with an empty collection', function () {
     expect($empty->overlapAll($a))->toHaveCount(0);
 });
 
+it('keeps insertion order for equal starts when sorting keyed periods', function () {
+    $first = Period::make('2018-01-01', '2018-01-20');
+    $second = Period::make('2018-01-01', '2018-01-10');
+    $collection = new PeriodCollection(z: $first, a: $second);
+
+    expect(iterator_to_array($collection->sort()))->toBe([$first, $second]);
+});
+
+it('determines overlaps in insertion order with keyed periods', function () {
+    $first = Period::make('2018-01-01', '2018-01-20');
+    $second = Period::make('2018-01-01', '2018-01-10');
+    $collection = new PeriodCollection(Period::make('2018-01-01', '2018-01-31'));
+
+    $overlaps = $collection->overlapAll(new PeriodCollection(z: $first, a: $second));
+
+    expect($overlaps)->toHaveCount(2);
+    expect($overlaps[0]->equals($first))->toBeTrue();
+    expect($overlaps[1]->equals($second))->toBeTrue();
+});
+
+it('determines boundaries gaps and union after the first period is removed', function () {
+    $first = Period::make('2018-01-01', '2018-01-05');
+    $second = Period::make('2018-01-10', '2018-01-15');
+    $third = Period::make('2018-01-20', '2018-01-25');
+    $collection = new PeriodCollection($first, $second, $third);
+
+    unset($collection[0]);
+
+    expect($collection->boundaries()->equals(Period::make('2018-01-10', '2018-01-25')))->toBeTrue();
+
+    $gaps = $collection->gaps();
+
+    expect($gaps)->toHaveCount(1);
+    expect($gaps[0]->equals(Period::make('2018-01-16', '2018-01-19')))->toBeTrue();
+
+    $union = $collection->union();
+
+    expect($union)->toHaveCount(2);
+    expect($union[0]->equals($second))->toBeTrue();
+    expect($union[1]->equals($third))->toBeTrue();
+});
+
+it('reduces periods appended by the callback', function () {
+    $period = Period::make('2018-01-01', '2018-01-05');
+    $collection = new PeriodCollection($period, $period);
+
+    $count = $collection->reduce(function (int $count) use ($collection, $period) {
+        if ($count === 0) {
+            $collection[] = $period;
+        }
+
+        return $count + 1;
+    }, 0);
+
+    expect($count)->toBe(3);
+});
+
 /**
  * A                   [====]
  * B                               [========]

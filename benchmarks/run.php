@@ -1,5 +1,9 @@
 <?php
 
+use Spatie\Period\Period;
+use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
+
 /*
  * Usage: XDEBUG_MODE=off php benchmarks/run.php [path/to/src]
  *
@@ -23,10 +27,7 @@ spl_autoload_register(function (string $class) use ($src) {
     }
 });
 
-use Spatie\Period\Period;
-use Spatie\Period\PeriodCollection;
-use Spatie\Period\Precision;
-
+/** @return array<int, Period> */
 function periods(int $count, int $seed = 42): array
 {
     mt_srand($seed);
@@ -35,7 +36,7 @@ function periods(int $count, int $seed = 42): array
     $periods = [];
     $offset = 0;
 
-    for ($i = 0; $i < $count; $i++) {
+    for ($index = 0; $index < $count; $index++) {
         $offset += mt_rand(1, 10);
         $start = $base->modify("+{$offset} days");
         $periods[] = Period::make($start, $start->modify('+' . mt_rand(0, 8) . ' days'));
@@ -59,7 +60,7 @@ function bench(string $name, int $iterations, Closure $setup, Closure $run): voi
     for ($repetition = 0; $repetition < 5; $repetition++) {
         $start = hrtime(true);
 
-        for ($i = 0; $i < $iterations; $i++) {
+        for ($iteration = 0; $iteration < $iterations; $iteration++) {
             $run($input);
         }
 
@@ -74,30 +75,30 @@ function bench(string $name, int $iterations, Closure $setup, Closure $run): voi
 printf("%-40s %12s %12s\n", 'scenario', 'min (ms)', 'median (ms)');
 
 bench('Period::make x1000', 20, fn () => null, function () {
-    for ($i = 0; $i < 1000; $i++) {
+    for ($iteration = 0; $iteration < 1000; $iteration++) {
         Period::make('2020-01-01', '2020-12-31');
     }
 });
 
 bench('Period::length MONTH 100y x100', 20, fn () => Period::make('1900-01-01', '1999-12-01', Precision::MONTH()), function (Period $period) {
-    for ($i = 0; $i < 100; $i++) {
+    for ($iteration = 0; $iteration < 100; $iteration++) {
         $period->length();
     }
 });
 
 bench('Period::length YEAR 1000y x100', 20, fn () => Period::make('1000-01-01', '1999-01-01', Precision::YEAR()), function (Period $period) {
-    for ($i = 0; $i < 100; $i++) {
+    for ($iteration = 0; $iteration < 100; $iteration++) {
         $period->length();
     }
 });
 
 bench('Period::touchesWith pairs n=200', 20, fn () => periods(200), function (array $periods) {
-    foreach ($periods as $a) {
-        $a->touchesWith($periods[0]);
+    foreach ($periods as $period) {
+        $period->touchesWith($periods[0]);
     }
 
-    for ($i = 1; $i < count($periods); $i++) {
-        $periods[$i - 1]->touchesWith($periods[$i]);
+    for ($index = 1; $index < count($periods); $index++) {
+        $periods[$index - 1]->touchesWith($periods[$index]);
     }
 });
 
@@ -105,27 +106,27 @@ bench('Period::subtract(...n) n=200', 5, fn () => [Period::make('2000-01-01', '2
     $input[0]->subtract(...$input[1]);
 });
 
-foreach ([50, 200, 1000] as $n) {
-    $iterations = max(1, intdiv(1000, $n));
+foreach ([50, 200, 1000] as $count) {
+    $iterations = max(1, intdiv(1000, $count));
 
-    bench("PeriodCollection::boundaries n={$n}", $iterations * 10, fn () => collection($n), fn (PeriodCollection $c) => $c->boundaries());
+    bench("PeriodCollection::boundaries n={$count}", $iterations * 10, fn () => collection($count), fn (PeriodCollection $collection) => $collection->boundaries());
 
-    bench("PeriodCollection::sort n={$n}", $iterations * 10, function () use ($n) {
-        $periods = periods($n);
+    bench("PeriodCollection::sort n={$count}", $iterations * 10, function () use ($count) {
+        $periods = periods($count);
         shuffle($periods);
 
         return new PeriodCollection(...$periods);
-    }, fn (PeriodCollection $c) => $c->sort());
+    }, fn (PeriodCollection $collection) => $collection->sort());
 
-    bench("PeriodCollection::intersect n={$n}", $iterations * 10, fn () => collection($n), fn (PeriodCollection $c) => $c->intersect(Period::make('2001-01-01', '2005-12-31')));
+    bench("PeriodCollection::intersect n={$count}", $iterations * 10, fn () => collection($count), fn (PeriodCollection $collection) => $collection->intersect(Period::make('2001-01-01', '2005-12-31')));
 
-    bench("PeriodCollection::overlapAll n={$n}", $iterations, fn () => [collection($n, 1), collection($n, 2)], fn (array $c) => $c[0]->overlapAll($c[1]));
+    bench("PeriodCollection::overlapAll n={$count}", $iterations, fn () => [collection($count, 1), collection($count, 2)], fn (array $collections) => $collections[0]->overlapAll($collections[1]));
 
-    bench("PeriodCollection::subtract n={$n}", $iterations, fn () => [collection($n, 1), collection(intdiv($n, 10), 2)], fn (array $c) => $c[0]->subtract($c[1]));
+    bench("PeriodCollection::subtract n={$count}", $iterations, fn () => [collection($count, 1), collection(intdiv($count, 10), 2)], fn (array $collections) => $collections[0]->subtract($collections[1]));
 
-    bench("PeriodCollection::gaps n={$n}", $iterations, fn () => collection($n), fn (PeriodCollection $c) => $c->gaps());
+    bench("PeriodCollection::gaps n={$count}", $iterations, fn () => collection($count), fn (PeriodCollection $collection) => $collection->gaps());
 
-    bench("PeriodCollection::union n={$n}", $iterations, fn () => collection($n), fn (PeriodCollection $c) => $c->union());
+    bench("PeriodCollection::union n={$count}", $iterations, fn () => collection($count), fn (PeriodCollection $collection) => $collection->union());
 }
 
 printf("\npeak memory: %.1f MB\n", memory_get_peak_usage(true) / 1048576);

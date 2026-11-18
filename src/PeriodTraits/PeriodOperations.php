@@ -160,16 +160,26 @@ trait PeriodOperations
 
     protected function subtractAll(Period ...$others): PeriodCollection
     {
-        $starts = array_map(static fn (Period $period) => $period->includedStart(), $others);
-        $keys = array_keys($others);
+        $timezone = $this->includedStart()->getTimezone()->getName();
 
-        // The keys break ties, so equal starts keep their order and periods are never compared
-        array_multisort($starts, $keys, $others);
+        foreach ([$this, ...$others] as $period) {
+            if (
+                $period->includedStart() > $period->includedEnd()
+                || $period->includedStart()->getTimezone()->getName() !== $timezone
+                || $period->includedEnd()->getTimezone()->getName() !== $timezone
+            ) {
+                // Preserve existing fragments and calendar arithmetic outside the sweep's assumptions.
+                $subtractions = array_map(fn (Period $other) => $this->subtract($other), $others);
+
+                return (new PeriodCollection($this))->overlapAll(...$subtractions);
+            }
+        }
+
+        $others = (new PeriodCollection(...$others))->sort();
 
         $collection = new PeriodCollection();
         $start = $this->includedStart();
 
-        // Sweep the sorted periods, collecting the parts of this period that none of them cover
         foreach ($others as $other) {
             $this->ensurePrecisionMatches($other);
 
@@ -187,8 +197,7 @@ trait PeriodOperations
                 }
             }
 
-            // includedStart keeps the cursor from moving back for periods without included dates
-            $start = max($start, $other->includedStart(), $other->includedEnd()->add($this->interval));
+            $start = max($start, $other->includedEnd()->add($this->interval));
         }
 
         if ($start <= $this->includedEnd()) {

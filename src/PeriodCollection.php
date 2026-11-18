@@ -61,7 +61,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return null;
         }
 
-        [$firstPeriod] = $this->periods;
+        $firstPeriod = reset($this->periods);
 
         return Period::make(
             $start,
@@ -79,7 +79,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return static::make();
         }
 
-        return $boundaries->subtract(...$this);
+        return $boundaries->subtract(...array_values($this->periods));
     }
 
     public function intersect(Period $intersection): static
@@ -125,7 +125,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $carry = $initial;
 
-        foreach ($this->periods as $period) {
+        foreach ($this as $period) {
             $carry = $closure($carry, $period);
         }
 
@@ -156,13 +156,16 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return clone $this;
         }
 
-        $periods = [];
+        $collection = new static();
+        $otherPeriods = array_values($others->periods);
 
         foreach ($this->periods as $period) {
-            array_push($periods, ...$period->subtract(...$others->periods)->periods);
+            foreach ($period->subtract(...$otherPeriods)->periods as $remaining) {
+                $collection[] = $remaining;
+            }
         }
 
-        return new static(...$periods);
+        return $collection;
     }
 
     private function overlap(PeriodCollection $others): PeriodCollection
@@ -182,7 +185,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             }
         }
 
-        $sorted = $others->periods;
+        $sorted = array_values($others->periods);
         $starts = array_map(static fn (Period $period) => $period->includedStart(), $sorted);
         $keys = array_keys($sorted);
 
@@ -203,11 +206,11 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             $last = self::search($starts, $period->includedEnd(), false);
             $matches = [];
 
-            for ($i = $first; $i < $last; $i++) {
-                $overlap = $period->overlap($sorted[$i]);
+            for ($index = $first; $index < $last; $index++) {
+                $overlap = $period->overlap($sorted[$index]);
 
                 if ($overlap !== null) {
-                    $matches[$keys[$i]] = $overlap;
+                    $matches[$keys[$index]] = $overlap;
                 }
             }
 
@@ -222,7 +225,13 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         return $overlaps;
     }
 
-    /** Returns the first index whose date is after the given one, or equal to it when $orEqual is set */
+    /**
+     * Returns the first index after the date, or equal to it when $orEqual is set.
+     *
+     * @param array<int, DateTimeImmutable> $dates
+     * @param DateTimeImmutable $date
+     * @param bool $orEqual
+     */
     private static function search(array $dates, DateTimeImmutable $date, bool $orEqual): int
     {
         $low = 0;
@@ -254,6 +263,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     public function sort(): PeriodCollection
     {
         $collection = clone $this;
+        $collection->periods = array_values($collection->periods);
 
         $starts = array_map(static fn (Period $period) => $period->includedStart(), $collection->periods);
         $keys = array_keys($collection->periods);
@@ -272,6 +282,6 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return static::make();
         }
 
-        return static::make($boundaries)->subtract($boundaries->subtract(...$this));
+        return static::make($boundaries)->subtract($boundaries->subtract(...array_values($this->periods)));
     }
 }
