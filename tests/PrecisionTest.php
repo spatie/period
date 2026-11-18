@@ -177,3 +177,9 @@ it('precision seconds is more precise than hours', function () {
 
     expect($seconds->higherThan($hours))->toBeTrue();
 });
+
+it('lists all precisions from year to second', function () {
+    $names = array_map(fn (Precision $precision) => $precision->intervalName(), Precision::all());
+
+    expect($names)->toEqual(['y', 'm', 'd', 'h', 'i', 's']);
+});
