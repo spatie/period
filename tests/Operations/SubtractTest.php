@@ -1,5 +1,6 @@
 <?php
 
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 
@@ -199,4 +200,29 @@ it('passing empty period collection returns same period within collection', func
     expect($diff)->toBeInstanceOf(PeriodCollection::class);
     expect($diff)->toHaveCount(1);
     expect($diff[0]->equals($current))->toBeTrue();
+});
+
+it('subtracting multiple periods does not duplicate days next to a period without included days', function () {
+    $current = Period::make('2000-01-03', '2000-01-08');
+
+    $a = Period::make('2000-01-05', '2000-01-11');
+    $b = Period::make('2000-01-04', '2000-01-04', boundaries: Boundaries::EXCLUDE_ALL());
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
+});
+
+it('subtracting multiple periods does not duplicate days around an uncovered period without included days', function () {
+    $current = Period::make('2000-01-03', '2000-01-08');
+
+    $a = Period::make('2000-01-04', '2000-01-04', boundaries: Boundaries::EXCLUDE_ALL());
+    $b = Period::make('2000-01-20', '2000-01-21');
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2000-01-05', '2000-01-08')))->toBeTrue();
 });

@@ -160,13 +160,44 @@ trait PeriodOperations
 
     protected function subtractAll(Period ...$others): PeriodCollection
     {
-        $subtractions = [];
+        usort($others, static fn (Period $a, Period $b) => $a->includedStart() <=> $b->includedStart());
 
+        $collection = new PeriodCollection();
+        $start = $this->includedStart();
+
+        // Sweep the sorted periods, collecting the parts of this period that none of them cover
         foreach ($others as $other) {
-            $subtractions[] = $this->subtract($other);
+            $this->ensurePrecisionMatches($other);
+
+            if ($other->includedStart() > $start) {
+                $end = min($other->includedStart()->sub($this->interval), $this->includedEnd());
+
+                if ($start <= $end) {
+                    $collection[] = PeriodFactory::makeWithBoundaries(
+                        static::class,
+                        $start,
+                        $end,
+                        $this->precision(),
+                        $this->boundaries(),
+                    );
+                }
+            }
+
+            // includedStart keeps the cursor from moving back for periods without included dates
+            $start = max($start, $other->includedStart(), $other->includedEnd()->add($this->interval));
         }
 
-        return (new PeriodCollection($this))->overlapAll(...$subtractions);
+        if ($start <= $this->includedEnd()) {
+            $collection[] = PeriodFactory::makeWithBoundaries(
+                static::class,
+                $start,
+                $this->includedEnd(),
+                $this->precision(),
+                $this->boundaries(),
+            );
+        }
+
+        return $collection;
     }
 
     /**
