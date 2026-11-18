@@ -1,8 +1,10 @@
 <?php
 
 use Spatie\Period\Boundaries;
+use Spatie\Period\Exceptions\CannotComparePeriods;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
 
 /**
  * A            [=====]      [===========]
@@ -57,6 +59,44 @@ it('can determine multiple overlaps for multiple collections', function () {
 
     expect($overlapPeriods[0]->equals(Period::make('2018-01-06', '2018-01-07')))->toBeTrue();
     expect($overlapPeriods[1]->equals(Period::make('2018-01-15', '2018-01-20')))->toBeTrue();
+});
+
+/**
+ * A            [==]               [===]
+ * B                              [=]
+ * B           [=============================]
+ * B             []
+ *
+ * OVERLAP      [==]               []
+ * OVERLAP       []                [===]
+ */
+it('determines overlaps with unsorted periods in the order of both collections', function () {
+    $a = new PeriodCollection(
+        Period::make('2018-01-02', '2018-01-05'),
+        Period::make('2018-01-21', '2018-01-25')
+    );
+
+    $b = new PeriodCollection(
+        Period::make('2018-01-20', '2018-01-22'),
+        Period::make('2018-01-01', '2018-01-31'),
+        Period::make('2018-01-03', '2018-01-04')
+    );
+
+    $overlapPeriods = $a->overlapAll($b);
+
+    expect($overlapPeriods)->toHaveCount(4);
+
+    expect($overlapPeriods[0]->equals(Period::make('2018-01-02', '2018-01-05')))->toBeTrue();
+    expect($overlapPeriods[1]->equals(Period::make('2018-01-03', '2018-01-04')))->toBeTrue();
+    expect($overlapPeriods[2]->equals(Period::make('2018-01-21', '2018-01-22')))->toBeTrue();
+    expect($overlapPeriods[3]->equals(Period::make('2018-01-21', '2018-01-25')))->toBeTrue();
+});
+
+it('cannot determine overlaps with periods of another precision', function () {
+    $a = new PeriodCollection(Period::make('2018-01-01', '2018-01-05'));
+    $b = new PeriodCollection(Period::make('2019-01-01', '2019-03-01', Precision::MONTH()));
+
+    expect(fn () => $a->overlapAll($b))->toThrow(CannotComparePeriods::class);
 });
 
 /**
