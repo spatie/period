@@ -45,7 +45,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
         $start = null;
         $end = null;
 
-        foreach ($this as $period) {
+        foreach ($this->periods as $period) {
             if ($start === null || $start > $period->includedStart()) {
                 $start = $period->includedStart();
             }
@@ -84,7 +84,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $intersected = static::make();
 
-        foreach ($this as $period) {
+        foreach ($this->periods as $period) {
             $overlap = $intersection->overlap($period);
 
             if ($overlap === null) {
@@ -123,7 +123,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
     {
         $carry = $initial;
 
-        foreach ($this as $period) {
+        foreach ($this->periods as $period) {
             $carry = $closure($carry, $period);
         }
 
@@ -154,26 +154,28 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return clone $this;
         }
 
-        $collection = new static();
+        $periods = [];
 
-        foreach ($this as $period) {
-            $collection = $collection->add(...$period->subtract(...$others));
+        foreach ($this->periods as $period) {
+            array_push($periods, ...$period->subtract(...$others->periods)->periods);
         }
 
-        return $collection;
+        return new static(...$periods);
     }
 
     private function overlap(PeriodCollection $others): PeriodCollection
     {
         $overlaps = new PeriodCollection();
 
-        foreach ($this as $period) {
-            foreach ($others as $other) {
-                if (! $period->overlap($other)) {
+        foreach ($this->periods as $period) {
+            foreach ($others->periods as $other) {
+                $overlap = $period->overlap($other);
+
+                if (! $overlap) {
                     continue;
                 }
 
-                $overlaps[] = $period->overlap($other);
+                $overlaps[] = $overlap;
             }
         }
 
