@@ -18,3 +18,7 @@ it('can determine if two periods touch each other', function () {
 
     expect(Period::make('2018-01-01 06:30:00', '2018-01-01 07:30:00', Precision::SECOND())->touchesWith(Period::make('2018-01-01 09:00:00', '2018-01-01 10:00:00', Precision::SECOND())))->toBeFalse();
 });
+
+it('determines that overlapping periods do not touch', function () {
+    expect(Period::make('2018-01-01', '2018-01-10')->touchesWith(Period::make('2018-01-05', '2018-01-15')))->toBeFalse();
+});
