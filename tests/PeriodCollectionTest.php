@@ -99,6 +99,14 @@ it('cannot determine overlaps with periods of another precision', function () {
     expect(fn () => $a->overlapAll($b))->toThrow(CannotComparePeriods::class);
 });
 
+it('determines no overlaps with an empty collection', function () {
+    $a = new PeriodCollection(Period::make('2018-01-01', '2018-01-05'));
+    $empty = new PeriodCollection();
+
+    expect($a->overlapAll($empty))->toHaveCount(0);
+    expect($empty->overlapAll($a))->toHaveCount(0);
+});
+
 /**
  * A                   [====]
  * B                               [========]
