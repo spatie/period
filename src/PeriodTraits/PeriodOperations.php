@@ -161,10 +161,14 @@ trait PeriodOperations
     protected function subtractAll(Period ...$others): PeriodCollection
     {
         $timezone = $this->includedStart()->getTimezone()->getName();
+        $empty = [];
+        $nonEmpty = [];
 
-        foreach ([$this, ...$others] as $period) {
+        foreach ([$this, ...$others] as $key => $period) {
+            $isEmpty = $period->includedStart() > $period->includedEnd();
+
             if (
-                $period->includedStart() > $period->includedEnd()
+                ($isEmpty && $key === 0)
                 || $period->includedStart()->getTimezone()->getName() !== $timezone
                 || $period->includedEnd()->getTimezone()->getName() !== $timezone
             ) {
@@ -173,9 +177,15 @@ trait PeriodOperations
 
                 return (new PeriodCollection($this))->overlapAll(...$subtractions);
             }
+
+            if ($isEmpty) {
+                $empty[] = $period;
+            } elseif ($key !== 0) {
+                $nonEmpty[] = $period;
+            }
         }
 
-        $others = (new PeriodCollection(...$others))->sort();
+        $others = (new PeriodCollection(...$nonEmpty))->sort();
 
         $collection = new PeriodCollection();
         $start = $this->includedStart();
@@ -210,7 +220,10 @@ trait PeriodOperations
             );
         }
 
-        return $collection;
+        // Periods without included dates split the result as subtracting them one by one does
+        $subtractions = array_map(fn (Period $other) => $this->subtract($other), $empty);
+
+        return $collection->overlapAll(...$subtractions);
     }
 
     /**
