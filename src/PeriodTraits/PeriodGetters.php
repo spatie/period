@@ -94,7 +94,9 @@ trait PeriodGetters
             return floor($length / 60) + 1;
         }
 
-        return $this->includedStart()->diff($this->includedEnd())->days + 1;
+        [$start, $end] = $this->precision->alignTimes($this->includedStart(), $this->includedEnd());
+
+        return $start->diff($end)->days + 1;
     }
 
     public function duration(): PeriodDuration

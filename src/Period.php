@@ -38,8 +38,23 @@ class Period implements IteratorAggregate
         }
 
         $this->interval = $this->precision->interval();
-        $this->includedStart = $boundaries->startIncluded() ? $start : $start->add($this->interval);
-        $this->includedEnd = $boundaries->endIncluded() ? $end : $end->sub($this->interval);
+
+        // A day whose midnight does not exist starts later than the other days: a day, a month or a year
+        // before or after it must be rounded again. An hour, a minute and a second always have the same length.
+        $rounds = ! $precision->higherThan(Precision::DAY());
+
+        $this->includedStart = match (true) {
+            $boundaries->startIncluded() => $start,
+            $rounds => $precision->increment($start),
+            default => $start->add($this->interval),
+        };
+
+        $this->includedEnd = match (true) {
+            $boundaries->endIncluded() => $end,
+            $rounds => $precision->decrement($end),
+            default => $end->sub($this->interval),
+        };
+
         $this->duration = new PeriodDuration($this);
     }
 
