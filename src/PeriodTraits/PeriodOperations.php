@@ -160,13 +160,78 @@ trait PeriodOperations
 
     protected function subtractAll(Period ...$others): PeriodCollection
     {
-        $subtractions = [];
+        $timezone = $this->includedStart()->getTimezone()->getName();
+        $empty = [];
+        $nonEmpty = [];
 
-        foreach ($others as $other) {
-            $subtractions[] = $this->subtract($other);
+        foreach ([$this, ...$others] as $key => $period) {
+            $isEmpty = $period->includedStart() > $period->includedEnd();
+
+            if (
+                ($isEmpty && $key === 0)
+                || $period->includedStart()->getTimezone()->getName() !== $timezone
+                || $period->includedEnd()->getTimezone()->getName() !== $timezone
+            ) {
+                // Preserve existing fragments and calendar arithmetic outside the sweep's assumptions.
+                $subtractions = array_map(fn (Period $other) => $this->subtract($other), $others);
+
+                return (new PeriodCollection($this))->overlapAll(...$subtractions);
+            }
+
+            if ($isEmpty) {
+                $empty[] = $period;
+            } elseif ($key !== 0) {
+                $nonEmpty[] = $period;
+            }
         }
 
-        return (new PeriodCollection($this))->overlapAll(...$subtractions);
+        $others = (new PeriodCollection(...$nonEmpty))->sort();
+
+        $collection = new PeriodCollection();
+        $start = $this->includedStart();
+
+        // A period further than one interval away cannot change the result: skip the date arithmetic for it
+        $before = $this->precision->decrement($start);
+        $after = $this->precision->increment($this->includedEnd());
+
+        foreach ($others as $other) {
+            $this->ensurePrecisionMatches($other);
+
+            if ($other->includedEnd() < $before || $other->includedStart() > $after) {
+                continue;
+            }
+
+            if ($other->includedStart() > $start) {
+                $end = min($this->precision->decrement($other->includedStart()), $this->includedEnd());
+
+                if ($start <= $end) {
+                    $collection[] = PeriodFactory::makeWithBoundaries(
+                        static::class,
+                        $start,
+                        $end,
+                        $this->precision(),
+                        $this->boundaries(),
+                    );
+                }
+            }
+
+            $start = max($start, $this->precision->increment($other->includedEnd()));
+        }
+
+        if ($start <= $this->includedEnd()) {
+            $collection[] = PeriodFactory::makeWithBoundaries(
+                static::class,
+                $start,
+                $this->includedEnd(),
+                $this->precision(),
+                $this->boundaries(),
+            );
+        }
+
+        // Periods without included dates split the result as subtracting them one by one does
+        $subtractions = array_map(fn (Period $other) => $this->subtract($other), $empty);
+
+        return $collection->overlapAll(...$subtractions);
     }
 
     /**
