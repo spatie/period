@@ -234,6 +234,74 @@ it('loops after filter', function () {
     expect(count($items))->toEqual($filtered->count());
 });
 
+it('loops over the periods after an unset one', function () {
+    $collection = new PeriodCollection(
+        Period::make('2018-01-01', '2018-01-05'),
+        Period::make('2018-01-10', '2018-01-15'),
+        Period::make('2018-01-20', '2018-01-25')
+    );
+
+    unset($collection[1]);
+
+    expect(array_keys(iterator_to_array($collection)))->toEqual([0, 2]);
+    expect($collection->boundaries()->equals(Period::make('2018-01-01', '2018-01-25')))->toBeTrue();
+
+    $gaps = $collection->gaps();
+
+    expect($gaps)->toHaveCount(1);
+    expect($gaps[0]->equals(Period::make('2018-01-06', '2018-01-19')))->toBeTrue();
+});
+
+it('skips periods unset while looping', function () {
+    $collection = new PeriodCollection(
+        Period::make('2018-01-01', '2018-01-05'),
+        Period::make('2018-01-10', '2018-01-15'),
+        Period::make('2018-01-20', '2018-01-25')
+    );
+
+    $keys = [];
+
+    foreach ($collection as $key => $period) {
+        if ($key === 0) {
+            unset($collection[1]);
+        }
+
+        $keys[] = $key;
+    }
+
+    expect($keys)->toEqual([0, 2]);
+});
+
+it('loops over periods appended while looping', function () {
+    $period = Period::make('2018-01-01', '2018-01-05');
+    $collection = new PeriodCollection($period, $period);
+
+    unset($collection[0]);
+
+    $keys = [];
+
+    foreach ($collection as $key => $current) {
+        if ($key === 1) {
+            $collection[] = $period;
+        }
+
+        $keys[] = $key;
+    }
+
+    expect($keys)->toEqual([1, 2]);
+});
+
+it('is valid before a rewind when the first key was unset', function () {
+    $period = Period::make('2018-01-01', '2018-01-05');
+    $collection = new PeriodCollection($period, $period);
+
+    unset($collection[0]);
+
+    expect($collection->valid())->toBeTrue();
+    expect($collection->key())->toBe(1);
+    expect($collection->current())->toBe($period);
+});
+
 it('substracts empty period collection', function () {
     $collection = new PeriodCollection(
         Period::make('2018-01-01', '2018-01-02'),
