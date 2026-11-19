@@ -254,3 +254,20 @@ it('does not lose a month when subtracted periods in other timezones do not over
     expect($diff)->toHaveCount(1);
     expect($diff[0]->equals($current))->toBeTrue();
 });
+
+it('keeps the day after a subtracted day whose midnight does not exist', function () {
+    // In Havana the clock goes forward at midnight on 2020-03-08, so that day starts at 01:00
+    $day = fn (string $date) => new DateTimeImmutable($date, new DateTimeZone('America/Havana'));
+
+    $current = Period::make($day('2020-03-01'), $day('2020-03-15'));
+
+    $a = Period::make($day('2020-03-07'), $day('2020-03-08'));
+    $b = Period::make($day('2020-03-10'), $day('2020-03-11'));
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(3);
+    expect($diff[0]->equals(Period::make($day('2020-03-01'), $day('2020-03-06'))))->toBeTrue();
+    expect($diff[1]->equals(Period::make($day('2020-03-09'), $day('2020-03-09'))))->toBeTrue();
+    expect($diff[2]->equals(Period::make($day('2020-03-12'), $day('2020-03-15'))))->toBeTrue();
+});

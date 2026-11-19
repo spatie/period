@@ -184,7 +184,7 @@ trait PeriodOperations
             $this->ensurePrecisionMatches($other);
 
             if ($other->includedStart() > $start) {
-                $end = min($other->includedStart()->sub($this->interval), $this->includedEnd());
+                $end = min($this->precision->decrement($other->includedStart()), $this->includedEnd());
 
                 if ($start <= $end) {
                     $collection[] = PeriodFactory::makeWithBoundaries(
@@ -197,7 +197,7 @@ trait PeriodOperations
                 }
             }
 
-            $start = max($start, $other->includedEnd()->add($this->interval));
+            $start = max($start, $this->precision->increment($other->includedEnd()));
         }
 
         if ($start <= $this->includedEnd()) {
