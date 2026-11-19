@@ -190,8 +190,16 @@ trait PeriodOperations
         $collection = new PeriodCollection();
         $start = $this->includedStart();
 
+        // A period further than one interval away cannot change the result: skip the date arithmetic for it
+        $before = $this->precision->decrement($start);
+        $after = $this->precision->increment($this->includedEnd());
+
         foreach ($others as $other) {
             $this->ensurePrecisionMatches($other);
+
+            if ($other->includedEnd() < $before || $other->includedStart() > $after) {
+                continue;
+            }
 
             if ($other->includedStart() > $start) {
                 $end = min($this->precision->decrement($other->includedStart()), $this->includedEnd());
