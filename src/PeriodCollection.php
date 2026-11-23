@@ -59,7 +59,7 @@ class PeriodCollection implements ArrayAccess, Iterator, Countable
             return null;
         }
 
-        [$firstPeriod] = $this->periods;
+        $firstPeriod = reset($this->periods);
 
         return Period::make(
             $start,

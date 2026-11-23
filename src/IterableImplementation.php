@@ -44,7 +44,22 @@ trait IterableImplementation
 
     public function valid(): bool
     {
-        return array_key_exists($this->position, $this->periods);
+        if (array_key_exists($this->position, $this->periods)) {
+            return true;
+        }
+
+        $remainingKeys = array_filter(
+            array_keys($this->periods),
+            fn ($key) => is_int($key) && $key > $this->position,
+        );
+
+        if (! $remainingKeys) {
+            return false;
+        }
+
+        $this->position = min($remainingKeys);
+
+        return true;
     }
 
     public function rewind(): void
