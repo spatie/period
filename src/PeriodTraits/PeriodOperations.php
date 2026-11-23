@@ -167,6 +167,8 @@ trait PeriodOperations
                 $this->includedStart() > $this->includedEnd()
                 || $period->includedStart()->getTimezone()->getName() !== $timezone
                 || $period->includedEnd()->getTimezone()->getName() !== $timezone
+                || $period->includedStart() != $period->precision()->increment($period->precision()->decrement($period->includedStart()))
+                || $period->includedEnd() != $period->precision()->decrement($period->precision()->increment($period->includedEnd()))
             ) {
                 // Preserve existing fragments and calendar arithmetic outside the sweep's assumptions.
                 $subtractions = array_map(fn (Period $other) => $this->subtract($other), $others);
