@@ -28,6 +28,29 @@ it('preserves the length of a nonempty fractional period', function (string $pre
     expect($period->length())->toBe(1);
 })->with(['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND']);
 
+it('preserves unrounded dates passed to the constructor', function (string $precisionName) {
+    $precision = Precision::$precisionName();
+    $start = new DateTimeImmutable('2024-01-15 12:00:00 UTC');
+    $includedStart = $start->add($precision->interval());
+    $end = $includedStart->add($precision->interval())->modify('+1 hour');
+
+    $period = new Period($start, $end, $precision, Boundaries::EXCLUDE_ALL());
+
+    expect($period->includedStart())->toEqual($includedStart);
+    expect($period->includedEnd())->toEqual($includedStart->modify('+1 hour'));
+})->with(['DAY', 'MONTH', 'YEAR']);
+
+it('does not turn a fractional day across midnight into two days', function () {
+    $period = new Period(
+        new DateTimeImmutable('2024-01-01 23:00:00 UTC'),
+        new DateTimeImmutable('2024-01-02 01:00:00 UTC'),
+        Precision::DAY(),
+        Boundaries::EXCLUDE_NONE(),
+    );
+
+    expect($period->length())->toBe(1);
+});
+
 it('uses the overridden iterator for month and year lengths', function (string $precisionName) {
     $period = new class (
         new DateTimeImmutable('2024-01-01 UTC'),

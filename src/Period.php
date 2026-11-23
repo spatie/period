@@ -38,8 +38,21 @@ class Period implements IteratorAggregate
         }
 
         $this->interval = $this->precision->interval();
-        $this->includedStart = $boundaries->startIncluded() ? $start : $start->add($this->interval);
-        $this->includedEnd = $boundaries->endIncluded() ? $end : $end->sub($this->interval);
+
+        $rounds = ! $precision->higherThan(Precision::DAY());
+
+        $this->includedStart = match (true) {
+            $boundaries->startIncluded() => $start,
+            $rounds && $start == $precision->roundDate($start) => $precision->increment($start),
+            default => $start->add($this->interval),
+        };
+
+        $this->includedEnd = match (true) {
+            $boundaries->endIncluded() => $end,
+            $rounds && $end == $precision->roundDate($end) => $precision->decrement($end),
+            default => $end->sub($this->interval),
+        };
+
         $this->duration = new PeriodDuration($this);
     }
 

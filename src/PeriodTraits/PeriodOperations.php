@@ -196,7 +196,7 @@ trait PeriodOperations
 
     public function renew(): static
     {
-        $length = $this->includedStart->diff($this->includedEnd);
+        $length = $this->precision->diff($this->includedStart, $this->includedEnd);
 
         $start = $this->includedEnd->add($this->interval);
 

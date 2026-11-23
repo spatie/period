@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spatie\Period;
 
+use DateInterval;
 use DateTimeImmutable;
 
 class PeriodDuration
@@ -35,10 +36,15 @@ class PeriodDuration
     {
         $now = new DateTimeImmutable('@' . time()); // Ensure a TimeZone independent instance
 
-        $here = $this->period->includedEnd()->diff($this->period->includedStart(), true);
-        $there = $other->period->includedEnd()->diff($other->period->includedStart(), true);
+        $here = $this->interval();
+        $there = $other->interval();
 
         return $now->add($here)->getTimestamp() <=> $now->add($there)->getTimestamp();
+    }
+
+    private function interval(): DateInterval
+    {
+        return $this->period->precision()->diff($this->period->includedEnd(), $this->period->includedStart(), true);
     }
 
     private function startAndEndDatesAreTheSameAs(PeriodDuration $other): bool
@@ -55,8 +61,8 @@ class PeriodDuration
 
     private function numberOfDaysIsTheSameAs(PeriodDuration $other)
     {
-        $here = $this->period->includedEnd()->diff($this->period->includedStart(), true);
-        $there = $other->period->includedEnd()->diff($other->period->includedStart(), true);
+        $here = $this->interval();
+        $there = $other->interval();
 
         return $here->format('%a') === $there->format('%a');
     }

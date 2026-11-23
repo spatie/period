@@ -115,10 +115,10 @@ class Precision
         $minute = (self::MINUTE & $this->mask) === self::MINUTE ? $minute : '00';
         $second = (self::SECOND & $this->mask) === self::SECOND ? $second : '00';
 
-        return DateTimeImmutable::createFromFormat(
-            'Y m d H i s',
+        return $this->fromFields(
+            $date,
             implode(' ', [$year, $month, $day, $hour, $minute, $second]),
-            $date->getTimezone()
+            (self::HOUR & $this->mask) === self::HOUR
         );
     }
 
@@ -132,11 +132,46 @@ class Precision
         $minute = (self::MINUTE & $precision->mask) === self::MINUTE ? $minute : '59';
         $second = (self::SECOND & $precision->mask) === self::SECOND ? $second : '59';
 
-        return DateTimeImmutable::createFromFormat(
-            'Y m d H i s',
+        return $this->fromFields(
+            $date,
             implode(' ', [$year, $month, $day, $hour, $minute, $second]),
-            $date->getTimezone()
+            (self::HOUR & $precision->mask) === self::HOUR
         );
+    }
+
+    private function fromFields(DateTimeInterface $date, string $fields, bool $keepsHour): DateTimeImmutable
+    {
+        $rounded = DateTimeImmutable::createFromFormat('Y m d H i s', $fields, $date->getTimezone());
+
+        $shift = $rounded->getOffset() - $date->getOffset();
+
+        if (! $keepsHour || $shift === 0) {
+            return $rounded;
+        }
+
+        // The fields have no UTC offset: a time that occurs twice when the clock goes back always
+        // gets the same occurrence. Keep the offset of the original date when the time exists with it.
+        $sameOffset = (new DateTimeImmutable('@' . ($rounded->getTimestamp() + $shift)))->setTimezone($date->getTimezone());
+
+        return $sameOffset->format('Y m d H i s') === $fields ? $sameOffset : $rounded;
+    }
+
+    public function diff(DateTimeImmutable $start, DateTimeImmutable $end, bool $absolute = false): DateInterval
+    {
+        if (
+            $this->higherThan(self::DAY())
+            || $start != $this->roundDate($start)
+            || $end != $this->roundDate($end)
+        ) {
+            return $start->diff($end, $absolute);
+        }
+
+        // A missing midnight must not shorten the calendar difference by an hour.
+        $time = max($start->format('H:i'), $end->format('H:i'));
+        [$hour, $minute] = explode(':', $time);
+
+        return $start->setTime((int) $hour, (int) $minute)
+            ->diff($end->setTime((int) $hour, (int) $minute), $absolute);
     }
 
     public function equals(Precision ...$others): bool
