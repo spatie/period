@@ -160,13 +160,72 @@ trait PeriodOperations
 
     protected function subtractAll(Period ...$others): PeriodCollection
     {
-        $subtractions = [];
+        $timezone = $this->includedStart()->getTimezone()->getName();
 
-        foreach ($others as $other) {
-            $subtractions[] = $this->subtract($other);
+        foreach ([$this, ...$others] as $period) {
+            if (
+                $this->includedStart() > $this->includedEnd()
+                || $period->includedStart()->getTimezone()->getName() !== $timezone
+                || $period->includedEnd()->getTimezone()->getName() !== $timezone
+                || $period->includedStart() != $period->precision()->increment($period->precision()->decrement($period->includedStart()))
+                || $period->includedEnd() != $period->precision()->decrement($period->precision()->increment($period->includedEnd()))
+            ) {
+                // Preserve existing fragments and calendar arithmetic outside the sweep's assumptions.
+                $subtractions = array_map(fn (Period $other) => $this->subtract($other), $others);
+
+                return (new PeriodCollection($this))->overlapAll(...$subtractions);
+            }
         }
 
-        return (new PeriodCollection($this))->overlapAll(...$subtractions);
+        $others = (new PeriodCollection(...$others))->sort();
+        $collection = new PeriodCollection();
+        $subtractions = [];
+        $start = $this->includedStart();
+
+        $before = $this->precision->decrement($start);
+        $after = $this->precision->increment($this->includedEnd());
+
+        foreach ($others as $other) {
+            $this->ensurePrecisionMatches($other);
+
+            if ($other->includedStart() > $other->includedEnd()) {
+                $subtractions[] = $this->subtract($other);
+
+                continue;
+            }
+
+            if ($other->includedEnd() < $before || $other->includedStart() > $after) {
+                continue;
+            }
+
+            if ($other->includedStart() > $start) {
+                $end = min($this->precision->decrement($other->includedStart()), $this->includedEnd());
+
+                if ($start <= $end) {
+                    $collection[] = PeriodFactory::makeWithBoundaries(
+                        static::class,
+                        $start,
+                        $end,
+                        $this->precision(),
+                        $this->boundaries(),
+                    );
+                }
+            }
+
+            $start = max($start, $this->precision->increment($other->includedEnd()));
+        }
+
+        if ($start <= $this->includedEnd()) {
+            $collection[] = PeriodFactory::makeWithBoundaries(
+                static::class,
+                $start,
+                $this->includedEnd(),
+                $this->precision(),
+                $this->boundaries(),
+            );
+        }
+
+        return $collection->overlapAll(...$subtractions);
     }
 
     /**

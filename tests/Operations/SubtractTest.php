@@ -1,7 +1,9 @@
 <?php
 
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
 
 /**
  * A      [=====]
@@ -199,4 +201,128 @@ it('passing empty period collection returns same period within collection', func
     expect($diff)->toBeInstanceOf(PeriodCollection::class);
     expect($diff)->toHaveCount(1);
     expect($diff[0]->equals($current))->toBeTrue();
+});
+
+it('preserves subtraction fragments next to a period without included days', function () {
+    $current = Period::make('2000-01-03', '2000-01-08');
+
+    $a = Period::make('2000-01-05', '2000-01-11');
+    $b = Period::make('2000-01-04', '2000-01-04', boundaries: Boundaries::EXCLUDE_ALL());
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2000-01-04', '2000-01-04')))->toBeTrue();
+});
+
+it('preserves subtraction fragments around an uncovered period without included days', function () {
+    $current = Period::make('2000-01-03', '2000-01-08');
+
+    $a = Period::make('2000-01-04', '2000-01-04', boundaries: Boundaries::EXCLUDE_ALL());
+    $b = Period::make('2000-01-20', '2000-01-21');
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2000-01-03', '2000-01-04')))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2000-01-04', '2000-01-08')))->toBeTrue();
+});
+
+it('does not lose a month when subtracted periods in other timezones do not overlap', function () {
+    $current = Period::make(
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('Europe/Brussels')),
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('Europe/Brussels')),
+        Precision::MONTH(),
+        Boundaries::EXCLUDE_START(),
+    );
+
+    $before = Period::make(
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('UTC')),
+        new DateTimeImmutable('2024-03-01', new DateTimeZone('UTC')),
+        Precision::MONTH(),
+    );
+
+    $after = Period::make(
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('America/New_York')),
+        new DateTimeImmutable('2024-04-01', new DateTimeZone('America/New_York')),
+        Precision::MONTH(),
+    );
+
+    $diff = $current->subtract($before, $after);
+
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals($current))->toBeTrue();
+});
+
+it('keeps the day after a subtracted day whose midnight does not exist', function () {
+    // In Havana the clock goes forward at midnight on 2020-03-08, so that day starts at 01:00
+    $day = fn (string $date) => new DateTimeImmutable($date, new DateTimeZone('America/Havana'));
+
+    $current = Period::make($day('2020-03-01'), $day('2020-03-15'));
+
+    $a = Period::make($day('2020-03-07'), $day('2020-03-08'));
+    $b = Period::make($day('2020-03-10'), $day('2020-03-11'));
+
+    $diff = $current->subtract($a, $b);
+
+    expect($diff)->toHaveCount(3);
+    expect($diff[0]->equals(Period::make($day('2020-03-01'), $day('2020-03-06'))))->toBeTrue();
+    expect($diff[1]->equals(Period::make($day('2020-03-09'), $day('2020-03-09'))))->toBeTrue();
+    expect($diff[2]->equals(Period::make($day('2020-03-12'), $day('2020-03-15'))))->toBeTrue();
+});
+
+it('preserves subtraction fragments for unrounded constructor dates', function () {
+    $current = new Period(
+        new DateTimeImmutable('2024-02-29 12:28:56'),
+        new DateTimeImmutable('2024-02-29 12:33:56'),
+        Precision::MINUTE(),
+        Boundaries::EXCLUDE_END(),
+    );
+
+    $first = new Period(
+        new DateTimeImmutable('2024-02-29 12:28:56'),
+        new DateTimeImmutable('2024-02-29 12:30:56'),
+        Precision::MINUTE(),
+        Boundaries::EXCLUDE_ALL(),
+    );
+
+    $second = new Period(
+        new DateTimeImmutable('2024-02-29 12:32:56'),
+        new DateTimeImmutable('2024-02-29 12:34:56'),
+        Precision::MINUTE(),
+        Boundaries::EXCLUDE_END(),
+    );
+
+    $distant = Period::make('2024-03-01', '2024-03-02', Precision::MINUTE());
+
+    $diff = $current->subtract($distant, $first, $second);
+
+    expect($diff)->toHaveCount(2);
+    expect($diff[0]->equals(Period::make('2024-02-29 12:28:00', '2024-02-29 12:29:00', Precision::MINUTE(), Boundaries::EXCLUDE_END())))->toBeTrue();
+    expect($diff[1]->equals(Period::make('2024-02-29 12:30:00', '2024-02-29 12:32:00', Precision::MINUTE(), Boundaries::EXCLUDE_END())))->toBeTrue();
+});
+
+it('does not create a gap from empty hours around a half-hour clock change', function () {
+    $date = new DateTimeImmutable('2024-04-07 01:00:00', new DateTimeZone('Australia/Lord_Howe'));
+    $point = Period::make($date, $date, Precision::HOUR());
+    $empty = Period::make($date, $date, Precision::HOUR(), Boundaries::EXCLUDE_ALL());
+    $collection = new PeriodCollection($point, $empty, $empty);
+
+    expect($collection->gaps())->toHaveCount(0);
+    expect($collection->union())->toHaveCount(1);
+    expect($collection->union()[0]->equals($point))->toBeTrue();
+});
+
+it('preserves subtraction fragments around a skipped calendar day', function () {
+    $day = fn (string $date) => new DateTimeImmutable($date, new DateTimeZone('Pacific/Apia'));
+    $current = Period::make($day('2011-12-29'), $day('2012-01-03'));
+    $first = Period::make($day('2011-12-31'), $day('2012-01-04'), boundaries: Boundaries::EXCLUDE_END());
+    $second = Period::make($day('2011-12-29'), $day('2012-01-03'), boundaries: Boundaries::EXCLUDE_ALL());
+    $third = Period::make($day('2011-12-29'), $day('2011-12-29'));
+
+    $diff = $current->subtract($first, $second, $third);
+
+    expect($diff)->toHaveCount(1);
+    expect($diff[0]->equals(Period::make($day('2011-12-31'), $day('2011-12-31'))))->toBeTrue();
 });
