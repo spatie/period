@@ -491,3 +491,58 @@ it('unions collection', function () {
     expect($unioned[2]->start() == $collection[3]->start())->toBeTrue();
     expect($unioned[2]->end() == $collection[4]->end())->toBeTrue();
 });
+
+it('adds periods to a copy of the collection', function () {
+    $collection = new PeriodCollection(Period::make('2018-01-01', '2018-01-05'));
+
+    $added = $collection->add(Period::make('2018-01-10', '2018-01-15'), Period::make('2018-01-20', '2018-01-25'));
+
+    expect($collection)->toHaveCount(1);
+    expect($added)->toHaveCount(3);
+    expect($added[2]->equals(Period::make('2018-01-20', '2018-01-25')))->toBeTrue();
+});
+
+it('maps periods', function () {
+    $collection = new PeriodCollection(
+        Period::make('2018-01-01', '2018-01-05'),
+        Period::make('2018-01-10', '2018-01-15')
+    );
+
+    $renewed = $collection->map(fn (Period $period) => $period->renew());
+
+    expect($renewed[0]->equals(Period::make('2018-01-06', '2018-01-10')))->toBeTrue();
+    expect($renewed[1]->equals(Period::make('2018-01-16', '2018-01-21')))->toBeTrue();
+    expect($collection[0]->equals(Period::make('2018-01-01', '2018-01-05')))->toBeTrue();
+});
+
+it('reduces periods', function () {
+    $collection = new PeriodCollection(
+        Period::make('2018-01-01', '2018-01-05'),
+        Period::make('2018-01-10', '2018-01-15')
+    );
+
+    $length = $collection->reduce(fn (int $carry, Period $period) => $carry + $period->length(), 0);
+
+    expect($length)->toEqual(11);
+});
+
+it('can be accessed as an array', function () {
+    $collection = new PeriodCollection(Period::make('2018-01-01', '2018-01-05'));
+
+    expect(isset($collection[0]))->toBeTrue();
+    expect(isset($collection[1]))->toBeFalse();
+    expect($collection[1])->toBeNull();
+
+    $collection[0] = Period::make('2018-01-10', '2018-01-15');
+
+    expect($collection)->toHaveCount(1);
+    expect($collection[0]->equals(Period::make('2018-01-10', '2018-01-15')))->toBeTrue();
+});
+
+it('has no boundaries, gaps or union when empty', function () {
+    $collection = new PeriodCollection();
+
+    expect($collection->boundaries())->toBeNull();
+    expect($collection->gaps())->toHaveCount(0);
+    expect($collection->union())->toHaveCount(0);
+});

@@ -3,6 +3,8 @@
 use Carbon\Carbon;
 use Spatie\Period\Boundaries;
 use Spatie\Period\Exceptions\CannotCeilLowerPrecision;
+use Spatie\Period\Exceptions\InvalidDate;
+use Spatie\Period\Exceptions\InvalidPeriod;
 use Spatie\Period\Period;
 use Spatie\Period\Precision;
 
@@ -142,4 +144,29 @@ it('test from string', function () {
     expect(Period::fromString('(2021 , 2021]')->asString())->toEqual('(2021,2021]');
     expect(Period::fromString('( 2021 , 2021 )')->asString())->toEqual('(2021,2021)');
     expect(Period::fromString('[ 2021 , 2021 ]')->asString())->toEqual('[2021,2021]');
+});
+
+it('cannot end before it starts', function () {
+    Period::make('2018-01-10', '2018-01-01');
+})->throws(InvalidPeriod::class, 'The end time `2018-01-01 00:00:00` is before the start time `2018-01-10 00:00:00`.');
+
+it('cannot be made from a date that does not match the format', function () {
+    Period::make('2018-01-01', '01/31/2018');
+})->throws(InvalidDate::class, 'Could not construct a date from `01/31/2018` with format `Y-m-d`');
+
+it('names both precisions when the ceiling precision is higher', function (Precision $periodPrecision, Precision $ceilingPrecision, string $message) {
+    expect(fn () => Period::make('2018-01-01', '2018-01-15', $periodPrecision)->ceilingEnd($ceilingPrecision))
+        ->toThrow(CannotCeilLowerPrecision::class, $message);
+})->with([
+    [Precision::YEAR(), Precision::MONTH(), 'Cannot get the latest year of a month.'],
+    [Precision::MONTH(), Precision::DAY(), 'Cannot get the latest month of a day.'],
+    [Precision::DAY(), Precision::MINUTE(), 'Cannot get the latest day of a minute.'],
+    [Precision::MINUTE(), Precision::SECOND(), 'Cannot get the latest minute of a second.'],
+]);
+
+it('is not equal to a period with another start or end', function () {
+    $period = Period::make('2018-01-01', '2018-01-15');
+
+    expect($period->equals(Period::make('2018-01-02', '2018-01-15')))->toBeFalse();
+    expect($period->equals(Period::make('2018-01-01', '2018-01-14')))->toBeFalse();
 });
