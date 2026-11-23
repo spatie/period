@@ -156,23 +156,22 @@ class Precision
         return $sameOffset->format('Y m d H i s') === $fields ? $sameOffset : $rounded;
     }
 
-    /**
-     * A day whose midnight does not exist starts later than the other days, so the time between two rounded dates
-     * can be shorter or longer than a whole number of days. Move both dates to the same time of day before a diff.
-     *
-     * @return DateTimeImmutable[]
-     */
-    public function alignTimes(DateTimeImmutable $start, DateTimeImmutable $end): array
+    public function diff(DateTimeImmutable $start, DateTimeImmutable $end, bool $absolute = false): DateInterval
     {
-        $time = max($start->format('H:i'), $end->format('H:i'));
-
-        if ($this->higherThan(self::DAY()) || $time === '00:00') {
-            return [$start, $end];
+        if (
+            $this->higherThan(self::DAY())
+            || $start != $this->roundDate($start)
+            || $end != $this->roundDate($end)
+        ) {
+            return $start->diff($end, $absolute);
         }
 
+        // A missing midnight must not shorten the calendar difference by an hour.
+        $time = max($start->format('H:i'), $end->format('H:i'));
         [$hour, $minute] = explode(':', $time);
 
-        return [$start->setTime((int) $hour, (int) $minute), $end->setTime((int) $hour, (int) $minute)];
+        return $start->setTime((int) $hour, (int) $minute)
+            ->diff($end->setTime((int) $hour, (int) $minute), $absolute);
     }
 
     public function equals(Precision ...$others): bool

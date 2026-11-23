@@ -39,19 +39,17 @@ class Period implements IteratorAggregate
 
         $this->interval = $this->precision->interval();
 
-        // A day whose midnight does not exist starts later than the other days: a day, a month or a year
-        // before or after it must be rounded again. An hour, a minute and a second always have the same length.
         $rounds = ! $precision->higherThan(Precision::DAY());
 
         $this->includedStart = match (true) {
             $boundaries->startIncluded() => $start,
-            $rounds => $precision->increment($start),
+            $rounds && $start == $precision->roundDate($start) => $precision->increment($start),
             default => $start->add($this->interval),
         };
 
         $this->includedEnd = match (true) {
             $boundaries->endIncluded() => $end,
-            $rounds => $precision->decrement($end),
+            $rounds && $end == $precision->roundDate($end) => $precision->decrement($end),
             default => $end->sub($this->interval),
         };
 

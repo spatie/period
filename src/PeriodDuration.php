@@ -44,9 +44,7 @@ class PeriodDuration
 
     private function interval(): DateInterval
     {
-        [$start, $end] = $this->period->precision()->alignTimes($this->period->includedStart(), $this->period->includedEnd());
-
-        return $end->diff($start, true);
+        return $this->period->precision()->diff($this->period->includedEnd(), $this->period->includedStart(), true);
     }
 
     private function startAndEndDatesAreTheSameAs(PeriodDuration $other): bool

@@ -196,9 +196,7 @@ trait PeriodOperations
 
     public function renew(): static
     {
-        [$includedStart, $includedEnd] = $this->precision->alignTimes($this->includedStart, $this->includedEnd);
-
-        $length = $includedStart->diff($includedEnd);
+        $length = $this->precision->diff($this->includedStart, $this->includedEnd);
 
         $start = $this->includedEnd->add($this->interval);
 
