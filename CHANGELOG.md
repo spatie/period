@@ -2,6 +2,17 @@
 
 All notable changes to `period` will be documented in this file
 
+## 2.4.3 - 2026-11-23
+
+- Fix collection iteration after removing items, including removing the first item. Items appended during a loop are still visited. (#156)
+- Speed up subtraction, gaps, union, sorting and overlap searches on large collections while preserving existing results for empty periods, mixed timezones and unusual calendar transitions. (#157)
+- Fix rounding during repeated hours and calendar boundaries, lengths and duration comparisons around midnight clock changes. Direct constructor calls with unrounded dates keep their existing behavior. (#159)
+- Add coverage for collection operations, errors and edge cases. (#158)
+
+Thanks to @endelwar for all four contributions and the follow-up work on correctness and performance!
+
+**Full Changelog**: https://github.com/spatie/period/compare/2.4.2...2.4.3
+
 ## 2.4.2 - 2026-10-27
 
 - Return zero length for day, hour, minute, and second periods whose boundary exclusions reverse the included endpoints and whose iterator yields no dates (#153).
