@@ -161,14 +161,10 @@ trait PeriodOperations
     protected function subtractAll(Period ...$others): PeriodCollection
     {
         $timezone = $this->includedStart()->getTimezone()->getName();
-        $empty = [];
-        $nonEmpty = [];
 
-        foreach ([$this, ...$others] as $key => $period) {
-            $isEmpty = $period->includedStart() > $period->includedEnd();
-
+        foreach ([$this, ...$others] as $period) {
             if (
-                ($isEmpty && $key === 0)
+                $this->includedStart() > $this->includedEnd()
                 || $period->includedStart()->getTimezone()->getName() !== $timezone
                 || $period->includedEnd()->getTimezone()->getName() !== $timezone
             ) {
@@ -177,25 +173,24 @@ trait PeriodOperations
 
                 return (new PeriodCollection($this))->overlapAll(...$subtractions);
             }
-
-            if ($isEmpty) {
-                $empty[] = $period;
-            } elseif ($key !== 0) {
-                $nonEmpty[] = $period;
-            }
         }
 
-        $others = (new PeriodCollection(...$nonEmpty))->sort();
-
+        $others = (new PeriodCollection(...$others))->sort();
         $collection = new PeriodCollection();
+        $subtractions = [];
         $start = $this->includedStart();
 
-        // A period further than one interval away cannot change the result: skip the date arithmetic for it
         $before = $this->precision->decrement($start);
         $after = $this->precision->increment($this->includedEnd());
 
         foreach ($others as $other) {
             $this->ensurePrecisionMatches($other);
+
+            if ($other->includedStart() > $other->includedEnd()) {
+                $subtractions[] = $this->subtract($other);
+
+                continue;
+            }
 
             if ($other->includedEnd() < $before || $other->includedStart() > $after) {
                 continue;
@@ -227,9 +222,6 @@ trait PeriodOperations
                 $this->boundaries(),
             );
         }
-
-        // Periods without included dates split the result as subtracting them one by one does
-        $subtractions = array_map(fn (Period $other) => $this->subtract($other), $empty);
 
         return $collection->overlapAll(...$subtractions);
     }
