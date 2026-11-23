@@ -300,6 +300,19 @@ it('is valid before a rewind when the first key was unset', function () {
     expect($collection->valid())->toBeTrue();
     expect($collection->key())->toBe(1);
     expect($collection->current())->toBe($period);
+    expect($collection->boundaries()->equals($period))->toBeTrue();
+    expect($collection->gaps())->toHaveCount(0);
+    expect($collection->union())->toHaveCount(1);
+});
+
+it('visits remaining integer keys even when inserted out of order', function () {
+    $period = Period::make('2018-01-01', '2018-01-05');
+    $collection = new PeriodCollection($period);
+    $collection[10] = $period;
+    $collection[3] = $period;
+    $collection['label'] = $period;
+
+    expect(array_keys(iterator_to_array($collection)))->toBe([0, 3, 10]);
 });
 
 it('substracts empty period collection', function () {

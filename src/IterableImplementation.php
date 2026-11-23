@@ -44,14 +44,22 @@ trait IterableImplementation
 
     public function valid(): bool
     {
-        // Skip the keys removed with unset, up to the last key of the collection
-        $last = array_key_last($this->periods);
-
-        while (is_int($last) && $this->position < $last && ! array_key_exists($this->position, $this->periods)) {
-            $this->position++;
+        if (array_key_exists($this->position, $this->periods)) {
+            return true;
         }
 
-        return array_key_exists($this->position, $this->periods);
+        $remainingKeys = array_filter(
+            array_keys($this->periods),
+            fn ($key) => is_int($key) && $key > $this->position,
+        );
+
+        if (! $remainingKeys) {
+            return false;
+        }
+
+        $this->position = min($remainingKeys);
+
+        return true;
     }
 
     public function rewind(): void
